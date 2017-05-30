@@ -1,0 +1,50 @@
+html * {
+    background-color: #102031;
+    color: rgb(254, 249, 255);
+}
+
+body {
+    padding-top: 50px;
+}
+
+.linkified {
+    background: inherit;
+}
+
+.glyphicon {
+    font-size: 17px;
+}
+
+#chat_username {
+    max-width: 50%;
+    color: #75bcd1;
+    background: inherit;
+    display: inline-block;
+}
+
+#chat_username[user^="a"]{color: #ff60b1; font-weight:bold; font-style:italic;}
+#chat_username[user^="b"]{color: #ff5769; font-weight:bold; font-style:italic;}
+#chat_username[user^="c"]{color: #e3d762; font-weight:bold; font-style:italic;}
+#chat_username[user^="d"]{color: #9cff68; font-weight:bold; font-style:italic;}
+#chat_username[user^="e"]{color: #60ffd1; font-weight:bold; font-style:italic;}
+#chat_username[user^="f"]{color: #62b2ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="g"]{color: #13a7ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="h"]{color: #fffa70; font-weight:bold; font-style:italic;}
+#chat_username[user^="i"]{color: #ff60b1; font-weight:bold; font-style:italic;}
+#chat_username[user^="j"]{color: #ff8441; font-weight:bold; font-style:italic;}
+#chat_username[user^="k"]{color: #e3d762; font-weight:bold; font-style:italic;}
+#chat_username[user^="l"]{color: #9cff68; font-weight:bold; font-style:italic;}
+#chat_username[user^="m"]{color: #60ffd1; font-weight:bold; font-style:italic;}
+#chat_username[user^="n"]{color: #62b2ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="o"]{color: #13a7ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="p"]{color: #fffa70; font-weight:bold; font-style:italic;}
+#chat_username[user^="q"]{color: #ff60b1; font-weight:bold; font-style:italic;}
+#chat_username[user^="r"]{color: #b860ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="s"]{color: #ff8441; font-weight:bold; font-style:italic;}
+#chat_username[user^="t"]{color: #e3d762; font-weight:bold; font-style:italic;}
+#chat_username[user^="u"]{color: #9cff68; font-weight:bold; font-style:italic;}
+#chat_username[user^="v"]{color: #60ffd1; font-weight:bold; font-style:italic;}
+#chat_username[user^="w"]{color: #62b2ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="x"]{color: #13a7ff; font-weight:bold; font-style:italic;}
+#chat_username[user^="y"]{color: #fffa70; font-weight:bold; font-style:italic;}
+#chat_username[user^="z"]{color: #a922b7; font-weight:bold; font-style:italic;}

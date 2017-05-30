@@ -1,0 +1,14 @@
+*.swp
+ve/*
+tmp/*
+*__pycache__
+.idea/
+*.db
+gunicorn_logs
+*.pyc
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+*draft.html
+*beta.html

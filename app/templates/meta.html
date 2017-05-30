@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    {% for post in posts %}
+        <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+    {% endfor %}
+
+    <form action="" method="post" name="meta">
+        {{ form.hidden_tag() }}
+        <div>
+            <textarea name="content" style="height:300px;width:600px;"></textarea></br></br>
+            <textarea name="category" style="height:20px;width:100px;">Meta</textarea>
+        </div>
+
+        <p><input type="submit" value="Submit"></p>
+		</form>
+{% endblock %}
