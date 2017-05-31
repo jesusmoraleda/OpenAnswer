@@ -54,11 +54,12 @@ $(document).ready(function () {
             if ($.trim(text) != '') {
                 text_area.contains_latex = false;
                 latex_preview_div.collapse('hide');
-                socket.emit('sent', {msg: text, room: room_name});
-                if (text.match("^\@")) {
-                    add_message(my_username, {username: my_username, content: text, private: true});
-                    // We're not emitting any events so scroll down manually
-                    scrollChatToBottom();
+                var is_whisper = text.match("^\\@\\w+");
+                if (is_whisper != null) {
+                    socket.emit('whispered', {msg: text});
+                }
+                else {
+                    socket.emit('sent', {msg: text, room: room_name});
                 }
             }
         }

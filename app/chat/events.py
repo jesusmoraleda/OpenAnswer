@@ -59,22 +59,40 @@ def receive(data):
     content = data['msg']
     room = data['room']
     username = current_user.username
-    private_msg = content.startswith('@')
-    if private_msg:
-        to, *msg = content.split(' ', maxsplit=1)
-        content = msg[0] if msg else None
-        room = PRIVATE_ROOMS.get(to[1:])  # trim the leading @
-    # if they misspelled the username, don't broadcast this to public rooms
-    if content and room:
-        namespace = '/chat'
-        if not private_msg:
-            db.session.add(Message(user_id=current_user.id, content=content, room=room, namespace=namespace))
-            db.session.commit()
+    namespace = '/chat'
+    db.session.add(Message(user_id=current_user.id, content=content, room=room, namespace=namespace))
+    db.session.commit()
+    emit('received',
+         {
+             'content': content,
+             'username': username,
+             'private': False,  # send back whether it was private or not so we can highlight it
+             # 'email': current_user.email,
+             # 'last_seen': MomentJs(current_user.last_seen).calendar(),  # Additional params can be sent here too
+         }, room=room)
+
+
+@socketio.on('whispered', namespace='/chat')
+def receive_whisper(data):
+    content = data['msg']
+    username = current_user.username
+    to, *_ = content.split(' ', maxsplit=1)
+    recipient_room = PRIVATE_ROOMS.get(to[1:])  # trim the leading @
+    my_room = PRIVATE_ROOMS.get(username)
+    if recipient_room:
         emit('received',
              {
                  'content': content,
                  'username': username,
-                 'private': private_msg,  # send back whether it was private or not so we can highlight it
-                 # 'email': current_user.email,
-                 # 'last_seen': MomentJs(current_user.last_seen).calendar(),  # Additional params can be sent here too
-             }, room=room)
+                 'private': True,
+             }, room=recipient_room)
+    else:
+        content = 'Not delivered: ' + content
+
+    # Also emit to myself to see whether the message was delivered or not
+    emit('received',
+         {
+             'content': content,
+             'username': username,
+             'private': True,
+         }, room=my_room)
