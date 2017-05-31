@@ -15,7 +15,7 @@ $(document).ready(function () {
     scrollChatToBottom(1); //scroll after 1 second delay to let mathjax finish rendering
 
     socket.on('connect', function () {
-        socket.emit('joined', {room: room_name});
+        socket.emit('joined', {room: room_name, sid: socket.id});
     });
 
     socket.on('status', function (data) {
@@ -56,10 +56,10 @@ $(document).ready(function () {
                 latex_preview_div.collapse('hide');
                 var is_whisper = text.match("^\\@\\w+");
                 if (is_whisper != null) {
-                    socket.emit('whispered', {msg: text});
+                    socket.emit('whispered', {msg: text, sid: socket.id});
                 }
                 else {
-                    socket.emit('sent', {msg: text, room: room_name});
+                    socket.emit('sent', {msg: text, room: room_name, sid: socket.id});
                 }
             }
         }
