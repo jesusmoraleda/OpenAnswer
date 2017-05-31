@@ -89,16 +89,17 @@ def receive_whisper(data):
     to, *_ = content.split(' ', maxsplit=1)
     recipient_rooms = PRIVATE_ROOMS.get(to[1:])  # trim the leading @
     my_rooms = PRIVATE_ROOMS.get(username)
-    for room in recipient_rooms:
-        emit('received',
-             {
-                 'content': content,
-                 'username': username,
-                 'private': True,
-             }, room=room)
 
     if not recipient_rooms:
         content = 'Not delivered: ' + content
+    else:
+        for room in recipient_rooms:
+            emit('received',
+                 {
+                     'content': content,
+                     'username': username,
+                     'private': True,
+                 }, room=room)
 
     for room in my_rooms:
         # Also emit to myself to see whether the message was delivered or not
