@@ -6,6 +6,7 @@
 
 
     <h1>Hi, {{ user.username }}!</h1>
+    <img src="{{ current_user.gravatar(160) }}" class="img-rounded"/>
     {% if user.last_seen %}
         <p><i>Last seen: {{ momentjs(user.last_seen).calendar() }}</i></p>
     {% endif %}
