@@ -21,7 +21,7 @@ def joined(data):
     # FIXME: Sometimes stale connections keep trying to reconnect and keep emitting joined event
     # FIXME: Not sure if this is the right approach but suppress these warnings for now so it doesn't clutter the logs
     room = data['room']
-    sid = data['sid']
+    sid = data.get('sid') or request.sid
     if not current_user.is_anonymous:
         username = current_user.username
         join_room(room)
