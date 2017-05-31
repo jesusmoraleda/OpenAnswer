@@ -32,7 +32,7 @@ body {
 #chat_username[user^="h"]{color: #fffa70; font-weight:bold; font-style:italic;}
 #chat_username[user^="i"]{color: #ff60b1; font-weight:bold; font-style:italic;}
 #chat_username[user^="j"]{color: #ff8441; font-weight:bold; font-style:italic;}
-#chat_username[user^="k"]{color: #e3d762; font-weight:bold; font-style:italic;}
+#chat_username[user^="k"]{color: #1fe5ef; font-weight:bold; font-style:italic;}
 #chat_username[user^="l"]{color: #9cff68; font-weight:bold; font-style:italic;}
 #chat_username[user^="m"]{color: #60ffd1; font-weight:bold; font-style:italic;}
 #chat_username[user^="n"]{color: #62b2ff; font-weight:bold; font-style:italic;}
