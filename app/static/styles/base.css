@@ -15,6 +15,11 @@ body {
     font-size: 17px;
 }
 
+li #whisper_user {
+    background: inherit;
+    cursor: pointer;
+}
+
 #chat_username {
     max-width: 50%;
     color: #75bcd1;

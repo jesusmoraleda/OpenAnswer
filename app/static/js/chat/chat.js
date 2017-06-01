@@ -88,13 +88,21 @@ $(document).ready(function () {
     })
 });
 
+function start_whisper(text) {
+    var username = text.slice(0, -1);
+    var text_area = $('#text');
+    text_area.val("@" + username + " ");
+    text_area.focus();
+}
+
 function add_message(my_username, data) {
     var content = data.content;
-    var div_id = data.private ? "chat_message_private" : "chat_message";
-    div_id = content.match(" " + my_username + " ") ? "chat_message_to_me" : div_id;
-
-    var user = '<div id="chat_username" user="' + data.username +'">' + data.username + ':</div> ';
-    // Patch xss vulnerability by using .text instead of .html and only converting back escaped html
+    var div_id = content.match("\\b" + my_username + "\\b") ?  "chat_message_to_me" : "chat_message";
+    div_id = data.private ? "chat_message_private" : div_id;
+    var open_href = '<a onclick="start_whisper(this.text)" id="whisper_user">'
+    var user = open_href + '<div id="chat_username" user="' + data.username +'">' + data.username + ':</div></a> ';
+    // Patch xss vulnerability by using .text instead of .html and only linkifying escaped html
+    // From what I recall $('<div>') is only needed so we can call .text() (double check someday)
     var msg = $('<div>').text(content).html();
     $('#chat_messages').append($('<li id="' + div_id + '">').html(user + msg + '</li>').linkify({target: "_blank"}));
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
