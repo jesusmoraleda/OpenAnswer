@@ -33,13 +33,13 @@ def get_messages(room, page=1):
 @api.route('/users/<username>', methods=['GET'])
 @login_required
 def get_user(username=None):
-    users = models.User.query.all() if not username else [
-        models.User.query.filter(
+    if not username:
+        results = {'users': [
+            {'user': user.to_dict()} for user in models.User.query.all()
+        ]}
+    else:
+        user = models.User.query.filter(
             models.User.username == username
         ).first()
-    ]
-    return jsonify(
-        {'users': [
-            {'user': user.to_dict()} for user in users
-        ]}
-    )
+        results = user.to_dict() if user else {}
+    return jsonify(results)

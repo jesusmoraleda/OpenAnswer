@@ -16,6 +16,14 @@ $(document).ready(function () {
 
     socket.on('connect', function () {
         socket.emit('joined', {room: room_name, sid: socket.id});
+
+        // When we connect, request permission to send notifications for pms:
+        // https://developer.mozilla.org/en-US/docs/Web/API/notification#Alternate_example_run_on_page_load
+        // In many cases, you don't need to be this verbose. For example, in our demo, we simply run Notification.requestPermission regardless
+        // to make sure we can get permission to send notifications
+        Notification.requestPermission().then(function(result) {
+            console.log('result');
+        });
     });
 
     socket.on('status', function (data) {
@@ -104,6 +112,12 @@ function add_message(my_username, data) {
     // Patch xss vulnerability by using .text instead of .html and only linkifying escaped html
     // From what I recall $('<div>') is only needed so we can call .text() (double check someday)
     var msg = $('<div>').text(content).html();
+    if (data.private) {
+        $.getJSON('../users/' + data.username, function (user) {
+            // You only get back one user
+            spawnNotification(msg, user['gravatar'], data.username);
+        })
+    }
     $('#chat_messages').append($('<li id="' + div_id + '">').html(user + msg + '</li>').linkify({target: "_blank"}));
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
@@ -139,4 +153,14 @@ function scrollChatToBottom(delay) {
         var chatroom = $('#chatroom');
         chatroom.scrollTop(chatroom.prop("scrollHeight"));
     }, delay);
+}
+
+// Stolen from https://developer.mozilla.org/en-US/docs/Web/API/notification#Alternate_example_run_on_page_load
+function spawnNotification(body, icon, title) {
+    var options = {
+        body: body,
+        icon: icon,
+    };
+    var n = new Notification(title, options);
+    setTimeout(n.close.bind(n), 3000);
 }

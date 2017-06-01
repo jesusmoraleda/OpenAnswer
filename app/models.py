@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
             'is_admin': self.is_admin,
             'last_seen': self.last_seen,
             'beta': self.beta,
+            'gravatar': self.gravatar(60),
         }
 
     def gravatar(self, size):
