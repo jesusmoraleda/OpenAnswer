@@ -4,7 +4,7 @@ $(document).ready(function () {
     var unread = 0;
     var old_unread = 0;
     var room_name = location.pathname.substr(location.pathname.lastIndexOf('/') + 1);
-    var socket = io.connect('https://' + document.domain + ':' + location.port + '/chat');
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     // Grab the latest messages and populate the chat
     $.getJSON('../messages/' + room_name, function (data) {
