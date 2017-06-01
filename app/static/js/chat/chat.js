@@ -115,7 +115,9 @@ function add_message(my_username, data) {
     if (data.private) {
         $.getJSON('../users/' + data.username, function (user) {
             // You only get back one user
-            spawnNotification(msg, user['gravatar'], data.username);
+            if (data.username != my_username){
+                spawnNotification(msg.split('@'+data.username+' ')[1], user['gravatar'], data.username);
+            }
         })
     }
     $('#chat_messages').append($('<li id="' + div_id + '">').html(user + msg + '</li>').linkify({target: "_blank"}));
