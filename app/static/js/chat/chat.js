@@ -85,22 +85,22 @@ $(document).ready(function () {
         else {
             latex_preview_div.collapse('hide');
         }
-    })
-});
+    });
 
-function start_whisper(text) {
-    var username = text.slice(0, -1);
-    var text_area = $('#text');
-    text_area.val("@" + username + " ");
-    text_area.focus();
-}
+    $('#chat_messages').on('click touch', 'li #whisper_user', function() {
+            var username = this.text.slice(0, -1);
+            var text_area = $('#text');
+            text_area.val("@" + username + " ");
+            text_area.focus();
+        }
+    )
+});
 
 function add_message(my_username, data) {
     var content = data.content;
     var div_id = content.match("\\b" + my_username + "\\b") ?  "chat_message_to_me" : "chat_message";
     div_id = data.private ? "chat_message_private" : div_id;
-    var open_href = '<a onclick="start_whisper(this.text)" id="whisper_user">'
-    var user = open_href + '<div id="chat_username" user="' + data.username +'">' + data.username + ':</div></a> ';
+    var user = '<a id="whisper_user"><div id="chat_username" user="' + data.username +'">' + data.username + ':</div></a> ';
     // Patch xss vulnerability by using .text instead of .html and only linkifying escaped html
     // From what I recall $('<div>') is only needed so we can call .text() (double check someday)
     var msg = $('<div>').text(content).html();
