@@ -116,7 +116,7 @@ function add_message(my_username, data) {
         $.getJSON('../users/' + data.username, function (user) {
             // You only get back one user
             if (data.username != my_username){
-                spawnNotification(msg.split('@'+data.username+' ')[1], user['gravatar'], data.username);
+                spawnNotification(msg.split('@'+my_username+' ')[1], user['gravatar'], data.username);
             }
         })
     }
