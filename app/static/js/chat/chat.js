@@ -23,7 +23,7 @@ $(document).ready(function () {
         // In many cases, you don't need to be this verbose. For example, in our demo, we simply run Notification.requestPermission regardless
         // to make sure we can get permission to send notifications
         Notification.requestPermission().then(function(result) {
-            console.log('result');
+            console.log(result);
         });
     });
 
@@ -107,7 +107,7 @@ $(document).ready(function () {
     )
 
     $('#chatroom').on('scroll', function(){
-        autoscroll = ($(this).scrollTop() + $(this).innerHeight() >= this.scrollHeight); // enabled when we reach bottom
+        autoscroll = (this.scrollHeight - this.scrollTop === this.clientHeight); // enabled when we reach bottom
     });
 });
 
