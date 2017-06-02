@@ -5,14 +5,15 @@ $(document).ready(function () {
     var old_unread = 0;
     var room_name = location.pathname.substr(location.pathname.lastIndexOf('/') + 1);
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
+    var autoscroll = true;
 
     // Grab the latest messages and populate the chat
     $.getJSON('../messages/' + room_name, function (data) {
         $.each(data.messages, function (idx, msg) {
             add_message(my_username, msg);
-        })
+        });
+        scrollChatToBottom(1); //scroll after 1 second delay to let mathjax finish rendering
     });
-    scrollChatToBottom(1); //scroll after 1 second delay to let mathjax finish rendering
 
     socket.on('connect', function () {
         socket.emit('joined', {room: room_name, sid: socket.id});
@@ -39,15 +40,17 @@ $(document).ready(function () {
             var new_title = document.title.replace(old_unread.toString(), unread.toString());
             document.title = new_title;
         }
+        if (autoscroll) {
+            scrollChatToBottom();
+        }
         old_unread = unread;
-        
-        scrollChatToBottom();
     });
 
     var text_area = $('#text');
     var latex_preview_div = $('#latex_preview');
 
     text_area.focus(function () {
+        autoscroll = true;
         unread = 0;
         if (old_unread != 0) {
             document.title = document.title.replace(old_unread.toString(), unread.toString());
@@ -102,6 +105,10 @@ $(document).ready(function () {
             text_area.focus();
         }
     )
+
+    $('#chatroom').on('scroll', function(){
+        autoscroll = ($(this).scrollTop() + $(this).innerHeight() >= this.scrollHeight); // enabled when we reach bottom
+    });
 });
 
 function add_message(my_username, data) {
