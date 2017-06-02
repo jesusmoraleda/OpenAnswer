@@ -16,6 +16,7 @@ $(document).ready(function () {
     });
 
     socket.on('connect', function () {
+        // Note: socket.id in here also contains namespace, but it doesn't in request.sid object in python
         socket.emit('joined', {room: room_name, sid: socket.id});
 
         // When we connect, request permission to send notifications for pms:
