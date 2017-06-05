@@ -1,11 +1,11 @@
 from collections import defaultdict
+from datetime import datetime
 from email import utils
 from flask import request
 from flask_login import current_user
 from flask_socketio import emit, join_room
 from app import socketio, db
 from app.models import Message
-# from app.utils.markup.momentjs import MomentJs
 
 
 PRIVATE_ROOMS = defaultdict(set)
@@ -78,9 +78,7 @@ def receive(data):
          {
              'content': content,
              'username': username,
-             'private': False,  # send back whether it was private or not so we can highlight it
-             # 'email': current_user.email,
-             # 'last_seen': MomentJs(current_user.last_seen).calendar(),  # Additional params can be sent here too
+             'private': False,
              'timestamp': utils.format_datetime(m.timestamp),
          }, room=room)
 
@@ -102,6 +100,7 @@ def receive_whisper(data):
                      'content': content,
                      'username': username,
                      'private': True,
+                     'timestamp': utils.format_datetime(datetime.utcnow()),
                  }, room=room)
 
     for room in my_rooms:
