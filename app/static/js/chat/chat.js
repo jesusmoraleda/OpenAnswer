@@ -6,6 +6,8 @@ $(document).ready(function () {
     var room_name = location.pathname.substr(location.pathname.lastIndexOf('/') + 1);
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
     var autoscroll = true;
+    var text_area = $('#text');
+    var latex_preview_div = $('#latex_preview');
 
     // Grab the latest messages and populate the chat
     $.getJSON('../messages/' + room_name, function (data) {
@@ -46,9 +48,6 @@ $(document).ready(function () {
         }
         old_unread = unread;
     });
-
-    var text_area = $('#text');
-    var latex_preview_div = $('#latex_preview');
 
     text_area.focus(function () {
         autoscroll = true;
@@ -105,7 +104,7 @@ $(document).ready(function () {
             text_area.val("@" + username + " ");
             text_area.focus();
         }
-    )
+    );
 
     $('#chatroom').on('scroll', function(){
         autoscroll = (this.scrollHeight - this.scrollTop === this.clientHeight); // enabled when we reach bottom
@@ -138,39 +137,10 @@ function preview_latex(tex, latex_preview_div) {
     MathJax.Hub.queue.Push(["Text", MathJax.Hub.getAllJax("latex_preview")[0], tex.replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, "")]);
 }
 
-function visibility() {
-    var stateKey, eventKey, keys = {
-        hidden: "visibilitychange",
-        webkitHidden: "webkitvisibilitychange",
-        mozHidden: "mozvisibilitychange",
-        msHidden: "msvisibilitychange"
-    };
-    for (stateKey in keys) {
-        if (stateKey in document) {
-            eventKey = keys[stateKey];
-            break;
-        }
-    }
-    return function (c) {
-        if (c) document.addEventListener(eventKey, c);
-        return !document[stateKey];
-    }
-}
-
 function scrollChatToBottom(delay) {
     var delay = 500 * delay;
     setTimeout(function () {
         var chatroom = $('#chatroom');
         chatroom.scrollTop(chatroom.prop("scrollHeight"));
     }, delay);
-}
-
-// Stolen from https://developer.mozilla.org/en-US/docs/Web/API/notification#Alternate_example_run_on_page_load
-function spawnNotification(body, icon, title) {
-    var options = {
-        body: body,
-        icon: icon,
-    };
-    var n = new Notification(title, options);
-    setTimeout(n.close.bind(n), 3000);
 }

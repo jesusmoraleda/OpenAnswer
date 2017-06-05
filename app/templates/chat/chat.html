@@ -3,7 +3,8 @@
 {% block content %}
 {#    FIXME: Kinda hacky to just store username here somewhere.. we should save it in base#}
     <div id="_my_username" style="display:none">{{ user.username }}</div>
-    <script src="{{ url_for('static', filename='js/chat/socketio2.0.2.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/chat/socketio2.0.2.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat/notifs.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat/jquery.caret.js') }}"></script>
     <script src="{{ url_for('static', filename='js/linkify.min.js') }}"></script>
