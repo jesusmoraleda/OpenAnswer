@@ -7,6 +7,7 @@ $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
     var autoscroll = true;
     var text_area = $('#text');
+    var chat_messages = $('#chat_messages');
     var latex_preview_div = $('#latex_preview');
 
     // Grab the latest messages and populate the chat
@@ -98,16 +99,15 @@ $(document).ready(function () {
         }
     });
 
-    $('#chat_messages').on('click touch', 'li #send_whisper_to', function() {
+    chat_messages.on('click touch', 'li #send_whisper_to', function() {
             var username = this.text.slice(0, -1);
             var text_area = $('#text');
             text_area.val("@" + username + " ");
             text_area.focus();
         }
     );
-
-    $('#chat_messages').on('mouseenter touchstart', '#chat_message, #chat_message_to_me, #chat_message_private', show_timestamp);
-    $('#chat_messages').on('mouseleave touchend', '#chat_message, #chat_message_to_me, #chat_message_private', hide_timestamp);
+    chat_messages.on('mouseenter touchstart', '#chat_message, #chat_message_to_me, #chat_message_private', show_timestamp);
+    chat_messages.on('mouseleave touchend', '#chat_message, #chat_message_to_me, #chat_message_private', hide_timestamp);
 
     $('#chatroom').on('scroll', function(){
         autoscroll = (this.scrollHeight - this.scrollTop === this.clientHeight); // enabled when we reach bottom
@@ -116,24 +116,24 @@ $(document).ready(function () {
 
 function add_message(my_username, data) {
     var content = data.content;
-    var div_id = content.match("\\b" + my_username + "\\b") ?  "chat_message_to_me" : "chat_message";
-    div_id = data.private ? "chat_message_private" : div_id;
-    var user = '<a id="send_whisper_to"><div id="chat_username" user="' + data.username +'">' + data.username + ':</div></a> ';
+    var sender_username = data.username;
+    var div_id = data.private ? 'chat_message_private' : content.match("\\b"+my_username+"\\b") ? 'chat_message_to_me' : 'chat_message';
+    var user = '<a id="send_whisper_to"><div id="chat_username" user="' + sender_username +'">' + sender_username + ':</div></a> ';
     // Patch xss vulnerability by using .text instead of .html and only linkifying escaped html
     // From what I recall $('<div>') is only needed so we can call .text() (double check someday)
     var msg = $('<div>').text(content).html();
-    if (data.private) {
-        $.getJSON('../users/' + data.username, function (user) {
-            // You only get back one user
-            if (data.username != my_username){
-                spawnNotification(msg.split('@'+my_username+' ')[1], user['gravatar'], data.username);
+    if (div_id === 'chat_message_private') {
+        $.getJSON('../users/' + sender_username, function (u) {
+            if (u['username'] != my_username) {
+                // You only get back one user
+                spawnNotification(msg.split('@'+my_username+' ')[1], u['gravatar'], u['username']);
             }
         })
     }
-    // var ts = '<div id="timestamp">' + $.timeago(new Date(data.timestamp)) + '</div>';
-    var ts = '<div id="timestamp"></div>';
     $('#chat_messages').append(
-        $('<li id="' + div_id + '" timestamp="' + data.timestamp +'">').html(user + msg + ts + '</li>').linkify({target: "_blank"})
+        $('<li id="' + div_id + '" timestamp="' + data.timestamp +'">').html(
+            user + msg + '<div id="timestamp"></div></li>'
+        ).linkify({target: "_blank"})
     );
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
