@@ -15,8 +15,6 @@ def chat_room(room):
 def online_users():
     if current_user.is_admin:
         from .events import ONLINE_USERS
-        return jsonify(
-            {username: {room: list(ids) for (room, ids) in rooms.items()} for (username, rooms) in ONLINE_USERS.items()}
-        )
+        return jsonify(ONLINE_USERS.get_all_users())
     else:
         return {'online': 'Only admins can see this'}

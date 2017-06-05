@@ -7,11 +7,37 @@ from app.models import Message
 # from app.utils.markup.momentjs import MomentJs
 
 
-def defaultdict_set():
-    return defaultdict(set)
-ONLINE_USERS = defaultdict(defaultdict_set)
-
 PRIVATE_ROOMS = defaultdict(set)
+
+
+class OnlineUsers:
+    def __init__(self):
+        """sid: room"""
+        self.sockets_to_rooms = {}
+        self.sockets_to_usernames = {}
+
+    def joined(self, sid, room):
+        # Treat my socket id as my room name
+        join_room(sid)
+        PRIVATE_ROOMS[current_user.username].add(sid)
+        join_room(room)
+        self.sockets_to_rooms[sid] = room
+        self.sockets_to_usernames[sid] = current_user.username
+
+    def disconnected(self, sid):
+        room = self.sockets_to_rooms.pop(sid, None)
+        self.sockets_to_usernames.pop(sid, None)
+        PRIVATE_ROOMS.pop(sid, None)
+        return room
+
+    def get_users(self, room):
+        sockets = (sid for (sid, r) in self.sockets_to_rooms.items() if r == room)
+        return set(self.sockets_to_usernames[sid] for sid in sockets)
+
+    def get_all_users(self):
+        return {self.sockets_to_usernames[sid]: {room: sid} for (sid, room) in self.sockets_to_rooms.items()}
+
+ONLINE_USERS = OnlineUsers()
 
 
 @socketio.on('joined', namespace='/chat')
@@ -23,45 +49,17 @@ def joined(data):
     room = data['room']
     sid = request.sid
     if not current_user.is_anonymous:
-        username = current_user.username
-        join_room(room)
-        # Treat my socket id as my room name
-        join_room(sid)
-        ONLINE_USERS[username][room].add(sid)
-        PRIVATE_ROOMS[username].add(sid)
-        # FIXME: Move div generation to client-side
-        online = ['<div id="chat_username" user="%s">%s</div>' % (u, u)
-                  for (u, rooms_and_sox) in ONLINE_USERS.items() if room in rooms_and_sox]
+        ONLINE_USERS.joined(sid, room)
+        online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
         emit('status', {'online_users': online}, room=room)
 
 
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
-    #FIXME: see if we can get the socket to send socket id on disconnect instead of relying on request.sid
     sid = request.sid
-    for room, sids in ONLINE_USERS[current_user.username].items():
-        if sid in sids:
-            sids.remove(sid)
-            if not sids:
-                # FIXME: Move div generation to client-side
-                online = ['<div id="chat_username" user="%s">%s</div>' % (u, u)
-                          for u in ONLINE_USERS if u != current_user.username]
-                emit('status', {'online_users': online}, room=room)
-
-    remaining_rooms = defaultdict(set)
-    for room, sids in ONLINE_USERS[current_user.username].items():
-        if sids:
-            remaining_rooms[room] = sids
-    ONLINE_USERS[current_user.username] = remaining_rooms
-
-    # FIXME: All this tracking should probably be a separate service/class by now
-    remaining_private_rooms = PRIVATE_ROOMS.get(current_user.username, set())
-    if sid in remaining_private_rooms:
-        remaining_private_rooms.remove(sid)
-    if not remaining_private_rooms:
-        PRIVATE_ROOMS.pop(current_user.username, None)
-    else:
-        PRIVATE_ROOMS[current_user.username] = remaining_private_rooms
+    room = ONLINE_USERS.disconnected(sid)
+    online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
+    emit('status', {'online_users': online}, room=room)
 
 
 @socketio.on('sent', namespace='/chat')

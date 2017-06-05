@@ -31,12 +31,9 @@
             src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script>
     <link href="{{ url_for('static', filename='styles/chat.css') }}" rel="stylesheet" type="text/css"/>
 
-
     <div class="container">
         <div class="row">
-            <div class="col">
-                <div id="users_in_room"></div>
-            </div>
+            <div id="users_in_room"></div>
         </div>
         <div class="row">
             <div class="col">
@@ -45,11 +42,6 @@
                 </div>
             </div>
         </div>
-{#        <div class="row">#}
-{#            <div class="col">#}
-{#                <div id="typing"></div>#}
-{#            </div>#}
-{#        </div>#}
     </div>
     <div class="navbar navbar-fixed-bottom">
         <div class="container">
