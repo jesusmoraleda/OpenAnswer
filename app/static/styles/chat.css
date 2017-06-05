@@ -55,20 +55,6 @@ body {
     border-radius: 4px;
 }
 
-#chat_message:hover #timestamp {
-    display: inline-block;
-}
-#chat_message:focus #timestamp {
-    display: inline-block;
-}
-
-#chat_message_private:hover #timestamp {
-    display: inline-block;
-}
-#chat_message_private:focus #timestamp {
-    display: inline-block;
-}
-
 #timestamp {
     font-size: 60%;
     background: inherit;

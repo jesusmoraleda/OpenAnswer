@@ -106,6 +106,18 @@ $(document).ready(function () {
         }
     );
 
+    $('#chat_messages').on('mouseenter touchstart', '#chat_message', function() {
+        var ts = $.timeago(new Date(this.getAttribute('timestamp')));
+        var ts_div = $(this).children("#timestamp");
+        ts_div.text(ts);
+        ts_div.css('display', 'inline-block');
+    });
+
+    $('#chat_messages').on('mouseleave touchend', '#chat_message', function() {
+        var ts_div = $(this).children("#timestamp");
+        ts_div.css('display', 'none');
+    });
+
     $('#chatroom').on('scroll', function(){
         autoscroll = (this.scrollHeight - this.scrollTop === this.clientHeight); // enabled when we reach bottom
     });
@@ -127,8 +139,11 @@ function add_message(my_username, data) {
             }
         })
     }
-    var ts = '<div id="timestamp">' + $.timeago(new Date(data.timestamp)) + '</div>';
-    $('#chat_messages').append($('<li id="' + div_id + '">').html(user + msg + ts + '</li>').linkify({target: "_blank"}));
+    // var ts = '<div id="timestamp">' + $.timeago(new Date(data.timestamp)) + '</div>';
+    var ts = '<div id="timestamp"></div>';
+    $('#chat_messages').append(
+        $('<li id="' + div_id + '" timestamp="' + data.timestamp +'">').html(user + msg + ts + '</li>').linkify({target: "_blank"})
+    );
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
 
