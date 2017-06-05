@@ -90,7 +90,7 @@ def receive_whisper(data):
     to, *_ = content.split(' ', maxsplit=1)
     recipient_rooms = PRIVATE_ROOMS.get(to[1:])  # trim the leading @
     my_rooms = PRIVATE_ROOMS.get(username)
-
+    ts = datetime.utcnow()
     if not recipient_rooms:
         content = 'Not delivered: ' + content
     else:
@@ -100,7 +100,7 @@ def receive_whisper(data):
                      'content': content,
                      'username': username,
                      'private': True,
-                     'timestamp': utils.format_datetime(datetime.utcnow()),
+                     'timestamp': utils.format_datetime(ts),
                  }, room=room)
 
     for room in my_rooms:
@@ -110,4 +110,5 @@ def receive_whisper(data):
                  'content': content,
                  'username': username,
                  'private': True,
+                 'timestamp': utils.format_datetime(ts),
              }, room=room)

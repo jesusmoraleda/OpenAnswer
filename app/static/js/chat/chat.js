@@ -106,17 +106,8 @@ $(document).ready(function () {
         }
     );
 
-    $('#chat_messages').on('mouseenter touchstart', '#chat_message', function() {
-        var ts = $.timeago(new Date(this.getAttribute('timestamp')));
-        var ts_div = $(this).children("#timestamp");
-        ts_div.text(ts);
-        ts_div.css('display', 'inline-block');
-    });
-
-    $('#chat_messages').on('mouseleave touchend', '#chat_message', function() {
-        var ts_div = $(this).children("#timestamp");
-        ts_div.css('display', 'none');
-    });
+    $('#chat_messages').on('mouseenter touchstart', '#chat_message, #chat_message_to_me, #chat_message_private', show_timestamp);
+    $('#chat_messages').on('mouseleave touchend', '#chat_message, #chat_message_to_me, #chat_message_private', hide_timestamp);
 
     $('#chatroom').on('scroll', function(){
         autoscroll = (this.scrollHeight - this.scrollTop === this.clientHeight); // enabled when we reach bottom
