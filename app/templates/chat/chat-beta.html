@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+{#    FIXME: Kinda hacky to just store username here somewhere.. we should save it in base#}
+    <div id="_my_username" style="display:none">{{ user.username }}</div>
+    <script src="{{ url_for('static', filename='js/chat/socketio2.0.2.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat/chat-beta.js') }}"></script>
+
+    <input type='text' id='room_name'/>
+    <div id="conv_board">
+    </div>
+
+{% endblock %}

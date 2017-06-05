@@ -10,5 +10,3 @@ gunicorn_logs
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
-*draft.html
-*beta.html
