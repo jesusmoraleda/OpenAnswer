@@ -35,7 +35,7 @@ class OnlineUsers:
         return set(self.sockets_to_usernames[sid] for sid in sockets)
 
     def get_all_users(self):
-        return {self.sockets_to_usernames[sid]: {room: sid} for (sid, room) in self.sockets_to_rooms.items()}
+        return {self.sockets_to_usernames[sid]: {sid: room} for (sid, room) in self.sockets_to_rooms.items()}
 
 ONLINE_USERS = OnlineUsers()
 
