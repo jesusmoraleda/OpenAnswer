@@ -30,7 +30,7 @@ class User(UserMixin, db.Model):
 
     def gravatar(self, size):
         # mm, monsterid, identicon, wavatar, retro, blank are the available defaults
-        return 'http://www.gravatar.com/avatar/%s?d=identicon&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
+        return 'https://www.gravatar.com/avatar/%s?d=identicon&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
 
 
 class UserIp(db.Model):
