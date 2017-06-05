@@ -39,6 +39,14 @@ def home():
     return render_template('home.html', title='Welcome to OpenAnswer')
 
 
+@app.route('/logs')
+@login_required
+def logs():
+    if current_user.is_admin:
+        with open('./gunicorn_logs') as f:
+            return render_template('logs.html', log_content=f.read())
+
+
 @app.route('/logout')
 def logout():
     logout_user()
