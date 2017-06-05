@@ -15,7 +15,7 @@ body {
     font-size: 17px;
 }
 
-li #whisper_user {
+li #send_whisper_to {
     background: inherit;
     cursor: pointer;
 }

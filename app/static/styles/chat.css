@@ -55,6 +55,20 @@ body {
     border-radius: 4px;
 }
 
+#chat_message:hover #timestamp {
+    display: inline-block;
+}
+#chat_message:focus #timestamp {
+    display: inline-block;
+}
+
+#timestamp {
+    font-size: 60%;
+    background: inherit;
+    display: none;
+    float: right;
+}
+
 #latex_preview {
     border: 1px solid #fff;
     border-radius: 4px;

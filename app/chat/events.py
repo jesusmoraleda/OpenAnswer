@@ -1,4 +1,5 @@
 from collections import defaultdict
+from email import utils
 from flask import request
 from flask_login import current_user
 from flask_socketio import emit, join_room
@@ -70,7 +71,8 @@ def receive(data):
     room = data['room']
     username = current_user.username
     namespace = '/chat'
-    db.session.add(Message(user_id=current_user.id, content=content, room=room, namespace=namespace))
+    m = Message(user_id=current_user.id, content=content, room=room, namespace=namespace)
+    db.session.add(m)
     db.session.commit()
     emit('received',
          {
@@ -79,6 +81,7 @@ def receive(data):
              'private': False,  # send back whether it was private or not so we can highlight it
              # 'email': current_user.email,
              # 'last_seen': MomentJs(current_user.last_seen).calendar(),  # Additional params can be sent here too
+             'timestamp': utils.format_datetime(m.timestamp),
          }, room=room)
 
 
