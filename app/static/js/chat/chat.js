@@ -80,7 +80,7 @@ $(document).ready(function () {
     text_area.keyup(function (e) {
         //FIXME: Investigate why the delay causes extra line endings
         var val = this.value;
-        var latex_endings = {'(': '\\)', '[': '\\]'};
+        var latex_endings = {'$': '$$'};
         var caret_pos = $(text_area).caret();
         if ($.inArray(e.key, Object.keys(latex_endings)) != -1) {
             // caret is after nth character, we want the character before that; and then subtract another one because strings are 0-index
@@ -117,11 +117,10 @@ $(document).ready(function () {
 function add_message(my_username, data) {
     var content = data.content;
     var sender_username = data.username;
+    //FIXME: Change to class
     var div_id = data.private ? 'chat_message_private' : content.match("\\b"+my_username+"\\b") ? 'chat_message_to_me' : 'chat_message';
     var user = '<a id="send_whisper_to"><div id="chat_username" user="' + sender_username +'">' + sender_username + ':</div></a> ';
-    // Patch xss vulnerability by using .text instead of .html and only linkifying escaped html
-    // From what I recall $('<div>') is only needed so we can call .text() (double check someday)
-    var msg = $('<div>').text(content).html();
+    var msg = marked(content, {sanitize: true});
     if (div_id === 'chat_message_private') {
         $.getJSON('../users/' + sender_username, function (u) {
             if (u['username'] != my_username) {
@@ -132,8 +131,8 @@ function add_message(my_username, data) {
     }
     $('#chat_messages').append(
         $('<li id="' + div_id + '" timestamp="' + data.timestamp +'">').html(
-            user + msg + '<div id="timestamp"></div></li>'
-        ).linkify({target: "_blank"})
+            user + '<div class="msg_content">' + msg + '</div><div id="timestamp"></div></li>'
+        )
     );
     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
