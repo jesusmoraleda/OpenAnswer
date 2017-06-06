@@ -116,6 +116,10 @@ def meta():
         db.session.commit()
     return render_template('meta.html', title='Meta', posts=meta_posts, form=form, navtab='meta')
 
+@app.route('/help')
+def help():
+    return render_template('help.html', title='Help', navtab='help')
+
 
 # Admin views here
 class AdminModelView(ModelView):

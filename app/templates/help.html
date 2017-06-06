@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p1>
+        <h2>Help</h2>
+        <div>You can view the <a href="https://github.com/openanswer/OpenAnswer/wiki">GitHub Wiki</a>, or, if you
+            prefer,
+            read a summary here.
+        </div>
+        <div>
+            This site has many basic features you'd expect from a chat client; here are some less obvious features:
+        </div>
+        <div>
+            <h3>Tagging</h3>
+            To tag a user, simply include their name in your message. The user who receives the message will
+            see their tag with a bold border.
+        </div>
+        <div>
+            <h3>Private Messages</h3>
+            To pm a user, type "@username" followed by the message you want to send. PMs are not stored on the
+            server and disappear, so careful about refresh if you wish to save a transcript! You can also pm a user by
+            clicking on their name, which will autocomplete the "@username" in your bottom chat input.
+        </div>
+        <div>
+            <h3>Rooms</h3>
+            We're currently working on allowing multiple rooms in a single window (a single page application type
+            deal), but for now, users start in the "lobby", and can move to a different chat room by directly modifying
+            the url.
+        </div>
+        <div>
+            <h3>LaTeX</h3>
+            You can add a LaTeX to your message with standard methods.
+        </div>
+        <div>
+            <h3>Planned Developments</h3>
+            We're currently actively working on the chat section of this site, and plan on modifying it to accommodate
+            questions as well.
+        </div>
+    </p1>
+{% endblock %}
