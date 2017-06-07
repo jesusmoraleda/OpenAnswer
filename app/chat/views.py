@@ -10,10 +10,10 @@ def chat_room(room):
     return render_template('chat/chat.html', title='(0) %s' % room.capitalize(), user=current_user, navtab='chat')
 
 
-@chat.route('/beta-chat')
+@chat.route('/alpha-chat')
 @login_required
 def beta_chat():
-    return render_template('chat/chat-beta.html', title='Chat', user=current_user)
+    return render_template('chat/chat-alpha.html', title='Chat', user=current_user)
 
 
 @chat.route('/online')
