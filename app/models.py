@@ -65,6 +65,9 @@ class Message(db.Model):
     room = db.Column(db.Text, nullable=False)
     namespace = db.Column(db.Text, nullable=False)
 
+    def __repr__(self):
+        return str(self.id)
+
     def to_dict(self):
         # FIXME: Is this how backrefs are supposed to work? Seems like a waste to query user.. investigate
         user = User.query.get(self.user_id)
