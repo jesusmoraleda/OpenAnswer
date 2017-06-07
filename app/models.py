@@ -39,6 +39,9 @@ class UserIp(db.Model):
     ip_address = db.Column(db.String(50))  # http://stackoverflow.com/a/166157/2302482
     timestamp = db.Column(db.DateTime)
 
+    def __repr__(self):
+        return "%s | %s" % (self.ip_address, self.timestamp.strftime('%x %X'))
+
 
 @lm.user_loader
 def load_user(user_id):
