@@ -9,11 +9,14 @@ $(document).ready(function () {
     var text_area = $('#text');
     var chat_messages = $('#chat_messages');
     var latex_preview_div = $('#latex_preview');
+    // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+    // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
 
     // Grab the latest messages and populate the chat
     $.getJSON('../messages/' + room_name, function (data) {
         $.each(data.messages, function (idx, msg) {
-            add_message(my_username, msg);
+            add_message(my_username, msg, isIE);
         });
         scrollChatToBottom(1); //scroll after 1 second delay to let mathjax finish rendering
     });
@@ -26,9 +29,11 @@ $(document).ready(function () {
         // https://developer.mozilla.org/en-US/docs/Web/API/notification#Alternate_example_run_on_page_load
         // In many cases, you don't need to be this verbose. For example, in our demo, we simply run Notification.requestPermission regardless
         // to make sure we can get permission to send notifications
-        Notification.requestPermission().then(function(result) {
-            console.log(result);
-        });
+        if (!isIE) {
+            Notification.requestPermission().then(function(result) {
+                console.log(result);
+            });
+        }
     });
 
     socket.on('status', function (data) {
@@ -37,7 +42,7 @@ $(document).ready(function () {
     });
 
     socket.on('received', function (data) {
-        add_message(my_username, data);
+        add_message(my_username, data, isIE);
 
         if (!is_visible()) {
             unread += 1;
@@ -114,7 +119,7 @@ $(document).ready(function () {
     });
 });
 
-function add_message(my_username, data) {
+function add_message(my_username, data, isIE) {
     var content = data.content;
     var sender_username = data.username;
     //FIXME: Change to class
@@ -123,7 +128,7 @@ function add_message(my_username, data) {
     var msg = marked(content, {sanitize: true});
     if (div_id === 'chat_message_private') {
         $.getJSON('../users/' + sender_username, function (u) {
-            if (u['username'] != my_username) {
+            if (u['username'] != my_username && !isIE) {
                 // You only get back one user
                 spawnNotification(msg.split('@'+my_username+' ')[1], u['gravatar'], u['username']);
             }
