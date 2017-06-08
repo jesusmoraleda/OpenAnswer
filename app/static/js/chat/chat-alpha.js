@@ -34,4 +34,7 @@ function addMenuItem( layout, title, text ) {
     };
 
     layout.createDragSource( element, newItemConfig );
+    element.click(function(){
+        layout.root.contentItems[ 0 ].addChild( newItemConfig );
+    });
 };

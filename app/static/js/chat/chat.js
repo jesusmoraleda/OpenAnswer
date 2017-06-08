@@ -139,13 +139,23 @@ function add_message(my_username, data, isIE) {
             user + '<div class="msg_content">' + msg + '</div><div id="timestamp"></div></li>'
         )
     );
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    try {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+    catch(e) {
+        console.log(e);
+    }
 }
 
 function preview_latex(tex, latex_preview_div) {
     latex_preview_div.collapse('show');
     // FIXME: Why is this lowercase queue and the one in add_message uppercase
-    MathJax.Hub.queue.Push(["Text", MathJax.Hub.getAllJax("latex_preview")[0], tex.replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, "")]);
+    try {
+        MathJax.Hub.queue.Push(["Text", MathJax.Hub.getAllJax("latex_preview")[0], tex.replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, "")]);
+    }
+    catch(e) {
+        console.log(e);
+    }
 }
 
 function scrollChatToBottom(delay) {
