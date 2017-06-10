@@ -23,6 +23,7 @@ $(document).ready(function () {
 
     myLayout.on('tabCreated', function (tab) {
         console.log('tab created', tab);
+        socket.emit('joined', {room: tab.titleElement[0].textContent});
         tab
             .closeElement
             .off('click') //unbind the current click handler
@@ -49,7 +50,7 @@ function addSidebarItem(layout, socket, room_name) {
     layout.createDragSource(element, newItemConfig);
     element.click(function () {
         layout.root.contentItems[0].addChild(newItemConfig);
-        socket.emit('joined', {room: room_name, sid: socket.id});
+        //socket.emit('joined', {room: room_name, sid: socket.id});
     });
 };
 
