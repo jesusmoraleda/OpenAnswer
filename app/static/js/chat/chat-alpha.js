@@ -27,17 +27,17 @@ $(document).ready(function () {
     addSidebarItem(myLayout, 'a');
 });
 
-/** @param {window.GoldenLayout} layout Layout into which we will be dropping items from sidebar**/
-/** @param {String} room_name The name of the room we're joining**/
-function addSidebarItem(layout, room_name) {
-    var element = $('<li>' + room_name + '</li>');
-    $('#sidebar').append(element);
+/** @param {window.GoldenLayout} layout Layout into which we will be dropping items from roomList**/
+/** @param {String} roomName The name of the room we're joining**/
+function addSidebarItem(layout, roomName) {
+    var element = $('<li>' + roomName + '</li>');
+    $('#roomList').append(element);
 
     var newItemConfig = {
-        title: room_name,
+        title: roomName,
         type: 'component',
         componentName: 'room',
-        componentState: {text: getChatWindowTemplate(room_name)}
+        componentState: {text: getChatWindowTemplate(roomName)}
     };
 
     // Enable dragging and dropping the room, as well as opening it on click
@@ -45,21 +45,20 @@ function addSidebarItem(layout, room_name) {
     element.click(function () {
         layout.root.contentItems[0].addChild(newItemConfig);
     });
-};
+}
 
 
+/**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
     socket.emit('left', {room: tab.titleElement[0].textContent});
     tab.contentItem.remove();
-};
+}
 
-
-function getChatWindowTemplate(room_name) {
+function getChatWindowTemplate(roomName) {
     var chatWindowHtml =
-        '<div class="chatWindow" id="' + room_name + '">' +
+        '<div class="chatWindow" id="' + roomName + '">' +
             '<ul class="chatMessages">' +
             '</ul>' +
         '</div>';
-
     return chatWindowHtml
-};
+}
