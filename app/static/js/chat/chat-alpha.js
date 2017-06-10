@@ -25,11 +25,7 @@ $(document).ready(function () {
         tab
             .closeElement
             .off('click') //unbind the current click handler
-            .click(function () {
-                console.log('leaving room: ', tab.titleElement[0].textContent);
-                socket.emit('left', {room: tab.titleElement[0].textContent});
-                tab.contentItem.remove();
-            });
+            .click(function () {chatWindowClosed(tab, socket)});
     });
 
     myLayout.init();
@@ -55,3 +51,9 @@ function addSidebarItem(layout, socket, room_name) {
         socket.emit('joined', {room: room_name, sid: socket.id});
     });
 };
+
+function chatWindowClosed(tab, socket) {
+    console.log('leaving room: ', tab.titleElement[0].textContent);
+    socket.emit('left', {room: tab.titleElement[0].textContent});
+    tab.contentItem.remove();
+}
