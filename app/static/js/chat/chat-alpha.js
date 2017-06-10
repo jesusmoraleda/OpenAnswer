@@ -43,7 +43,8 @@ function addSidebarItem(layout, roomName) {
     // Enable dragging and dropping the room, as well as opening it on click
     layout.createDragSource(element, newItemConfig);
     element.click(function () {
-        layout.root.contentItems[0].addChild(newItemConfig);
+        var addTo = (layout.root.contentItems.length == 0) ? layout.root : layout.root.contentItems[0];
+        addTo.addChild(newItemConfig);
     });
 }
 
