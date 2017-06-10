@@ -1,21 +1,12 @@
 $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
+
     socket.on('received', function (data) {
         console.log(data);
         $('#'+data.room+'.chatWindow .chatMessages').append('<li> ' + data.username + ': '+ data.content + '</li>')
     });
-    var config = {
-        content: [{
-            type: 'row',
-            content: [{
-                type: 'component',
-                componentName: 'room',
-                componentState: {text: 'Messages'}
-            }]
-        }]
-    };
 
-    var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
+    var myLayout = new window.GoldenLayout({content: []}, $('#layoutContainer'));
 
     myLayout.registerComponent('room', function (container, state) {
         container.getElement().html(state.text);
@@ -32,30 +23,43 @@ $(document).ready(function () {
 
     myLayout.init();
 
-    addSidebarItem(myLayout, socket, 'lobby');
-    addSidebarItem(myLayout, socket, 'a');
+    addSidebarItem(myLayout, 'lobby');
+    addSidebarItem(myLayout, 'a');
 });
 
-function addSidebarItem(layout, socket, room_name) {
+/** @param {window.GoldenLayout} layout Layout into which we will be dropping items from sidebar**/
+/** @param {String} room_name The name of the room we're joining**/
+function addSidebarItem(layout, room_name) {
     var element = $('<li>' + room_name + '</li>');
     $('#sidebar').append(element);
-    var chatWindowHtml = '<div class="chatWindow" id="' + room_name + '"><ul class="chatMessages"></ul></div>';
+
     var newItemConfig = {
         title: room_name,
         type: 'component',
         componentName: 'room',
-        componentState: {text: chatWindowHtml}
+        componentState: {text: getChatWindowTemplate(room_name)}
     };
 
+    // Enable dragging and dropping the room, as well as opening it on click
     layout.createDragSource(element, newItemConfig);
     element.click(function () {
         layout.root.contentItems[0].addChild(newItemConfig);
-        //socket.emit('joined', {room: room_name, sid: socket.id});
     });
 };
 
+
 function chatWindowClosed(tab, socket) {
-    console.log('leaving room: ', tab.titleElement[0].textContent);
     socket.emit('left', {room: tab.titleElement[0].textContent});
     tab.contentItem.remove();
-}
+};
+
+
+function getChatWindowTemplate(room_name) {
+    var chatWindowHtml =
+        '<div class="chatWindow" id="' + room_name + '">' +
+            '<ul class="chatMessages">' +
+            '</ul>' +
+        '</div>';
+
+    return chatWindowHtml
+};
