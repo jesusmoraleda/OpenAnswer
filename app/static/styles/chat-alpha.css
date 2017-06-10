@@ -22,7 +22,7 @@ html, body{
   overflow: hidden;
 }
 
-#menuContainer{
+#sidebar{
   width: 20%;
   height: 100%;
   position:absolute;
@@ -31,7 +31,7 @@ html, body{
   background: #222;
 }
 
-#menuContainer li{
+#sidebar li{
   cursor: move;
   border-bottom: 1px solid #000;
   border-top: 1px solid #333;
@@ -42,7 +42,7 @@ html, body{
   font: 12px Arial, sans-serif;
 }
 
-#menuContainer li:hover{
+#sidebar li:hover{
   background: #111;
   color: #CCC;
 }

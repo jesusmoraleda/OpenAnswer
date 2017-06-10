@@ -19,9 +19,7 @@ class OnlineUsers:
 
     def joined(self, sid, room):
         # Treat my socket id as my room name
-        join_room(sid)
         PRIVATE_ROOMS[current_user.username].add(sid)
-        join_room(room)
         self.sockets_to_rooms[sid] = room
         self.sockets_to_usernames[sid] = current_user.username
 
@@ -52,6 +50,8 @@ def joined(data):
     room = data['room']
     sid = request.sid
     if not current_user.is_anonymous:
+        join_room(sid)
+        join_room(room)
         ONLINE_USERS.joined(sid, room)
         online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
         emit('status', {'online_users': online}, room=room)

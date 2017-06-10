@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
+    socket.on('received', function(data){console.log(data)});
     var config = {
         content: [{
             type: 'row',
@@ -18,23 +20,24 @@ $(document).ready(function() {
 
     myLayout.init();
 
-    addMenuItem( myLayout, 'Some room', 'Messages from another room' );
-    addMenuItem( myLayout, 'Some question', 'Question details' );
+    addSidebarItem( myLayout, socket, 'lobby');
+    addSidebarItem( myLayout, socket, 'a');
 });
 
-function addMenuItem( layout, title, text ) {
-    var element = $( '<li>' + text + '</li>' );
-    $( '#menuContainer' ).append( element );
+function addSidebarItem(layout, socket, room_name) {
+    var element = $( '<li>' + room_name + '</li>' );
+    $( '#sidebar' ).append( element );
 
    var newItemConfig = {
-        title: title,
+        title: room_name,
         type: 'component',
         componentName: 'room',
-        componentState: { text: text }
+        componentState: { text: 'STRING' }
     };
 
     layout.createDragSource( element, newItemConfig );
     element.click(function(){
+        socket.emit('joined', {room: room_name, sid: socket.id});
         layout.root.contentItems[ 0 ].addChild( newItemConfig );
     });
 };
