@@ -3,10 +3,9 @@ from datetime import datetime
 from email import utils
 from flask import request
 from flask_login import current_user
-from flask_socketio import emit, join_room
+from flask_socketio import emit, join_room, leave_room
 from app import socketio, db
 from app.models import Message
-
 
 PRIVATE_ROOMS = defaultdict(set)
 
@@ -38,6 +37,7 @@ class OnlineUsers:
             {self.sockets_to_usernames[sid]: (room, sid)} for (sid, room) in self.sockets_to_rooms.items()
         ]
 
+
 ONLINE_USERS = OnlineUsers()
 
 
@@ -57,10 +57,17 @@ def joined(data):
         emit('status', {'online_users': online}, room=room)
 
 
+@socketio.on('left', namespace='/chat')
+def left(data):
+    room = data['room']
+    leave_room(room)
+
+
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
     sid = request.sid
     room = ONLINE_USERS.disconnected(sid)
+    # FIXME: need to implement this in left event.
     online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
     emit('status', {'online_users': online}, room=room)
 

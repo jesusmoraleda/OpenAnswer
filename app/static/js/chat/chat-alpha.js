@@ -1,43 +1,57 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
-    socket.on('received', function(data){console.log(data)});
+    socket.on('received', function (data) {
+        console.log(data)
+    });
     var config = {
         content: [{
             type: 'row',
             content: [{
-                type:'component',
+                type: 'component',
                 componentName: 'room',
-                componentState: { text: 'Messages' }
+                componentState: {text: 'Messages'}
             }]
         }]
     };
 
-    var myLayout = new window.GoldenLayout( config, $('#layoutContainer') );
+    var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
-    myLayout.registerComponent( 'room', function( container, state ){
-        container.getElement().html( '<h2>' + state.text + '</h2>');
+    myLayout.registerComponent('room', function (container, state) {
+        container.getElement().html('<h2>' + state.text + '</h2>');
+    });
+
+    myLayout.on('tabCreated', function (tab) {
+        console.log('tab created', tab);
+        tab
+            .closeElement
+            .off('click') //unbind the current click handler
+            .click(function () {
+                console.log('leaving room: ', tab.titleElement[0].textContent);
+                socket.emit('left', {room: tab.titleElement[0].textContent});
+                tab.contentItem.remove();
+            });
     });
 
     myLayout.init();
 
-    addSidebarItem( myLayout, socket, 'lobby');
-    addSidebarItem( myLayout, socket, 'a');
+    addSidebarItem(myLayout, socket, 'lobby');
+    addSidebarItem(myLayout, socket, 'a');
 });
 
 function addSidebarItem(layout, socket, room_name) {
-    var element = $( '<li>' + room_name + '</li>' );
-    $( '#sidebar' ).append( element );
+    var element = $('<li>' + room_name + '</li>');
+    $('#sidebar').append(element);
 
-   var newItemConfig = {
+    var newItemConfig = {
         title: room_name,
         type: 'component',
         componentName: 'room',
-        componentState: { text: 'STRING' }
+        componentState: {text: 'STRING'}
     };
 
-    layout.createDragSource( element, newItemConfig );
-    element.click(function(){
+    layout.createDragSource(element, newItemConfig);
+    element.click(function () {
+        layout.root.contentItems[0].addChild(newItemConfig);
         socket.emit('joined', {room: room_name, sid: socket.id});
-        layout.root.contentItems[ 0 ].addChild( newItemConfig );
     });
 };
