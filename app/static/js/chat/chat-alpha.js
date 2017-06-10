@@ -1,7 +1,8 @@
 $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
     socket.on('received', function (data) {
-        console.log(data)
+        console.log(data);
+        $('#'+data.room+'.chatWindow .chatMessages').append('<li> ' + data.username + ': '+ data.content + '</li>')
     });
     var config = {
         content: [{
@@ -17,7 +18,7 @@ $(document).ready(function () {
     var myLayout = new window.GoldenLayout(config, $('#layoutContainer'));
 
     myLayout.registerComponent('room', function (container, state) {
-        container.getElement().html('<h2>' + state.text + '</h2>');
+        container.getElement().html(state.text);
     });
 
     myLayout.on('tabCreated', function (tab) {
@@ -37,12 +38,12 @@ $(document).ready(function () {
 function addSidebarItem(layout, socket, room_name) {
     var element = $('<li>' + room_name + '</li>');
     $('#sidebar').append(element);
-
+    var chatWindowHtml = '<div class="chatWindow" id="' + room_name + '"><ul class="chatMessages"></ul></div>';
     var newItemConfig = {
         title: room_name,
         type: 'component',
         componentName: 'room',
-        componentState: {text: 'STRING'}
+        componentState: {text: chatWindowHtml}
     };
 
     layout.createDragSource(element, newItemConfig);

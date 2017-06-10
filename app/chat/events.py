@@ -87,6 +87,7 @@ def receive(data):
              'username': username,
              'private': False,
              'timestamp': utils.format_datetime(m.timestamp),
+             'room': room,
          }, room=room)
 
 
