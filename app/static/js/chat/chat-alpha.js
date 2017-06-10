@@ -50,7 +50,7 @@ function addSidebarItem(layout, roomName) {
 
 /**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
-    socket.emit('left', {room: tab.titleElement[0].textContent});
+    socket.emit('left');
     tab.contentItem.remove();
 }
 

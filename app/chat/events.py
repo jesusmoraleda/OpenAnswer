@@ -58,16 +58,17 @@ def joined(data):
 
 
 @socketio.on('left', namespace='/chat')
-def left(data):
-    room = data['room']
+def left():
+    room = ONLINE_USERS.disconnected(request.sid)
     leave_room(room)
+    online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
+    emit('status', {'online_users': online}, room=room)
 
 
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
     sid = request.sid
     room = ONLINE_USERS.disconnected(sid)
-    # FIXME: need to implement this in left event.
     online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
     emit('status', {'online_users': online}, room=room)
 
