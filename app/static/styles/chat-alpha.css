@@ -1,50 +1,62 @@
-h2{
-  font: 14px Arial, sans-serif;
-  color:#fff;
-  padding: 10px;
-  text-align: center;
+h2 {
+    font: 14px Arial, sans-serif;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
 }
 
-html, body{
-  height: 100%;
+html, body {
+    height: 100%;
 }
 
-*{
-  margin: 0;
-  padding: 0;
-  list-style-type:none;
+* {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 }
 
-#wrapper{
-  height: 100%;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+#wrapper {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
 }
 
 #roomList {
-  width: 20%;
-  height: 100%;
-  position:absolute;
-  top: 0;
-  left: 0;
-  background: #222;
+    width: inherit;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #222;
 }
 
-#roomList li{
-  cursor: move;
-  border-bottom: 1px solid #000;
-  border-top: 1px solid #333;
-  cursor: pointer;
-  padding: 10px 5px;
-  color: #BBB;
-  background: #1a1a1a;
-  font: 12px Arial, sans-serif;
+#roomList li {
+    cursor: move;
+    border-bottom: 1px solid #000;
+    border-top: 1px solid #333;
+    cursor: pointer;
+    padding: 10px 5px;
+    color: #BBB;
+    background: #1a1a1a;
+    font: 12px Arial, sans-serif;
 }
 
-#roomList li:hover{
-  background: #111;
-  color: #CCC;
+#chatEntry {
+    width: inherit;
+    position: absolute;
+    bottom: 0px;
+    color: #BBB;
+    background: #1a1a1a;
+}
+
+#sidebar{
+    width: 20%;
+}
+
+#roomList li:hover {
+    background: #111;
+    color: #CCC;
 }
 
 #layoutContainer {
