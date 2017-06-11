@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     socket.on('received', function (data) {
         console.log(data);
-        $('#'+data.room+'.chatWindow .chatMessages').append('<li> ' + data.username + ': '+ data.content + '</li>')
+        $('#' + data.room + '.chatWindow .chatMessages').append('<li> ' + data.username + ': ' + data.content + '</li>')
     });
 
     var myLayout = new window.GoldenLayout({content: []}, $('#layoutContainer'));
@@ -18,13 +18,27 @@ $(document).ready(function () {
         tab
             .closeElement
             .off('click') //unbind the current click handler
-            .click(function () {chatWindowClosed(tab, socket)});
+            .click(function () {
+                chatWindowClosed(tab, socket)
+            });
     });
 
     myLayout.init();
 
-    addSidebarItem(myLayout, 'lobby');
-    addSidebarItem(myLayout, 'a');
+    var roomEntry = $('#sidebar #roomEntry');
+
+    roomEntry.keypress(function (e) {
+        var code = e.keyCode || e.which;
+        if (code == 13) {
+            var roomName = $.trim(roomEntry.val());
+            roomEntry.val('');
+            if (roomName != '') {
+                addSidebarItem(myLayout, roomName)
+            }
+        }
+    });
+
+
 });
 
 /** @param {window.GoldenLayout} layout Layout into which we will be dropping items from roomList**/
@@ -58,8 +72,8 @@ function chatWindowClosed(tab, socket) {
 function getChatWindowTemplate(roomName) {
     var chatWindowHtml =
         '<div class="chatWindow" id="' + roomName + '">' +
-            '<ul class="chatMessages">' +
-            '</ul>' +
+        '<ul class="chatMessages">' +
+        '</ul>' +
         '</div>';
     return chatWindowHtml
 }
