@@ -2,18 +2,18 @@ $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('received', function (data) {
-        console.log(data);
         $('#' + data.room + '.chatWindow .chatMessages').append('<li> ' + data.username + ': ' + data.content + '</li>')
     });
 
-    var myLayout = new window.GoldenLayout({content: []}, $('#layoutContainer'));
+    var layoutContainer = $('#layoutContainer');
+
+    var myLayout = new window.GoldenLayout({content: []}, layoutContainer);
 
     myLayout.registerComponent('room', function (container, state) {
         container.getElement().html(state.text);
     });
 
     myLayout.on('tabCreated', function (tab) {
-        console.log('tab created', tab);
         socket.emit('joined', {room: tab.titleElement[0].textContent});
         tab
             .closeElement
@@ -29,21 +29,30 @@ $(document).ready(function () {
 
     roomEntry.keypress(function (e) {
         var code = e.keyCode || e.which;
-        if (code == 13) {
+        if (code === 13) {
             var roomName = $.trim(roomEntry.val());
             roomEntry.val('');
-            if (roomName != '') {
+            if (roomName !== '') {
                 addSidebarItem(myLayout, roomName, true);
             }
         }
     });
 
+    layoutContainer.on('keypress', '.chatEntry', function (e) {
+        var code = e.keyCode || e.which;
+        if (code === 13) {
+            var msg = $.trim($(this).val());
+            if (msg !== '') {
+                socket.emit('sent', {msg: $(this).val(), room: this.id, sid: socket.id});
+                this.value = '';
+            }
+        }
+    });
 
+    addSidebarItem(myLayout, 'lobby', true);
 });
 
-/** @param {window.GoldenLayout} layout Layout into which we will be dropping items from roomList**/
-/** @param {String} roomName The name of the room we're joining**/
-/** @param {Boolean} autoOpen Automatically open the tab if set to true**/
+
 function addSidebarItem(layout, roomName, autoOpen) {
     var element = $('<li>' + roomName + '</li>');
     $('#roomList').append(element);
@@ -79,9 +88,9 @@ function chatWindowClosed(tab, socket) {
 function getChatWindowTemplate(roomName) {
     var chatWindowHtml =
         '<div class="chatWindow" id="' + roomName + '">' +
-        '<ul class="chatMessages">' +
-        '</ul>' +
-        '<input class="chatEntry" type="text">' +
+            '<ul class="chatMessages">' +
+            '</ul>' +
+            '<input class="chatEntry" id="' + roomName + '" ' + 'type="text">' +
         '</div>';
     return chatWindowHtml;
 }
