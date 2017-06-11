@@ -33,7 +33,7 @@ $(document).ready(function () {
             var roomName = $.trim(roomEntry.val());
             roomEntry.val('');
             if (roomName != '') {
-                addSidebarItem(myLayout, roomName)
+                addSidebarItem(myLayout, roomName, true);
             }
         }
     });
@@ -43,7 +43,8 @@ $(document).ready(function () {
 
 /** @param {window.GoldenLayout} layout Layout into which we will be dropping items from roomList**/
 /** @param {String} roomName The name of the room we're joining**/
-function addSidebarItem(layout, roomName) {
+/** @param {Boolean} autoOpen Automatically open the tab if set to true**/
+function addSidebarItem(layout, roomName, autoOpen) {
     var element = $('<li>' + roomName + '</li>');
     $('#roomList').append(element);
 
@@ -54,12 +55,18 @@ function addSidebarItem(layout, roomName) {
         componentState: {text: getChatWindowTemplate(roomName)}
     };
 
-    // Enable dragging and dropping the room, as well as opening it on click
-    layout.createDragSource(element, newItemConfig);
-    element.click(function () {
+    function openChatWindow() {
         var addTo = (layout.root.contentItems.length == 0) ? layout.root : layout.root.contentItems[0];
         addTo.addChild(newItemConfig);
-    });
+    }
+
+    // Enable dragging and dropping the room, as well as opening it on click
+    layout.createDragSource(element, newItemConfig);
+    element.click(openChatWindow);
+
+    if (autoOpen) {
+        openChatWindow();
+    }
 }
 
 
@@ -75,5 +82,5 @@ function getChatWindowTemplate(roomName) {
         '<ul class="chatMessages">' +
         '</ul>' +
         '</div>';
-    return chatWindowHtml
+    return chatWindowHtml;
 }
