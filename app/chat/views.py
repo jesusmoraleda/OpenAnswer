@@ -12,8 +12,8 @@ def chat_room(room):
 
 @chat.route('/alpha-chat')
 @login_required
-def beta_chat():
-    return render_template('chat/chat-alpha.html', title='Chat', user=current_user)
+def alpha_chat():
+    return render_template('chat/chat-alpha.html', title='Chat', user=current_user, navtab='alpha-chat')
 
 
 @chat.route('/online')

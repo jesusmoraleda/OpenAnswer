@@ -31,6 +31,9 @@
                         <li class="{% if navtab == 'chat' %}active{% endif %}">
                             <a href="{{ url_for('chat.chat_room', room='lobby' if not current_user.beta else 'beta') }}">Chat</a>
                         </li>
+                        <li class="{% if navtab == 'alpha-chat' %}active{% endif %}">
+                            <a href="{{ url_for('chat.alpha_chat') if not current_user.beta else url_for('chat.chat_room', room='beta') }}">Alpha-Chat</a>
+                        </li>
                         <li class="{% if navtab == 'issues' %}active{% endif %}">
                             <a href="https://github.com/openanswer/OpenAnswer/issues">GitHub Issues</a>
                         </li>
