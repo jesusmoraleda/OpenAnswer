@@ -22,7 +22,7 @@ html, body {
     overflow: hidden;
 }
 
-#sidebar{
+#sidebar {
     width: 20%;
 }
 
@@ -57,6 +57,10 @@ html, body {
     bottom: 0px;
     color: #BBB;
     background: #1a1a1a;
+    color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #fff;
+    border-radius: 4px;
 }
 
 #layoutContainer {
@@ -73,4 +77,32 @@ html, body {
     color: #BBB;
     background: #1a1a1a;
     width: 100%;
+    display: block;
+
+
+    color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #fff;
+    border-radius: 4px;
+}
+
+.chatMessages {
+    margin-bottom: 0px;
+    bottom: 25px;
+    display: block;
+    overflow-y: auto;
+    height: calc(100% - 25px);
+    width: 100%;
+    position: absolute;
+
+}
+
+.chatMessages li:nth-child(odd) {
+    background: #0b1526;
+    color: rgb(162, 162, 162);
+}
+
+.chatMessages li {
+    padding: 5px 10px;
+    color: rgb(162, 162, 162);
 }
