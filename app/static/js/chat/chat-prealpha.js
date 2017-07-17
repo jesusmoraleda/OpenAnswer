@@ -4,17 +4,30 @@ $(document).ready(function () {
     socket.on('received', function (data) {
         $('#' + data.room + '.chatWindow .chatMessages').append('<li> ' + data.username + ': ' + data.content + '</li>')
     });
-
+    var config = {
+        settings: {showPopoutIcon: false},
+        content: []
+    };
     var layoutContainer = $('#layoutContainer');
+    var myLayout, savedState = localStorage.getItem('savedState');
+    if (savedState !== null) {
+        myLayout = new window.GoldenLayout(JSON.parse(savedState), layoutContainer);
+    } else {
+        myLayout = new window.GoldenLayout(config, layoutContainer);
+    }
 
-    var myLayout = new window.GoldenLayout({
-        settings:{showPopoutIcon: false},
-        content: []}, layoutContainer);
+    myLayout.on('stateChanged', function () {
+        var state = JSON.stringify(myLayout.toConfig());
+        localStorage.setItem('savedState', state);
+    })
 
     myLayout.registerComponent('tab', function (container, state) {
         container.getElement().html(state.text);
     });
-
+    myLayout.init();
+    if (savedState === null) {
+        initalizeRoomList(myLayout);
+    }
     // Join a chat room when the corresponding tab is created
     myLayout.on('tabCreated', function (tab) {
         socket.emit('joined', {room: tab.titleElement[0].textContent});
@@ -25,9 +38,6 @@ $(document).ready(function () {
                 chatWindowClosed(tab, socket)
             });
     });
-
-    myLayout.init();
-    initalizeRoomList(myLayout);
     addRoom('lobby', myLayout);
     addRoom('lobby2', myLayout);
 
@@ -55,24 +65,27 @@ $(document).ready(function () {
         }
     });
 
+
 });
 
 
 function initalizeRoomList(layout) {
     var newTabConfig = {
-        title: 'Room List',
-        type: 'component',
-        componentName: 'tab',
-        componentState: {
-            text: '<div id="roomList">' +
-            '<input class="chatEntry" id="roomListEntry" type="text">'
-            + '</div>'
-        },
-        isClosable: false
+            title: 'Room List',
+            type: 'component',
+            componentName: 'tab',
+            componentState: {
+                text: '<div id="roomList">' +
+                '<input class="chatEntry" id="roomListEntry" type="text">'
+                + '</div>'
+            },
+            isClosable: false
 
-}
+        }
     ;
-    layout.root.addChild(newTabConfig);
+    var ad = (layout.root.contentItems.length == 0) ? layout.root : layout.root.contentItems[0];
+    ad.addChild(newTabConfig);
+    //layout.root.addChild(newTabConfig);
 }
 
 function addRoom(roomName, layout) {
