@@ -19,10 +19,11 @@ $(document).ready(function () {
     myLayout.on('stateChanged', function () {
         var state = JSON.stringify(myLayout.toConfig());
         localStorage.setItem('savedState', state);
-    })
+    });
 
     myLayout.registerComponent('tab', function (container, state) {
         container.getElement().html(state.text);
+        socket.emit('joined', {room: state.name});
     });
     myLayout.init();
     if (savedState === null) {
@@ -30,7 +31,6 @@ $(document).ready(function () {
     }
     // Join a chat room when the corresponding tab is created
     myLayout.on('tabCreated', function (tab) {
-        socket.emit('joined', {room: tab.titleElement[0].textContent});
         tab
             .closeElement
             .off('click') //unbind the current click handler
@@ -77,7 +77,8 @@ function initalizeRoomList(layout) {
             componentState: {
                 text: '<div id="roomList">' +
                 '<input class="chatEntry" id="roomListEntry" type="text">'
-                + '</div>'
+                + '</div>',
+                name: 'Room List',
             },
             isClosable: false
 
@@ -94,7 +95,10 @@ function addRoom(roomName, layout) {
         title: roomName,
         type: 'component',
         componentName: 'tab',
-        componentState: {text: getChatRoomTemplate(roomName)}
+        componentState: {
+            text: getChatRoomTemplate(roomName),
+            name: roomName
+        }
     }
     var roomListElement = $('<li>' + roomName + '</li>');
 
