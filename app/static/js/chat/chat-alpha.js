@@ -24,7 +24,8 @@ $(document).ready(function () {
         $.getJSON('../messages/' + state.name, function (data) {
             $.each(data.messages, function (idx, msg) {
                 addMessage(msg);
-            })
+            });
+            scrollChatToBottom(state.name, 0);
         });
         socket.emit('joined', {room: state.name});
     });
@@ -93,7 +94,7 @@ function addRoom(roomName, layout) {
         layout.root.contentItems[0].addChild(newRoom);
     }
 
-    $('#roomList').append(roomListElement);
+    $('#roomList').prepend(roomListElement);
     layout.createDragSource(roomListElement, newRoom);
     roomListElement.click(openChatWindow);
 }
@@ -138,4 +139,13 @@ function sendMessage(e, socket, messageEntry) {
 
 function addMessage(msg) {
     $('#' + msg.room + '.chatWindow .chatMessages').append('<li>' + msg.username + ': ' + msg.content + '</li>');
+    scrollChatToBottom(msg.room, 0);
+}
+
+function scrollChatToBottom(room, delay) {
+    var delay = 500 * delay;
+    setTimeout(function () {
+        var chatroom = $('#' + room + '.chatWindow .chatMessages');
+        chatroom.scrollTop(chatroom.prop("scrollHeight"));
+    }, delay);
 }
