@@ -2,7 +2,7 @@ $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('received', function (data) {
-        $('#' + data.room + '.chatWindow .chatMessages').append('<li> ' + data.username + ': ' + data.content + '</li>')
+        $('#' + data.room + '.chatWindow .chatMessages').append('<li>' + data.username + ': ' + data.content + '</li>')
     });
     var config = {
         settings: {showPopoutIcon: false},
@@ -26,9 +26,8 @@ $(document).ready(function () {
         socket.emit('joined', {room: state.name});
     });
     myLayout.init();
-    if (savedState === null) {
-        initalizeRoomList(myLayout);
-    }
+    initalizeRoomList(myLayout, !savedState);
+
     // Join a chat room when the corresponding tab is created
     myLayout.on('tabCreated', function (tab) {
         tab
@@ -38,38 +37,19 @@ $(document).ready(function () {
                 chatWindowClosed(tab, socket)
             });
     });
-    addRoom('lobby', myLayout);
-    addRoom('lobby2', myLayout);
+    addRoom('lobby',  myLayout);
 
     var roomEntry = $('#roomList #roomListEntry');
 
-    roomEntry.keypress(function (e) {
-        var code = e.keyCode || e.which;
-        if (code === 13) {
-            var roomName = $.trim(roomEntry.val());
-            roomEntry.val('');
-            if (roomName !== '' && roomName !== 'Room List') {
-                addRoom(roomName, myLayout);
-            }
-        }
-    })
-
-    layoutContainer.on('keypress', '.chatEntry', function (e) {
-        var code = e.keyCode || e.which;
-        if (code === 13) {
-            var msg = $.trim($(this).val());
-            if (msg !== '') {
-                socket.emit('sent', {msg: $(this).val(), room: this.id, sid: socket.id});
-                this.value = '';
-            }
-        }
+    roomEntry.keypress(function(e){
+        addToRoomList(e, roomEntry, myLayout);
     });
 
-
+    layoutContainer.on('keypress', '.chatEntry', function(e){sendMessage(e, socket, this)});
 });
 
 
-function initalizeRoomList(layout) {
+function initalizeRoomList(layout, createRoomList) {
     var newTabConfig = {
             title: 'Room List',
             type: 'component',
@@ -86,8 +66,10 @@ function initalizeRoomList(layout) {
     ;
 
     //I don't think this is needed; but testing requires playing with local storage.
-    var ad = (layout.root.contentItems.length == 0) ? layout.root : layout.root.contentItems[0];
-    ad.addChild(newTabConfig);
+    if (createRoomList) {
+        var ad = (layout.root.contentItems.length == 0) ? layout.root : layout.root.contentItems[0];
+        ad.addChild(newTabConfig);
+    }
 }
 
 function addRoom(roomName, layout) {
@@ -99,7 +81,7 @@ function addRoom(roomName, layout) {
             text: getChatRoomTemplate(roomName),
             name: roomName
         }
-    }
+    };
     var roomListElement = $('<li>' + roomName + '</li>');
 
     function openChatWindow() {
@@ -110,17 +92,11 @@ function addRoom(roomName, layout) {
     layout.createDragSource(roomListElement, newRoom);
     roomListElement.click(openChatWindow);
 }
+
 /**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
     socket.emit('left');
     tab.contentItem.remove();
-}
-
-function getTabTemplate(tabName) {
-    var tabHtml =
-        '<ul class="tab" id="${tabName}"></ul>';
-
-    return tabHtml;
 }
 
 function getChatRoomTemplate(roomName) {
@@ -131,4 +107,26 @@ function getChatRoomTemplate(roomName) {
         '<input class="chatEntry" id="' + roomName + '" ' + 'type="text">' +
         '</div>';
     return chatWindowHtml;
+}
+
+function addToRoomList(e, roomEntry, myLayout) {
+    var code = e.keyCode || e.which;
+    if (code === 13) {
+        var roomName = $.trim(roomEntry.val());
+        roomEntry.val('');
+        if (roomName !== '' && roomName !== 'Room List') {
+            addRoom(roomName, myLayout);
+        }
+    }
+}
+
+function sendMessage(e, socket, messageEntry) {
+    var code = e.keyCode || e.which;
+    if (code === 13) {
+        var msg = $.trim($(messageEntry).val());
+        if (msg !== '') {
+            socket.emit('sent', {msg: $(messageEntry).val(), room: messageEntry.id, sid: socket.id});
+            messageEntry.value = '';
+        }
+    }
 }
