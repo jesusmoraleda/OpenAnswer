@@ -1,9 +1,7 @@
 $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
-    socket.on('received', function (data) {
-        $('#' + data.room + '.chatWindow .chatMessages').append('<li>' + data.username + ': ' + data.content + '</li>')
-    });
+    socket.on('received', addMessage);
     var config = {
         settings: {showPopoutIcon: false},
         content: []
@@ -23,6 +21,11 @@ $(document).ready(function () {
 
     myLayout.registerComponent('tab', function (container, state) {
         container.getElement().html(state.text);
+        $.getJSON('../messages/' + state.name, function (data) {
+            $.each(data.messages, function (idx, msg) {
+                addMessage(msg);
+            })
+        });
         socket.emit('joined', {room: state.name});
     });
     myLayout.init();
@@ -37,15 +40,17 @@ $(document).ready(function () {
                 chatWindowClosed(tab, socket)
             });
     });
-    addRoom('lobby',  myLayout);
+    addRoom('lobby', myLayout);
 
     var roomEntry = $('#roomList #roomListEntry');
 
-    roomEntry.keypress(function(e){
+    roomEntry.keypress(function (e) {
         addToRoomList(e, roomEntry, myLayout);
     });
 
-    layoutContainer.on('keypress', '.chatEntry', function(e){sendMessage(e, socket, this)});
+    layoutContainer.on('keypress', '.chatEntry', function (e) {
+        sendMessage(e, socket, this)
+    });
 });
 
 
@@ -129,4 +134,8 @@ function sendMessage(e, socket, messageEntry) {
             messageEntry.value = '';
         }
     }
+}
+
+function addMessage(msg) {
+    $('#' + msg.room + '.chatWindow .chatMessages').append('<li>' + msg.username + ': ' + msg.content + '</li>');
 }
