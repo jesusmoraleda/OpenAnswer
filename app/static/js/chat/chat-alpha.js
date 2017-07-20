@@ -1,11 +1,41 @@
 $(document).ready(function () {
+
+    //markdown stuff
+    var twemoji = window.twemoji;
+    var markdown = window.markdownit({
+        linkify: true,
+    }).use(window.markdownitEmoji).use(window.markdownitMathjax());
+    markdown.renderer.rules.emoji = function (token, idx) {
+        return twemoji.parse(token[idx].content);
+    };
+    var defaultRender = markdown.renderer.rules.link_open || function (tokens, idx, options, env, self) {
+            return self.renderToken(tokens, idx, options);
+        };
+
+    markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+        // If you are sure other plugins can't add `target` - drop check below
+        var aIndex = tokens[idx].attrIndex('target');
+        if (aIndex < 0) {
+            tokens[idx].attrPush(['target', '_blank']); // add new attribute
+        } else {
+            tokens[idx].attrs[aIndex][1] = '_blank';    // replace value of existing attr
+        }
+        // pass token to default renderer.
+        return defaultRender(tokens, idx, options, env, self);
+    };
+
+    //socket stuff
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
-    socket.on('received', addMessage);
+    socket.on('received', function (msg) {
+        addMessage(msg, markdown)
+    });
     var config = {
         settings: {showPopoutIcon: false},
         content: []
     };
+
+    //layout stuff
     var layoutContainer = $('#layoutContainer');
     var myLayout, savedState = localStorage.getItem('savedState');
     if (savedState !== null) {
@@ -23,7 +53,7 @@ $(document).ready(function () {
         container.getElement().html(state.text);
         $.getJSON('../messages/' + state.name, function (data) {
             $.each(data.messages, function (idx, msg) {
-                addMessage(msg);
+                addMessage(msg, markdown);
             });
             scrollChatToBottom(state.name, 0);
         });
@@ -137,8 +167,8 @@ function sendMessage(e, socket, messageEntry) {
     }
 }
 
-function addMessage(msg) {
-    $('#' + msg.room + '.chatWindow .chatMessages').append('<li>' + msg.username + ': ' + msg.content + '</li>');
+function addMessage(msg, markdown) {
+    $('#' + msg.room + '.chatWindow .chatMessages').append('<li>' + msg.username + ': ' + markdown.renderInline(msg.content) + '</li>');
     scrollChatToBottom(msg.room, 0);
 }
 

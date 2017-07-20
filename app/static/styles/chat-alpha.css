@@ -102,3 +102,7 @@ html, body {
     padding: 5px 10px;
     color: rgb(162, 162, 162);
 }
+
+.emoji{
+    height: 1.2em;
+}
