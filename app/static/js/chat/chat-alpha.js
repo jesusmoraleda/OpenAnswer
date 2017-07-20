@@ -169,6 +169,12 @@ function sendMessage(e, socket, messageEntry) {
 
 function addMessage(msg, markdown) {
     $('#' + msg.room + '.chatWindow .chatMessages').append('<li>' + msg.username + ': ' + markdown.renderInline(msg.content) + '</li>');
+    try {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+    catch(e) {
+        console.log(e);
+    }
     scrollChatToBottom(msg.room, 0);
 }
 
