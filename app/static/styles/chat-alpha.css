@@ -106,3 +106,10 @@ html, body {
 .emoji{
     height: 1.2em;
 }
+
+#timestamp {
+    font-size: 60%;
+    background: inherit;
+    display: none;
+    float: right;
+}

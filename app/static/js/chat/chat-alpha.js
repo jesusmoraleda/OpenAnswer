@@ -82,6 +82,9 @@ $(document).ready(function () {
     layoutContainer.on('keypress', '.chatEntry', function (e) {
         sendMessage(e, socket, this)
     });
+
+    layoutContainer.on('mouseenter touchstart', '.chatWindow .chatMessages #chatMessage', show_timestamp);
+    layoutContainer.on('mouseleave touchend', '.chatWindow .chatMessages #chatMessage', hide_timestamp);
 });
 
 
@@ -168,13 +171,12 @@ function sendMessage(e, socket, messageEntry) {
 }
 
 function addMessage(msg, markdown) {
-    $('#' + msg.room + '.chatWindow .chatMessages').append('<li>' + msg.username + ': ' + markdown.renderInline(msg.content) + '</li>');
-    try {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    }
-    catch(e) {
-        console.log(e);
-    }
+    $('#' + msg.room + '.chatWindow .chatMessages').append(
+        '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
+            msg.username + ': ' + markdown.renderInline(msg.content) +
+        '<div id="timestamp"></div></li>'
+    );
+    renderMathJax();
     scrollChatToBottom(msg.room, 0);
 }
 
@@ -184,4 +186,13 @@ function scrollChatToBottom(room, delay) {
         var chatroom = $('#' + room + '.chatWindow .chatMessages');
         chatroom.scrollTop(chatroom.prop("scrollHeight"));
     }, delay);
+}
+
+function renderMathJax(){
+    try {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+    catch (e) {
+        console.log(e);
+    }
 }
