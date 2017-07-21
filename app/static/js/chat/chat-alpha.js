@@ -85,6 +85,11 @@ $(document).ready(function () {
 
     layoutContainer.on('mouseenter touchstart', '.chatWindow .chatMessages #chatMessage', show_timestamp);
     layoutContainer.on('mouseleave touchend', '.chatWindow .chatMessages #chatMessage', hide_timestamp);
+
+    $(window).resize(function () {
+        myLayout.updateSize()
+    })
+
 });
 
 
@@ -173,7 +178,7 @@ function sendMessage(e, socket, messageEntry) {
 function addMessage(msg, markdown) {
     $('#' + msg.room + '.chatWindow .chatMessages').append(
         '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
-            msg.username + ': ' + markdown.renderInline(msg.content) +
+        msg.username + ': ' + markdown.renderInline(msg.content) +
         '<div id="timestamp"></div></li>'
     );
     renderMathJax();
@@ -188,7 +193,7 @@ function scrollChatToBottom(room, delay) {
     }, delay);
 }
 
-function renderMathJax(){
+function renderMathJax() {
     try {
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
     }
