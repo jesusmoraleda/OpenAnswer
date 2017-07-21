@@ -120,6 +120,11 @@ def meta():
 def help():
     return render_template('help.html', title='Help', navtab='help')
 
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html', title='Settings', navtab='settings', user=current_user)
+
 
 # Admin views here
 class AdminModelView(ModelView):

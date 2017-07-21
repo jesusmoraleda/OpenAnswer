@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    <img src="{{ user.gravatar(160) }}" class="img-rounded"/>
+    <div><button id="clearSavedLayout">Clear saved layout</button></div>
+
+
+    {% if user.is_admin %}
+        <p><a href="{{  url_for('admin.index') }}">Go to admin page</a></p>
+    {% endif %}
+{% endblock %}
