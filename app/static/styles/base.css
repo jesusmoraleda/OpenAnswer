@@ -82,3 +82,4 @@ li #send_whisper_to {
 #chat_username[user^="x"]{color: #13a7ff; font-weight:bold; font-style:italic;}
 #chat_username[user^="y"]{color: #fffa70; font-weight:bold; font-style:italic;}
 #chat_username[user^="z"]{color: #a922b7; font-weight:bold; font-style:italic;}
+#chat_username[user^="1"]{color: #ff60b1; font-weight:bold; font-style:italic;}

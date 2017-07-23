@@ -9,9 +9,11 @@ function getChatRoomTemplate(roomName) {
 }
 
 function getMessageTemplate(msg, markdown) {
+    var sender_username = msg.username;
     var messageTemplate =
         '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
-            msg.username + ': ' + markdown.renderInline(msg.content) +
+            '<div id="chat_username" user="' + sender_username +'">' + sender_username + ':</div> ' +
+            markdown.renderInline(msg.content) +
         '<div id="timestamp"></div></li>';
     return messageTemplate;
 }
