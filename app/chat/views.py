@@ -17,10 +17,14 @@ def alpha_chat():
 
 
 @chat.route('/online')
+@chat.route('/online/<room>', methods=['GET'])
 @login_required
-def online_users():
-    if current_user.is_admin:
-        from .events import ONLINE_USERS
-        return jsonify(ONLINE_USERS.get_all_users())
+def online_users(room=None):
+    from .events import ONLINE_USERS
+    if not room:
+        if current_user.is_admin:
+            return jsonify(ONLINE_USERS.get_all_users())
+        else:
+            return jsonify({'online': 'Only admins can see this'})
     else:
-        return {'online': 'Only admins can see this'}
+        return jsonify({'online': list(ONLINE_USERS.get_users(room))})

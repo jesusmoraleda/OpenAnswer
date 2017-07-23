@@ -4,7 +4,7 @@
     {#    FIXME: Kinda hacky to just store username here somewhere.. we should save it in base#}
     <div id="_my_username" style="display:none">{{ user.username }}</div>
     <script src="{{ url_for('static', filename='js/chat/socketio2.0.2.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chat/ts_format.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat/utils.js') }}"></script>
 
     <script type="text/javascript" src="//golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
     <link type="text/css" rel="stylesheet" href="//golden-layout.com/files/latest/css/goldenlayout-base.css"/>
@@ -19,6 +19,7 @@
     <script async
             src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script>
 
+    <script src="{{ url_for('static', filename='js/chat/templates.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat/chat-alpha.js') }}"></script>
     <link href="{{ url_for('static', filename='styles/chat-alpha.css') }}" rel="stylesheet" type="text/css"/>
 

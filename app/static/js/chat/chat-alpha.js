@@ -3,7 +3,7 @@ $(document).ready(function () {
     //markdown stuff
     var twemoji = window.twemoji;
     var markdown = window.markdownit({
-        linkify: true,
+        linkify: true
     }).use(window.markdownitEmoji).use(window.markdownitMathjax());
     markdown.renderer.rules.emoji = function (token, idx) {
         return twemoji.parse(token[idx].content);
@@ -143,16 +143,6 @@ function chatWindowClosed(tab, socket) {
     tab.contentItem.remove();
 }
 
-function getChatRoomTemplate(roomName) {
-    var chatWindowHtml =
-        '<div class="chatWindow" id="' + roomName + '">' +
-        '<ul class="chatMessages">' +
-        '</ul>' +
-        '<input class="chatEntry" id="' + roomName + '" ' + 'type="text">' +
-        '</div>';
-    return chatWindowHtml;
-}
-
 function addToRoomList(e, roomEntry, myLayout) {
     var code = e.keyCode || e.which;
     if (code === 13) {
@@ -176,45 +166,7 @@ function sendMessage(e, socket, messageEntry) {
 }
 
 function addMessage(msg, markdown) {
-    $('#' + msg.room + '.chatWindow .chatMessages').append(
-        '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
-        msg.username + ': ' + markdown.renderInline(msg.content) +
-        '<div id="timestamp"></div></li>'
-    );
+    $('#' + msg.room + '.chatWindow .chatMessages').append(getMessageTemplate(msg, markdown));
     renderMathJax();
     scrollChatToBottom(msg.room, 0);
-}
-
-function scrollChatToBottom(room, delay) {
-    var delay = 500 * delay;
-    setTimeout(function () {
-        var chatroom = $('#' + room + '.chatWindow .chatMessages');
-        chatroom.scrollTop(chatroom.prop("scrollHeight"));
-    }, delay);
-}
-
-function renderMathJax() {
-    try {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    }
-    catch (e) {
-        console.log(e);
-    }
-}
-
-function loadStoredStyleSheet() {
-    var styleSheet = localStorage.getItem('goldenLayoutTheme');
-    var link = $('#goldenLayoutTheme')
-    var dict = {
-        'light': "//golden-layout.com/assets/css/goldenlayout-light-theme.css",
-        'dark': "//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css",
-        'soda' : "//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css",
-        'translucent' : "//golden-layout.com/files/latest/css/goldenlayout-translucent-theme.css"
-    }
-    if ((styleSheet == 'undefined' || styleSheet == undefined)) {
-        link.attr('href', dict.dark);
-    }
-    else {
-        link.attr('href', dict[styleSheet]);
-    }
 }
