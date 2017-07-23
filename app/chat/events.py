@@ -53,24 +53,21 @@ def joined(data):
         join_room(sid)
         join_room(room)
         ONLINE_USERS.joined(sid, room)
-        online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-        emit('status', {'online_users': online}, room=room)
+        update_online_userlist(room)
 
 
 @socketio.on('left', namespace='/chat')
 def left():
     room = ONLINE_USERS.disconnected(request.sid)
     leave_room(room)
-    online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-    emit('status', {'online_users': online}, room=room)
+    update_online_userlist(room)
 
 
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
     sid = request.sid
     room = ONLINE_USERS.disconnected(sid)
-    online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-    emit('status', {'online_users': online}, room=room)
+    update_online_userlist(room)
 
 
 @socketio.on('sent', namespace='/chat')
@@ -121,3 +118,8 @@ def receive_whisper(data):
                  'private': True,
                  'timestamp': utils.format_datetime(ts),
              }, room=room)
+
+
+def update_online_userlist(room):
+    online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
+    emit('status', {'online_users': online, 'room': room}, room=room)

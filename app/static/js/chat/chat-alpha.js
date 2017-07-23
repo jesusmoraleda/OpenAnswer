@@ -24,18 +24,24 @@ $(document).ready(function () {
         return defaultRender(tokens, idx, options, env, self);
     };
 
-    //socket stuff
+/**--------------------------------Sockets------------------------------------**/
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('received', function (msg) {
         addMessage(msg, markdown)
     });
+
+    socket.on('status', function (data) {
+        $('#chatContent-'+data.room)[0].innerHTML = data.online_users.join(' ');
+    });
+
+/**------------------------------Golden Layout---------------------------------**/
+
     var config = {
         settings: {showPopoutIcon: false},
         content: []
     };
 
-    //layout stuff
     var layoutContainer = $('#layoutContainer');
     var myLayout, savedState = localStorage.getItem('savedState');
     if (savedState !== null) {
@@ -125,7 +131,7 @@ function addRoom(roomName, layout) {
             name: roomName
         }
     };
-    var roomListElement = $('<li>' + roomName + '</li>');
+    var roomListElement = $(getRoomListElement(roomName));
 
     function openChatWindow() {
         layout.root.contentItems[0].addChild(newRoom);
@@ -133,7 +139,7 @@ function addRoom(roomName, layout) {
 
     $('#roomList').prepend(roomListElement);
     layout.createDragSource(roomListElement, newRoom);
-    roomListElement.click(openChatWindow);
+    // roomListElement.click(openChatWindow);
 }
 
 /**------------------------------Chat Windows---------------------------------**/
