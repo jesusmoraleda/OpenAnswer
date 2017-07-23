@@ -102,10 +102,9 @@ function initalizeRoomList(layout, createRoomList) {
                 text: '<div id="roomList">' +
                 '<input class="chatEntry" id="roomListEntry" type="text">'
                 + '</div>',
-                name: 'Room List',
+                name: 'Room List'
             },
             isClosable: false
-
         }
     ;
 
