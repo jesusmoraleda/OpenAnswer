@@ -1,6 +1,7 @@
 $(document).ready(function () {
     loadStoredStyleSheet();
     //markdown stuff
+    var open_rooms = [];
     var twemoji = window.twemoji;
     var markdown = window.markdownit({
         linkify: true
@@ -32,7 +33,10 @@ $(document).ready(function () {
     });
 
     socket.on('status', function (data) {
-        $('#chatContent-'+data.room)[0].innerHTML = data.online_users.join(' ');
+        var roomElem = $('#chatContent-'+data.room)[0];
+        if (roomElem != null) {
+            roomElem.innerHTML = data.online_users.join(' ');
+        }
     });
 
 /**------------------------------Golden Layout---------------------------------**/
@@ -56,6 +60,9 @@ $(document).ready(function () {
     });
 
     myLayout.registerComponent('tab', function (container, state) {
+        if (state.name !== 'Room List') {
+            open_rooms.push(state.name);
+        }
         container.getElement().html(state.text);
         $.getJSON('../messages/' + state.name, function (data) {
             $.each(data.messages, function (idx, msg) {
@@ -65,8 +72,14 @@ $(document).ready(function () {
         });
         socket.emit('joined', {room: state.name});
     });
+
     myLayout.init();
     initalizeRoomList(myLayout, !savedState);
+
+    // FIXME: Remove from open_rooms when the room is closed??
+    for (i=0; i<open_rooms.length; i++) {
+        addRoom(open_rooms[i], myLayout);
+    }
 
     // Join a chat room when the corresponding tab is created
     myLayout.on('tabCreated', function (tab) {
@@ -77,7 +90,6 @@ $(document).ready(function () {
                 chatWindowClosed(tab, socket)
             });
     });
-    addRoom('lobby', myLayout);
 
     var roomEntry = $('#roomList #roomListEntry');
 
@@ -133,13 +145,8 @@ function addRoom(roomName, layout) {
     };
     var roomListElement = $(getRoomListElement(roomName));
 
-    function openChatWindow() {
-        layout.root.contentItems[0].addChild(newRoom);
-    }
-
     $('#roomList').prepend(roomListElement);
     layout.createDragSource(roomListElement, newRoom);
-    // roomListElement.click(openChatWindow);
 }
 
 /**------------------------------Chat Windows---------------------------------**/

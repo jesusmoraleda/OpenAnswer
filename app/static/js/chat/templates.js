@@ -18,11 +18,11 @@ function getMessageTemplate(msg, markdown) {
 
 function getRoomListElement(roomName) {
     var roomListElement =
-        '<li data-toggle="collapse" data-target="#chatContent-' + roomName + '">' +
+        '<li data-toggle="collapse" data-target="#chatContent-' + roomName + '">> ' +
             roomName +
         '</li>' +
         '<div id="chatContent-' + roomName + '" class="collapse">' +
-            'Online in: ' + roomName +
+            '...' +
         '</div>';
     return roomListElement
 }
