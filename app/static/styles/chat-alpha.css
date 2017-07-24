@@ -94,7 +94,7 @@ html, body {
 }
 
 .chatMessages li:nth-child(odd) {
-    background: #0b1526;
+    background: #1a1a1a;
     color: rgb(162, 162, 162);
 }
 
