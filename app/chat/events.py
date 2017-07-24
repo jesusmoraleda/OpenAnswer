@@ -122,6 +122,6 @@ def receive_whisper(data):
 
 def update_online_userlist(room):
     online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-    emit('status', {'online_users': online, 'room': room}, room=room)
+    # emit('status', {'online_users': online, 'room': room}, room=room)
     # Also update the list of users in Room List
     emit('status', {'online_users': online, 'room': room}, room='Room List')
