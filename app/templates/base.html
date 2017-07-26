@@ -28,9 +28,6 @@
             <li class="collapse navbar-collapse" id="top-navigation-bar">
                 {% if not current_user.is_anonymous %}
                     <ul class="nav navbar-nav">
-                        <li class="{% if navtab == 'chat' %}active{% endif %}">
-                            <a href="{{ url_for('chat.chat_room', room='lobby' if not current_user.beta else 'beta') }}">Chat</a>
-                        </li>
                         <li class="{% if navtab == 'alpha-chat' %}active{% endif %}">
                             <a href="{{ url_for('chat.alpha_chat') if not current_user.beta else url_for('chat.chat_room', room='beta') }}">Chαt</a>
                         </li>
