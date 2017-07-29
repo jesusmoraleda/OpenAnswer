@@ -10,8 +10,8 @@ $(document).ready(function () {
         return twemoji.parse(token[idx].content);
     };
     var defaultRender = markdown.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-            return self.renderToken(tokens, idx, options);
-        };
+        return self.renderToken(tokens, idx, options);
+    };
 
     markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         // If you are sure other plugins can't add `target` - drop check below
@@ -151,7 +151,8 @@ function addRoom(roomName, layout) {
 
 /**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
-    socket.emit('left');
+    console.log('leaving ' + tab.contentItem.config.title);
+    socket.emit('left', {room: tab.contentItem.config.title});
     tab.contentItem.remove();
 }
 
