@@ -2,7 +2,8 @@ $(document).ready(function () {
     var is_visible = visibility();
     var unread = 0;
     var favicon = new Favico({
-        animation : 'popFade'
+        animation: 'none',
+        bgColor: '#26436B'
     });
     loadStoredStyleSheet();
 /**--------------------------------Renderer------------------------------------**/
