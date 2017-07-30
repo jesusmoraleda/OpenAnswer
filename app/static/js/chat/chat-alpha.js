@@ -1,6 +1,6 @@
 $(document).ready(function () {
     loadStoredStyleSheet();
-    //markdown stuff
+/**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
     var markdown = window.markdownit({
@@ -65,6 +65,14 @@ $(document).ready(function () {
             open_rooms.push(state.name);
         }
         container.getElement().html(state.text);
+        container.on('tab', function (tab) {
+            tab
+                .closeElement
+                .off('click') //unbind the current click handler
+                .click(function () {
+                    chatWindowClosed(tab, socket)
+                });
+        });
         $.getJSON('../messages/' + state.name, function (data) {
             $.each(data.messages, function (idx, msg) {
                 addMessage(msg, markdown);
@@ -75,22 +83,14 @@ $(document).ready(function () {
     });
 
     myLayout.init();
-    initalizeRoomList(myLayout, !savedState);
+    if (!savedState) {
+        initalizeRoomList(myLayout)
+    }
 
     // FIXME: Remove from open_rooms when the room is closed??
     for (i=0; i<open_rooms.length; i++) {
         addRoom(open_rooms[i], myLayout);
     }
-
-    // Join a chat room when the corresponding tab is created
-    myLayout.on('tabCreated', function (tab) {
-        tab
-            .closeElement
-            .off('click') //unbind the current click handler
-            .click(function () {
-                chatWindowClosed(tab, socket)
-            });
-    });
 
     var roomEntry = $('#roomList #roomListEntry');
 
@@ -111,27 +111,19 @@ $(document).ready(function () {
 
 });
 
-
-function initalizeRoomList(layout, createRoomList) {
-    var newTabConfig = {
-            title: 'Room List',
-            type: 'component',
-            componentName: 'tab',
-            componentState: {
-                text: '<div id="roomList">' +
-                '<input class="chatEntry" id="roomListEntry" type="text">'
-                + '</div>',
-                name: 'Room List'
-            },
-            isClosable: false
-        }
-    ;
-
-    //I don't think this is needed; but testing requires playing with local storage.
-    if (createRoomList) {
-        var ad = (layout.root.contentItems.length == 0) ? layout.root : layout.root.contentItems[0];
-        ad.addChild(newTabConfig);
-    }
+function initalizeRoomList(layout) {
+    layout.root.addChild({
+        title: 'Room List',
+        type: 'component',
+        componentName: 'tab',
+        componentState: {
+            text: '<div id="roomList">' +
+                      '<input class="chatEntry" id="roomListEntry" type="text">' +
+                  '</div>',
+            name: 'Room List'
+        },
+        isClosable: false
+    });
 }
 
 function addRoom(roomName, layout) {
@@ -152,7 +144,6 @@ function addRoom(roomName, layout) {
 
 /**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
-    console.log('leaving ' + tab.contentItem.config.title);
     socket.emit('left', {room: tab.contentItem.config.title});
     tab.contentItem.remove();
 }

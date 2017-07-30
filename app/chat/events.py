@@ -7,6 +7,7 @@ from flask_socketio import emit, join_room, leave_room
 from app import socketio, db
 from app.models import Message
 
+# FIXME: Consider getting rid of this - sockets_to_usersnames is pretty much the same data
 PRIVATE_ROOMS = defaultdict(set)
 
 
@@ -21,22 +22,23 @@ class OnlineUsers:
         PRIVATE_ROOMS[current_user.username].add(sid)
         self.sockets_to_rooms[sid].append(room)
         self.sockets_to_usernames[sid] = current_user.username
+        update_online_userlist(room)
 
     def disconnected(self, sid, room=None):
-        if not room:
-            self.sockets_to_rooms.pop(sid, None)
-            self.sockets_to_usernames.pop(sid, None)
-            PRIVATE_ROOMS.pop(sid, None)
-        else:
+        if room:
             self.sockets_to_rooms[sid].remove(room)
             remaining_rooms = self.sockets_to_rooms[sid]
-            if not remaining_rooms:
-                self.sockets_to_usernames.pop(sid, None)
-                PRIVATE_ROOMS.pop(sid, None)
-        return 'room from disconnected'
+            if remaining_rooms:
+                return update_online_userlist(room)
+
+        for room in self.sockets_to_rooms.get(sid, []):
+            update_online_userlist(room)
+        self.sockets_to_rooms.pop(sid, None)
+        self.sockets_to_usernames.pop(sid, None)
+        PRIVATE_ROOMS[current_user.username].remove(sid)
 
     def get_users(self, room):
-        sockets = (sid for (sid, r) in self.sockets_to_rooms.items() if r == room)
+        sockets = (sid for (sid, rooms_for_sid) in self.sockets_to_rooms.items() if room in rooms_for_sid)
         return set(self.sockets_to_usernames[sid] for sid in sockets)
 
     def get_all_users(self):
@@ -55,22 +57,19 @@ def joined(data):
     # FIXME: Sometimes stale connections keep trying to reconnect and keep emitting joined event
     # FIXME: Not sure if this is the right approach but suppress these warnings for now so it doesn't clutter the logs
     room = data['room']
-    # FIXME: FIX SPECIAL ROOM LIST TREATMENT!!!!!
+    # FIXME: FIX SPECIAL ROOM LIST TREATMENT!!!!! Why did I write this comment?
     sid = request.sid
     if not current_user.is_anonymous:
         join_room(sid)
         join_room(room)
         ONLINE_USERS.joined(sid, room)
-        # update_online_userlist(room)
 
 
 @socketio.on('left', namespace='/chat')
 def left(data):
     room = data['room']
-    ONLINE_USERS.disconnected(request.sid, room)
-    print('leaving ', room)
     leave_room(room)
-    # update_online_userlist(room)
+    ONLINE_USERS.disconnected(request.sid, room)
 
 
 @socketio.on('disconnect', namespace='/chat')
@@ -78,7 +77,6 @@ def disconnect():
     #FIXME: Disconnect from all the rooms
     sid = request.sid
     ONLINE_USERS.disconnected(sid)
-    # update_online_userlist(room)
 
 
 @socketio.on('sent', namespace='/chat')
@@ -131,8 +129,8 @@ def receive_whisper(data):
              }, room=room)
 
 
-# def update_online_userlist(room):
-#     online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-#     emit('status', {'online_users': online, 'room': room}, room=room)
-#     # Also update the list of users in Room List
-#     emit('status', {'online_users': online, 'room': room}, room='Room-List')
+def update_online_userlist(room):
+    online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
+    emit('status', {'online_users': online, 'room': room}, room=room)
+    # Also update the list of users in Room List
+    emit('status', {'online_users': online, 'room': room}, room='Room List')
