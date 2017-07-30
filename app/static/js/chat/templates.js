@@ -23,8 +23,8 @@ function getRoomListElement(roomName) {
         '<li data-toggle="collapse" data-target="#chatContent-' + roomName + '">> ' +
             roomName +
         '</li>' +
-        '<div id="chatContent-' + roomName + '" class="collapse">' +
-            '...' +
+        '<div id="chatContent-' + roomName + '" class="collapse in">' +
+            'Online:' +
         '</div>';
     return roomListElement
 }
