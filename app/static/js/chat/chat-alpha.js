@@ -126,7 +126,7 @@ function initalizeRoomList(layout) {
     });
 }
 
-function addRoom(roomName, layout) {
+function addRoom(roomName, layout, openChatTab) {
     var newRoom = {
         title: roomName,
         type: 'component',
@@ -140,6 +140,9 @@ function addRoom(roomName, layout) {
 
     $('#roomList').prepend(roomListElement);
     layout.createDragSource(roomListElement, newRoom);
+    if (openChatTab) {
+        layout.root.contentItems[0].addChild(newRoom);
+    }
 }
 
 /**------------------------------Chat Windows---------------------------------**/
@@ -148,13 +151,13 @@ function chatWindowClosed(tab, socket) {
     tab.contentItem.remove();
 }
 
-function addToRoomList(e, roomEntry, myLayout) {
+function addToRoomList(e, roomEntry, layout) {
     var code = e.keyCode || e.which;
     if (code === 13) {
         var roomName = $.trim(roomEntry.val());
         roomEntry.val('');
         if (roomName !== '' && roomName !== 'Room List') {
-            addRoom(roomName, myLayout);
+            addRoom(roomName, layout, openChatTab=true);
         }
     }
 }
