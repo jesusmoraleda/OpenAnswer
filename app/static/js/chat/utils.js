@@ -34,11 +34,16 @@ function loadStoredStyleSheet() {
         'dark': "//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css",
         'soda' : "//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css",
         'translucent' : "//golden-layout.com/files/latest/css/goldenlayout-translucent-theme.css"
-    }
+    };
     if ((styleSheet == 'undefined' || styleSheet == undefined)) {
         link.attr('href', dict.dark);
     }
     else {
         link.attr('href', dict[styleSheet]);
     }
+}
+
+function enterKeyPressed(e) {
+    var code = e.keyCode || e.which;
+    return code === 13
 }

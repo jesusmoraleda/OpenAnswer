@@ -1,4 +1,9 @@
 $(document).ready(function () {
+    var is_visible = visibility();
+    var unread = 0;
+    var favicon = new Favico({
+        animation : 'popFade'
+    });
     loadStoredStyleSheet();
 /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
@@ -12,7 +17,6 @@ $(document).ready(function () {
     var defaultRender = markdown.renderer.rules.link_open || function (tokens, idx, options, env, self) {
         return self.renderToken(tokens, idx, options);
     };
-
     markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         // If you are sure other plugins can't add `target` - drop check below
         var aIndex = tokens[idx].attrIndex('target');
@@ -30,6 +34,14 @@ $(document).ready(function () {
 
     socket.on('received', function (msg) {
         addMessage(msg, markdown)
+        if (!is_visible()) {
+            unread += 1;
+            favicon.badge(unread)
+        }
+        else {
+            unread = 0;
+            favicon.badge(unread)
+        }
     });
 
     socket.on('status', function (data) {
@@ -151,8 +163,7 @@ function chatWindowClosed(tab, socket) {
 }
 
 function addToRoomList(e, roomEntry, layout) {
-    var code = e.keyCode || e.which;
-    if (code === 13) {
+    if (enterKeyPressed(e)) {
         var roomName = $.trim(roomEntry.val());
         roomEntry.val('');
         if (roomName !== '' && roomName !== 'Room List') {
@@ -162,8 +173,7 @@ function addToRoomList(e, roomEntry, layout) {
 }
 
 function sendMessage(e, socket, messageEntry) {
-    var code = e.keyCode || e.which;
-    if (code === 13) {
+    if (enterKeyPressed(e)) {
         var msg = $.trim($(messageEntry).val());
         if (msg !== '') {
             socket.emit('sent', {msg: $(messageEntry).val(), room: messageEntry.id, sid: socket.id});
