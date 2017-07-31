@@ -116,8 +116,8 @@ html, body {
 
 /*Overriding bootstrap defaults*/
 #chatMessage .embed-responsive-16by9 {
-    height: 135px;
-    width: 240px;
+    height: 198px;
+    width: 352px;
     padding-bottom: 0;
 }
 
