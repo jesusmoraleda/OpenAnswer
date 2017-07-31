@@ -128,7 +128,7 @@ def settings():
 
 # Admin views here
 class AdminModelView(ModelView):
-    page_size = 300
+    page_size = 500
 
     def is_accessible(self):
         return g.user.is_authenticated and g.user.is_admin
