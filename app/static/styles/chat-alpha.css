@@ -103,6 +103,13 @@ html, body {
     color: rgb(162, 162, 162);
 }
 
+#chatMessage img {
+    max-height: 160px;
+    max-width: 200px;
+    width: auto;
+    height: auto;
+}
+
 .emoji{
     height: 1.2em;
 }
