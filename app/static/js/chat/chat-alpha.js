@@ -11,7 +11,9 @@ $(document).ready(function () {
     var twemoji = window.twemoji;
     var markdown = window.markdownit({
         linkify: true
-    }).use(window.markdownitEmoji).use(window.markdownitMathjax());
+    }).use(window.markdownitEmoji)
+      .use(window.markdownitMathjax())
+      .use(window.markdownitVideo());
     markdown.renderer.rules.emoji = function (token, idx) {
         return twemoji.parse(token[idx].content);
     };

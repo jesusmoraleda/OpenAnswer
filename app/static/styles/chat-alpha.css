@@ -114,6 +114,13 @@ html, body {
     height: 1.2em;
 }
 
+/*Overriding bootstrap defaults*/
+#chatMessage .embed-responsive-16by9 {
+    height: 135px;
+    width: 240px;
+    padding-bottom: 0;
+}
+
 #timestamp {
     font-size: 60%;
     background: inherit;
