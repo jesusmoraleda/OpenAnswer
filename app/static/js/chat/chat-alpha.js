@@ -6,20 +6,20 @@ $(document).ready(function () {
         bgColor: '#26436B'
     });
     loadStoredStyleSheet();
-/**--------------------------------Renderer------------------------------------**/
+    /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
     var markdown = window.markdownit({
         linkify: true
     }).use(window.markdownitEmoji)
-      .use(window.markdownitMathjax())
-      .use(window.markdownitVideo());
+        .use(window.markdownitMathjax())
+        .use(window.markdownitVideo());
     markdown.renderer.rules.emoji = function (token, idx) {
         return twemoji.parse(token[idx].content);
     };
     var defaultRender = markdown.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-        return self.renderToken(tokens, idx, options);
-    };
+            return self.renderToken(tokens, idx, options);
+        };
     markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         // If you are sure other plugins can't add `target` - drop check below
         var aIndex = tokens[idx].attrIndex('target');
@@ -32,7 +32,7 @@ $(document).ready(function () {
         return defaultRender(tokens, idx, options, env, self);
     };
 
-/**--------------------------------Sockets------------------------------------**/
+    /**--------------------------------Sockets------------------------------------**/
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('received', function (msg) {
@@ -48,17 +48,23 @@ $(document).ready(function () {
     });
 
     socket.on('status', function (data) {
-        var roomElem = $('#chatContent-'+data.room)[0];
+        var roomElem = $('#chatContent-' + data.room)[0];
         if (roomElem != null) {
             roomElem.innerHTML = data.online_users.join(' ');
         }
     });
 
-/**------------------------------Golden Layout---------------------------------**/
+    /**------------------------------Golden Layout---------------------------------**/
 
     var config = {
         settings: {showPopoutIcon: false},
-        content: []
+        content: [
+            {
+                type: 'row',
+                isClosable: false,
+                content: [],
+            }
+        ]
     };
 
     var layoutContainer = $('#layoutContainer');
@@ -97,13 +103,14 @@ $(document).ready(function () {
     });
 
     myLayout.init();
-    if (!savedState) {
-        initalizeRoomList(myLayout)
+    // FIXME: Remove from open_rooms when the room is closed??
+    for (i = 0; i < open_rooms.length; i++) {
+        addRoom(open_rooms[i], myLayout);
     }
 
-    // FIXME: Remove from open_rooms when the room is closed??
-    for (i=0; i<open_rooms.length; i++) {
-        addRoom(open_rooms[i], myLayout);
+    if (!savedState) {
+        initalizeRoomList(myLayout);
+        addRoom('lobby', myLayout, true);
     }
 
     var roomEntry = $('#roomList #roomListEntry');
@@ -113,7 +120,7 @@ $(document).ready(function () {
     });
 
     layoutContainer.on('keypress', '.chatEntry', function (e) {
-        sendMessage(e, socket, this)
+        sendMessage(e, socket, this);
     });
 
     layoutContainer.on('mouseenter touchstart', '.chatWindow .chatMessages #chatMessage', show_timestamp);
@@ -126,14 +133,14 @@ $(document).ready(function () {
 });
 
 function initalizeRoomList(layout) {
-    layout.root.addChild({
+    layout.root.contentItems[0].addChild({
         title: 'Room List',
         type: 'component',
         componentName: 'tab',
         componentState: {
             text: '<div id="roomList">' +
-                      '<input class="chatEntry" id="roomListEntry" type="text">' +
-                  '</div>',
+            '<input class="chatEntry" id="roomListEntry" type="text">' +
+            '</div>',
             name: 'Room List'
         },
         isClosable: false
@@ -170,7 +177,7 @@ function addToRoomList(e, roomEntry, layout) {
         var roomName = $.trim(roomEntry.val());
         roomEntry.val('');
         if (roomName !== '' && roomName !== 'Room List') {
-            addRoom(roomName, layout, openChatTab=true);
+            addRoom(roomName, layout, openChatTab = true);
         }
     }
 }

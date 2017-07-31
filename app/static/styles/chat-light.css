@@ -1,0 +1,125 @@
+h2 {
+    font: 14px Arial, sans-serif;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+html, body {
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+#wrapper {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+#roomList {
+    width: inherit;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#roomList li {
+    cursor: move;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    padding: 10px 5px;
+    background: #e1e1e1;
+    font: 12px Arial, sans-serif;
+    color: #444;
+}
+
+#roomList li:hover {
+    background: #ccc;
+    color: #444;
+}
+
+#roomEntry {
+    width: inherit;
+    position: absolute;
+    bottom: 0px;
+    color: #333;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    border-radius: 4px;
+}
+
+#layoutContainer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0%;
+}
+
+.chatEntry {
+    position: absolute;
+    bottom: 0px;
+    color: #444;
+    background: #eaeaea;
+    width: 100%;
+    display: block;
+
+
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.chatMessages {
+    margin-bottom: 0px;
+    bottom: 25px;
+    display: block;
+    overflow-y: auto;
+    height: calc(100% - 25px);
+    width: 100%;
+    position: absolute;
+    color: #fff;
+
+}
+
+.chatMessages li:nth-child(odd) {
+    background: #eaeaea;
+}
+
+.chatMessages li {
+    padding: 5px 10px;
+    color: #444;
+}
+
+#chatMessage img {
+    max-height: 160px;
+    max-width: 200px;
+    width: auto;
+    height: auto;
+}
+
+#chatMessage .emoji{
+    height: 1.2em;
+}
+
+/*Overriding bootstrap defaults*/
+#chatMessage .embed-responsive-16by9 {
+    height: 198px;
+    width: 352px;
+    padding-bottom: 0;
+}
+
+#timestamp {
+    font-size: 60%;
+    background: inherit;
+    display: none;
+    float: right;
+}
