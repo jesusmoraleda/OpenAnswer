@@ -110,7 +110,7 @@ html, body {
     height: auto;
 }
 
-.emoji{
+#chatMessage .emoji{
     height: 1.2em;
 }
 
