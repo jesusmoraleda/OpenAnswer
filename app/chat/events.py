@@ -31,11 +31,15 @@ class OnlineUsers:
             if remaining_rooms:
                 return update_online_userlist(room)
 
-        for room in self.sockets_to_rooms.get(sid, []):
-            update_online_userlist(room)
+        # Retain the rooms the disconnected user was in so we can update the status to others
+        old_rooms = self.sockets_to_rooms.get(sid, [])
+        # Remove them from those rooms so when the status is updated, you don't see them there
         self.sockets_to_rooms.pop(sid, None)
         self.sockets_to_usernames.pop(sid, None)
         PRIVATE_ROOMS[current_user.username].remove(sid)
+        # Update the statuses for the rooms that the user disconnected from
+        for room in old_rooms:
+            update_online_userlist(room)
 
     def get_users(self, room):
         sockets = (sid for (sid, rooms_for_sid) in self.sockets_to_rooms.items() if room in rooms_for_sid)
