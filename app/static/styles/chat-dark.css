@@ -93,7 +93,6 @@ html, body {
     height: calc(100% - 25px);
     width: 100%;
     position: absolute;
-
 }
 
 .chatMessages li:nth-child(odd) {
@@ -104,6 +103,8 @@ html, body {
 .chatMessages li {
     padding: 5px 10px;
     color: rgb(162, 162, 162);
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .chatMessages::-webkit-scrollbar-thumb {

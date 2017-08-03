@@ -72,7 +72,6 @@ html, body {
     width: 100%;
     display: block;
 
-
     box-sizing: border-box;
     border: 1px solid #aaa;
     border-radius: 4px;
@@ -87,7 +86,6 @@ html, body {
     width: 100%;
     position: absolute;
     color: #fff;
-
 }
 
 .chatMessages li:nth-child(odd) {
@@ -97,6 +95,8 @@ html, body {
 .chatMessages li {
     padding: 5px 10px;
     color: #444;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 #chatMessage img {
