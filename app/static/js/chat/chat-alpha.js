@@ -6,6 +6,17 @@ $(document).ready(function () {
         bgColor: '#26436B'
     });
     loadStoredStyleSheet();
+    $.notify.addStyle('unread', {
+      html: "<div><span data-notify-text/></div>",
+      classes: {
+          //FIXME: Move to css file
+        base: {
+          "white-space": "nowrap",
+          "background-color": "#757373",
+          "padding": "5px"
+        },
+      }
+    });
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
@@ -164,6 +175,17 @@ function addRoom(roomName, layout, openChatTab) {
     if (openChatTab) {
         layout.root.contentItems[0].addChild(newRoom);
     }
+
+    //Set up scroll events
+    var messageContainer = getMessageContainer(roomName);
+    messageContainer.scroll(function (e) {
+        messageContainer.prop('pauseScroll', false);
+        var currentScroll = $(this).scrollTop();
+        if (currentScroll < this.lastScroll) {
+            messageContainer.prop('pauseScroll', true);
+        }
+        this.lastScroll = currentScroll;
+    });
 }
 
 /**------------------------------Chat Windows---------------------------------**/

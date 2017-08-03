@@ -9,11 +9,27 @@ function hide_timestamp() {
     $(this).children("#timestamp").css('display', 'none');
 }
 
+function getMessageContainer(room) {
+    return $('#' + room + '.chatWindow .chatMessages')
+}
+
 function scrollChatToBottom(room, delay) {
     var delay = 500 * delay;
     setTimeout(function () {
-        var chatroom = $('#' + room + '.chatWindow .chatMessages');
-        chatroom.scrollTop(chatroom.prop("scrollHeight"));
+        var messageContainer = getMessageContainer(room);
+        if (!messageContainer.prop('pauseScroll')) {
+            messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
+        }
+        else {
+            //FIXME: Subscribe to onclick events on these and hide/scroll them down
+            $('#' + room + ' .chatEntry').notify(
+                'New messages', {
+                    elementPosition: 'top center',
+                    autoHide: false,
+                    style: 'unread',
+                }
+            );
+        }
     }, delay);
 }
 
