@@ -136,7 +136,9 @@ $(document).ready(function () {
 
     layoutContainer.on('mouseenter touchstart', '.chatWindow .chatMessages #chatMessage', show_timestamp);
     layoutContainer.on('mouseleave touchend', '.chatWindow .chatMessages #chatMessage', hide_timestamp);
-    layoutContainer.on('focus', '.chatEntry', function (e) {favicon.badge(0)});
+    layoutContainer.on('focus', '.chatEntry', function (e) {
+        unread = 0;
+    favicon.badge(unread)});
 
     $(window).resize(function () {
         myLayout.updateSize()
