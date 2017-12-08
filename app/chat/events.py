@@ -7,7 +7,9 @@ from flask_socketio import emit, join_room, leave_room
 from app import socketio, db
 from app.models import Message
 
-# FIXME: Consider getting rid of this - sockets_to_usersnames is pretty much the same data
+# OnlineUsers.sockets_to_usernames maps socket ids to usernames.
+# PRIVATE_ROOMS maps usernames to socket ids.
+# I think it's okay to keep both so we can quickly identify which "SID"s a user is in, and which users are in a given "SID"
 PRIVATE_ROOMS = defaultdict(set)
 
 
@@ -78,7 +80,6 @@ def left(data):
 
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
-    #FIXME: Disconnect from all the rooms
     sid = request.sid
     ONLINE_USERS.disconnected(sid)
 
