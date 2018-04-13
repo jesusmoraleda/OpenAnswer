@@ -2,7 +2,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 WTF_CSRF_ENABLED = True
-SECRET_KEY = 'secret3'
+SECRET_KEY = os.environ['FLASK_SECRET_KEY']
 
 if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
