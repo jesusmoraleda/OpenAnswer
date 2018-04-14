@@ -81,7 +81,9 @@ $(document).ready(function () {
     var layoutContainer = $('#layoutContainer');
     var myLayout, savedState = localStorage.getItem('savedState');
     if (savedState !== null) {
-        myLayout = new window.GoldenLayout(JSON.parse(savedState), layoutContainer);
+        var saved = JSON.parse(savedState);
+        console.log(saved);
+        myLayout = new window.GoldenLayout(saved, layoutContainer);
     } else {
         myLayout = new window.GoldenLayout(config, layoutContainer);
     }
