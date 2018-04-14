@@ -41,12 +41,26 @@ def home():
     return render_template('home.html', title='Welcome to OpenAnswer')
 
 
-@app.route('/logs')
+@app.route('/logs/')
+@app.route('/logs/<path>')
 @login_required
-def logs():
-    if current_user.is_admin:
-        with open('./gunicorn_logs') as f:
-            return render_template('logs.html', log_content=f.read())
+def logs(path=None):
+    if not current_user.is_admin:
+        return
+    path = path or 'gunicorn'
+    locations = {
+        'gunicorn': './gunicorn_logs',
+        'access': '/var/log/nginx/access.log',
+        'error': '/var/log/nginx/error.log',
+    }
+    lines = ['Log not found']
+    try:
+        with open(locations[path]) as f:
+            lines = f.readlines()
+    # Don't want to clutter logs with additional exceptions for no reason
+    except Exception:
+        pass
+    return render_template('logs.html', log_content=lines)
 
 
 @app.route('/logout')

@@ -1,5 +1,9 @@
 <html>
 <head></head>
 
-<body>{{ log_content }}</body>
+<body>
+    {% for line in log_content %}
+        {{ line }}</br>
+    {% endfor %}
+</body>
 </html>
