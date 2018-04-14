@@ -32,6 +32,20 @@ http {
             allow all;
         }
     }
+    
+    server {
+    
+        server_name beta.openanswer.io;
+        location / {
+            proxy_pass http://192.168.0.132;
+            proxy_http_version 1.1;
+            proxy_redirect default;
+            proxy_set_header Host $http_host;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header X-Forwarded-For $remote_addr;
+        }
+    }
 }
 
 
