@@ -36,6 +36,8 @@ def _login_user_and_record_ip(usr, remember=True):
 
 @app.route('/')
 def home():
+    if not current_user.is_anonymous:
+        return redirect(url_for('alpha-chat'))
     return render_template('home.html', title='Welcome to OpenAnswer')
 
 
@@ -116,9 +118,11 @@ def meta():
         db.session.commit()
     return render_template('meta.html', title='Meta', posts=meta_posts, form=form, navtab='meta')
 
+
 @app.route('/help')
 def help():
     return render_template('help.html', title='Help', navtab='help')
+
 
 @app.route('/settings')
 @login_required

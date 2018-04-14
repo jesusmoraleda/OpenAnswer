@@ -3,7 +3,7 @@ $(document).ready(function () {
         delete(window.localStorage.savedState);
     });
 
-    $('#styleSheetChoice').change(function storeStyleSheet() {
-        localStorage.setItem('goldenLayoutTheme', this.value);
-    });
+    // $('#styleSheetChoice').change(function storeStyleSheet() {
+    //     localStorage.setItem('goldenLayoutTheme', this.value);
+    // });
 });
