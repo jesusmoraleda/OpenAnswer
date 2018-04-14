@@ -37,7 +37,7 @@ http {
     
         server_name beta.openanswer.io;
         location / {
-            proxy_pass http://192.168.0.132;
+            proxy_pass http://192.168.0.133;
             proxy_http_version 1.1;
             proxy_redirect default;
             proxy_set_header Host $http_host;
