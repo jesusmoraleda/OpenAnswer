@@ -37,7 +37,7 @@ def _login_user_and_record_ip(usr, remember=True):
 @app.route('/')
 def home():
     if not current_user.is_anonymous:
-        return redirect(url_for('alpha-chat'))
+        return redirect(url_for('chat.alpha_chat'))
     return render_template('home.html', title='Welcome to OpenAnswer')
 
 
