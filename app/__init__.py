@@ -3,10 +3,12 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 from .utils.markup.momentjs import MomentJs
 
 # Create and configure the app
 app = Flask(__name__)
+
 app.config.from_object('config')
 app.jinja_env.globals['momentjs'] = MomentJs
 
@@ -18,6 +20,9 @@ lm.login_view = 'home'
 # Set up socketio for chat
 socketio = SocketIO()
 socketio.init_app(app)
+
+# Bootstrap fix the forms please
+bootstrap = Bootstrap(app)
 
 from app import views, models
 

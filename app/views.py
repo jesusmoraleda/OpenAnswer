@@ -8,6 +8,9 @@ from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
 from .models import Post, User, UserIp
+from .utils.decorators.admin import admin_required
+import os
+import logging
 
 
 @app.before_request
@@ -43,10 +46,8 @@ def home():
 
 @app.route('/logs/')
 @app.route('/logs/<path>')
-@login_required
+@admin_required
 def logs(path=None):
-    if not current_user.is_admin:
-        return
     path = path or 'gunicorn'
     locations = {
         'gunicorn': './gunicorn_logs',
@@ -61,6 +62,33 @@ def logs(path=None):
     except Exception:
         pass
     return render_template('logs.html', log_content=lines)
+
+
+@app.route('/beta_keys')
+@admin_required
+def beta_keys():
+    if not current_user.is_admin:
+        return
+    lines = ['Beta keys not found.']
+    try:
+        with open(os.environ['BETA_KEYS_PATH']) as f:
+            lines = f.readlines()
+    # Don't want to clutter logs with additional exceptions for no reason
+    except Exception:
+        pass
+    return render_template('logs.html', log_content=lines)
+
+
+@app.route('/gen_beta_keys')
+@admin_required
+def gen_beta_keys():
+    try:
+        os.system(
+            'wget -qO- uuidgenerator.net/version4/bulk?amount4=10 >> {path}'.format(path=os.environ['BETA_KEYS_PATH'])
+        )
+    except Exception as e:
+        logging.exception('Beta keys not generated', )
+    return redirect(url_for('beta_keys'))
 
 
 @app.route('/logout')
@@ -82,6 +110,7 @@ def user(username):
 
 @app.route('/signup/<email>', methods=['GET', 'POST'])
 def signup(email):
+    is_beta = os.environ.get('IS_BETA')
     form = SignupForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -89,11 +118,18 @@ def signup(email):
             _user = User(username=username, email=email)
             db.session.add(_user)
             db.session.commit()
+            if is_beta:
+                keys = {}
+                with open(os.environ['BETA_KEYS_PATH'], 'r') as f:
+                    keys = set(key.strip() for key in f.readlines())
+                keys.remove(form.beta_key.data)
+                with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
+                    f.write('\n'.join(keys))
             _login_user_and_record_ip(_user)
             return redirect(url_for('home'))
         else:
             form.username.errors.append('That username has been registered, please pick a new one')
-    return render_template('signup.html', title='Signup', form=form)
+    return render_template('signup.html', title='Signup', form=form, is_beta=is_beta)
 
 
 @app.route('/authorize/<provider>')
