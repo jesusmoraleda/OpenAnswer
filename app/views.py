@@ -9,7 +9,7 @@ from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
 from .models import Post, User, UserIp
 import os
-
+import logging
 
 @app.before_request
 def before_request():
@@ -78,6 +78,18 @@ def beta_keys():
         pass
     return render_template('logs.html', log_content=lines)
 
+@app.route('/gen_beta_keys')
+@login_required
+def gen_beta_keys():
+    if not current_user.is_admin:
+        return
+    try:
+        os.system(
+            'wget -qO- uuidgenerator.net/version4/bulk?amount4=10 >> {path}'.format(path=os.environ['BETA_KEYS_PATH'])
+        )
+    except Exception as e:
+        logging.exception('Beta keys not generated', )
+    return redirect(url_for('beta_keys'))
 
 @app.route('/logout')
 def logout():
