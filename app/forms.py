@@ -19,7 +19,7 @@ class SignupForm(FlaskForm):
             Length(min=3, max=16, message='Username needs to be between 3 and 16 chars long')
         ]
     )
-    if os.environ['IS_BETA']:
+    if os.environ.get('IS_BETA'):
         beta_key = StringField(
             'beta-key', validators=[UUID(message='Message must be a beta-key'),
                                     validate_beta_key]

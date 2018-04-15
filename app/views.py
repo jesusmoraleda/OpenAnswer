@@ -94,7 +94,7 @@ def signup(email):
             return redirect(url_for('home'))
         else:
             form.username.errors.append('That username has been registered, please pick a new one')
-    return render_template('signup.html', title='Signup', form=form, is_beta=os.environ['IS_BETA'])
+    return render_template('signup.html', title='Signup', form=form, is_beta=os.environ.get('IS_BETA'))
 
 
 @app.route('/authorize/<provider>')
