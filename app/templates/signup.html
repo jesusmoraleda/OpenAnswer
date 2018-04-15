@@ -13,5 +13,8 @@
         {% for error in form.username.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}<br>
+        {% for error in form.beta_key.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
     </form>
 {% endblock %}
