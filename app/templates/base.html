@@ -46,7 +46,7 @@
                             </a>
                         </li>
                         {% if current_user.is_admin %}
-                            <li><a href="{{ url_for('admin') }}"><span class="glyphicon glyphicon-console"></span></a></li>
+                            <li><a href="{{ url_for('admin.index') }}"><span class="glyphicon glyphicon-console"></span></a></li>
                         {% endif %}
                         <li><a href="https://beta.openanswer.io"><span class="glyphicon glyphicon-fire"></span></a></li>
                         <li><a href="{{ url_for('settings') }}"><span class="glyphicon glyphicon-cog"></span></a></li>
