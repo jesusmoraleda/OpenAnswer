@@ -6,7 +6,7 @@ import os
 
 def validate_beta_key(form, field):
     with open(os.environ['BETA_KEYS_PATH']) as f:
-        if field.data not in f.readlines():
+        if field.data not in (key.strip() for key in f.readlines()):
             raise ValidationError(message='Invalid key')
 
 
