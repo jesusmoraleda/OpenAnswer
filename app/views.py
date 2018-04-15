@@ -107,7 +107,7 @@ def signup(email):
             db.session.add(_user)
             db.session.commit()
             if is_beta:
-                with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
+                with open(os.environ['BETA_KEYS_PATH'], 'r+') as f:
                     keys = set(key.strip() for key in f.readlines())
                     keys.remove(form.beta_key.data)
                     f.write('\n'.join(keys))
