@@ -28,6 +28,10 @@ body {
     color: white;
 }
 
+.fa-github {
+    font-size: 17px;
+}
+
 .navbar-custom {
     background-color:#102031;
     color: rgb(205, 200, 206);
