@@ -12,6 +12,7 @@ from .utils.decorators.admin import admin_required
 import os
 import logging
 
+
 @app.before_request
 def before_request():
     g.user = current_user
