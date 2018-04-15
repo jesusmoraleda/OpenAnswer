@@ -83,6 +83,9 @@ def beta_keys():
 @admin_required
 def gen_beta_keys():
     try:
+        # FIXME: This is stupid, we should generate this ourselves
+        # >>> import uuid
+        # >>> uuid.uuid4()
         os.system(
             'wget -qO- uuidgenerator.net/version4/bulk?amount4=10 >> {path}'.format(path=os.environ['BETA_KEYS_PATH'])
         )
@@ -119,7 +122,6 @@ def signup(email):
             db.session.add(_user)
             db.session.commit()
             if is_beta:
-                keys = {}
                 with open(os.environ['BETA_KEYS_PATH'], 'r') as f:
                     keys = set(key.strip() for key in f.readlines())
                 keys.remove(form.beta_key.data)
