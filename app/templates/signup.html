@@ -4,18 +4,9 @@
 
 {% block content %}
     <h1>Please pick a username</h1>
-    <form action="" method="post" name="signup">
-        {{ form.hidden_tag() }}
-        {{ form.username(size=16) }}<br>
-        {% if is_beta %}
-            {{ form.beta_key(size=60)}}<br>
-        {% endif %}
-        <p><input type="submit" value="Set username"></p>
-        {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
-        {% for error in form.beta_key.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
-    </form>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
 {% endblock %}
