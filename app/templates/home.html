@@ -3,22 +3,11 @@
 
 {% block content %}
     {% if current_user.is_anonymous %}
-        <p>
-        <h1 style="font-family: Arial">Signup or:</h1>
-        <a href="{{ url_for('oauth_authorize', provider='facebook') }}" style="text-decoration: none;">
-            <img alt="Sign in with Facebook" height="44" width="172"
-                 src="https://i.stack.imgur.com/ZW4QC.png"/>
-        </a></br>
-        <a href="{{ url_for('oauth_authorize', provider='slack') }}" style="text-decoration: none;">
-            <img alt="Sign in with Slack" height="44" width="172"
-                 src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                 srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
-        </a></br>
-        <a href="{{ url_for('oauth_authorize', provider='google') }}" style="text-decoration: none;">
-            <img alt="Sign in with Google" height="44" width="172"
-                 src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png"/>
-        </a></br>
-        </p>
+        <h1 style="font-family: Arial">Please Register or Sign in via the below:</h1>
+        <div class="text-left">
+            <a href="{{ url_for('oauth_authorize', provider='facebook') }}" class="fa fa-facebook"></a>
+            <a href="{{ url_for('oauth_authorize', provider='google') }}" class="fa fa-google"></a>
+        </div>
     {% else %}
         <p>
         <h1 style="font-family: Arial">This page is under construction. Please check out the chat in the meantime.</h1>
