@@ -8,6 +8,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
 from .models import Post, User, UserIp
+import os
 
 
 @app.before_request
@@ -93,7 +94,7 @@ def signup(email):
             return redirect(url_for('home'))
         else:
             form.username.errors.append('That username has been registered, please pick a new one')
-    return render_template('signup.html', title='Signup', form=form)
+    return render_template('signup.html', title='Signup', form=form, is_beta=os.environ['IS_BETA'])
 
 
 @app.route('/authorize/<provider>')
