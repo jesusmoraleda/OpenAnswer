@@ -8,6 +8,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
 from .models import Post, User, UserIp
+from .utils.decorators.admin import admin_required
 import os
 import logging
 
@@ -44,10 +45,8 @@ def home():
 
 @app.route('/logs/')
 @app.route('/logs/<path>')
-@login_required
+@admin_required
 def logs(path=None):
-    if not current_user.is_admin:
-        return
     path = path or 'gunicorn'
     locations = {
         'gunicorn': './gunicorn_logs',
@@ -65,7 +64,7 @@ def logs(path=None):
 
 
 @app.route('/beta_keys')
-@login_required
+@admin_required
 def beta_keys():
     if not current_user.is_admin:
         return
@@ -78,11 +77,10 @@ def beta_keys():
         pass
     return render_template('logs.html', log_content=lines)
 
+
 @app.route('/gen_beta_keys')
-@login_required
+@admin_required
 def gen_beta_keys():
-    if not current_user.is_admin:
-        return
     try:
         os.system(
             'wget -qO- uuidgenerator.net/version4/bulk?amount4=10 >> {path}'.format(path=os.environ['BETA_KEYS_PATH'])
@@ -90,6 +88,7 @@ def gen_beta_keys():
     except Exception as e:
         logging.exception('Beta keys not generated', )
     return redirect(url_for('beta_keys'))
+
 
 @app.route('/logout')
 def logout():
