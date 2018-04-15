@@ -64,6 +64,21 @@ def logs(path=None):
     return render_template('logs.html', log_content=lines)
 
 
+@app.route('/beta_keys')
+@login_required
+def beta_keys():
+    if not current_user.is_admin:
+        return
+    lines = ['Beta keys not found.']
+    try:
+        with open(os.environ['BETA_KEYS_PATH']) as f:
+            lines = f.readlines()
+    # Don't want to clutter logs with additional exceptions for no reason
+    except Exception:
+        pass
+    return render_template('logs.html', log_content=lines)
+
+
 @app.route('/logout')
 def logout():
     logout_user()
@@ -83,6 +98,7 @@ def user(username):
 
 @app.route('/signup/<email>', methods=['GET', 'POST'])
 def signup(email):
+    is_beta = os.environ.get('IS_BETA')
     form = SignupForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -90,11 +106,16 @@ def signup(email):
             _user = User(username=username, email=email)
             db.session.add(_user)
             db.session.commit()
+            if is_beta:
+                with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
+                    keys = set(key.strip() for key in f.readlines())
+                    keys.remove(form.beta_key.data)
+                    f.write('\n'.join(keys))
             _login_user_and_record_ip(_user)
             return redirect(url_for('home'))
         else:
             form.username.errors.append('That username has been registered, please pick a new one')
-    return render_template('signup.html', title='Signup', form=form, is_beta=os.environ.get('IS_BETA'))
+    return render_template('signup.html', title='Signup', form=form, is_beta=is_beta)
 
 
 @app.route('/authorize/<provider>')
