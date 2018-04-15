@@ -4,6 +4,12 @@ from wtforms.validators import Length, Regexp, UUID, ValidationError
 import os
 
 
+def validate_beta_key(form, field):
+    with open(os.environ['BETA_KEYS_PATH']) as f:
+        if field.data not in f.readlines():
+            raise ValidationError(message='Invalid key')
+
+
 class SignupForm(FlaskForm):
     username = StringField(
         'username', validators=[
@@ -20,13 +26,6 @@ class SignupForm(FlaskForm):
         )
 
 
-
 class PostForm(FlaskForm):
     content = StringField('content')
     category = StringField('category')
-
-
-def validate_beta_key(form, field):
-    with open(os.environ['BETA_KEYS_PATH']) as f:
-        if field.data not in f.readlines():
-            raise ValidationError(message='Invalid key')
