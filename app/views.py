@@ -107,9 +107,11 @@ def signup(email):
             db.session.add(_user)
             db.session.commit()
             if is_beta:
-                with open(os.environ['BETA_KEYS_PATH'], 'r+') as f:
+                keys = {}
+                with open(os.environ['BETA_KEYS_PATH'], 'r') as f:
                     keys = set(key.strip() for key in f.readlines())
-                    keys.remove(form.beta_key.data)
+                keys.remove(form.beta_key.data)
+                with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
                     f.write('\n'.join(keys))
             _login_user_and_record_ip(_user)
             return redirect(url_for('home'))
