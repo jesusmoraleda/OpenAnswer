@@ -197,7 +197,7 @@ class AdminUserModelView(AdminModelView):
 
     # Trying to make messages load dynamically
     form_ajax_refs = {
-        'mesages': {
+        'messages': {
             'fields': ['timestamp', 'content'],
             'page_size': 5
         }
