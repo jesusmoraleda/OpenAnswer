@@ -28,10 +28,10 @@ from app import views, models
 
 # Administration page
 admin = Admin(app, name='OpenAnswer', template_mode='bootstrap3')
-admin.add_view(views.AdminModelView(models.User, db.session))
+admin.add_view(views.AdminUserModelView(models.User, db.session))
 admin.add_view(views.AdminModelView(models.UserIp, db.session))
 admin.add_view(views.AdminModelView(models.Post, db.session))
-admin.add_view(views.AdminModelView(models.Message, db.session))
+admin.add_view(views.AdminMessageModelView(models.Message, db.session))
 
 # Chat page
 from app.chat import chat as chat_blueprint
