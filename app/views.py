@@ -192,20 +192,21 @@ class AdminModelView(ModelView):
 
 class AdminUserModelView(AdminModelView):
     column_editable_list = ['username']
+    column_exclude_list = ['messages']
 
     inline_models = (models.Message,)
 
-    # Trying to make messages load dynamically
-    form_ajax_refs = {
-        'messages': {
-            'fields': ['timestamp', 'content'],
-            'page_size': 5
-        }
-    }
+    # # Trying to make messages load dynamically
+    # form_ajax_refs = {
+    #     'messages': {
+    #         'fields': ['timestamp', 'content'],
+    #         'page_size': 5
+    #     }
+    # }
 
 
 class AdminMessageModelView(AdminModelView):
-    column_searchable_list = ['content']
+    column_searchable_list = ['author', 'content', 'room']
 
 
 
