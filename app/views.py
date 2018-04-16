@@ -7,7 +7,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
-from .models import Post, User, UserIp
+from . import models
 from .utils.decorators.admin import admin_required
 import os
 import logging
@@ -32,7 +32,7 @@ def _get_remote_addr():
 
 
 def _login_user_and_record_ip(usr, remember=True):
-    db.session.add(UserIp(user_id=usr.id, ip_address=_get_remote_addr(), timestamp=datetime.utcnow()))
+    db.session.add(models.UserIp(user_id=usr.id, ip_address=_get_remote_addr(), timestamp=datetime.utcnow()))
     db.session.commit()
     login_user(usr, remember)
 
@@ -103,11 +103,11 @@ def logout():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    _user = User.query.filter_by(username=username).first()
+    _user = models.User.query.filter_by(username=username).first()
     if not _user:
         flash('User %s not found' % username)
         return redirect(url_for('home'))
-    posts = Post.query.filter_by(user_id=_user.id)
+    posts = models.Post.query.filter_by(user_id=_user.id)
     return render_template('user.html', title='Profile', user=_user, posts=posts, navtab='user')
 
 
@@ -117,8 +117,8 @@ def signup(email):
     form = SignupForm()
     if form.validate_on_submit():
         username = form.username.data
-        if not db.session.query(exists().where(User.username == username)).scalar():
-            _user = User(username=username, email=email)
+        if not db.session.query(exists().where(models.User.username == username)).scalar():
+            _user = models.User(username=username, email=email)
             db.session.add(_user)
             db.session.commit()
             if is_beta:
@@ -151,7 +151,7 @@ def oauth_callback(provider):
     if email is None:
         flash('Authentication failed.')
         return redirect(url_for('home'))
-    _user = User.query.filter_by(email=email).first()
+    _user = models.User.query.filter_by(email=email).first()
     if not _user:
         return redirect(url_for('signup', email=email))
     _login_user_and_record_ip(_user, True)
@@ -161,11 +161,11 @@ def oauth_callback(provider):
 @app.route('/meta', methods=['GET', 'POST'])
 @login_required
 def meta():
-    meta_posts = Post.query.filter_by(category='Meta')
+    meta_posts = models.Post.query.filter_by(category='Meta')
     form = PostForm()
     if form.validate_on_submit():
         # FIXME: Don't allow duplicate posts
-        _post = Post(user_id=g.user.id, body=form.content.data, category=form.category.data, timestamp=datetime.utcnow())
+        _post = models.Post(user_id=g.user.id, body=form.content.data, category=form.category.data, timestamp=datetime.utcnow())
         db.session.add(_post)
         db.session.commit()
     return render_template('meta.html', title='Meta', posts=meta_posts, form=form, navtab='meta')
@@ -188,3 +188,24 @@ class AdminModelView(ModelView):
 
     def is_accessible(self):
         return g.user.is_authenticated and g.user.is_admin
+
+
+class AdminUserModelView(AdminModelView):
+    column_editable_list = ['username']
+
+    inline_models = (models.Message,)
+
+    # Trying to make messages load dynamically
+    form_ajax_refs = {
+        'mesages': {
+            'fields': ['timestamp', 'content'],
+            'page_size': 5
+        }
+    }
+
+
+class AdminMessageModelView(AdminModelView):
+    column_searchable_list = ['content']
+
+
+
