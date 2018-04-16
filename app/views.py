@@ -206,7 +206,7 @@ class AdminUserModelView(AdminModelView):
 
 
 class AdminMessageModelView(AdminModelView):
-    column_searchable_list = ['author', 'content', 'room']
+    column_searchable_list = ['user_id', 'content', 'room']
 
 
 
