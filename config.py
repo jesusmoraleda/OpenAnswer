@@ -17,8 +17,8 @@ ENV = os.environ.get('ENV', 'PROD')
 
 LOCAL_OAUTH_CREDENTIALS = {
     'google': {
-        'id': os.environ['LOCAL_GO_OAUTH_ID'],
-        'secret': os.environ['LOCAL_GO_OAUTH_SECRET'],
+        'id': os.environ.get('LOCAL_GO_OAUTH_ID'),
+        'secret': os.environ.get('LOCAL_GO_OAUTH_SECRET'),
     },
     'facebook': {
         'id': '',
