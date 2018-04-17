@@ -1,4 +1,4 @@
-$(document).ready(function () {
+window.onload(function () {
     var is_visible = visibility();
     var unread = 0;
     var favicon = new Favico({
