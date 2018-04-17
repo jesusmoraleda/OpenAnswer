@@ -10,7 +10,28 @@ else:
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
-OAUTH_CREDENTIALS = {
+
+
+ENV = os.environ.get('ENV', 'PROD')
+
+
+LOCAL_OAUTH_CREDENTIALS = {
+    'google': {
+        'id': os.environ.get('LOCAL_GO_OAUTH_ID'),
+        'secret': os.environ.get('LOCAL_GO_OAUTH_SECRET'),
+    },
+    'facebook': {
+        'id': '',
+        'secret': '',
+    },
+    'slack': {
+        'id': '',
+        'secret': '',
+    }
+}
+
+
+PROD_OAUTH_CREDENTIALS = {
     'facebook': {
         'id': os.environ['FB_OAUTH_ID'],
         'secret': os.environ['FB_OAUTH_SECRET'],
@@ -21,6 +42,11 @@ OAUTH_CREDENTIALS = {
     },
     'slack': {
         'id': os.environ['SL_OAUTH_ID'],
-        'secret': os.environ['SL_OAUTH_SECRET']
+        'secret': os.environ['SL_OAUTH_SECRET'],
     }
+}
+
+OAUTH_CREDENTIALS = {
+    'LOCAL': LOCAL_OAUTH_CREDENTIALS,
+    'PROD': PROD_OAUTH_CREDENTIALS,
 }

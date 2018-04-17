@@ -9,7 +9,8 @@ class OAuthSignIn:
 
     def __init__(self, provider_name):
         self.provider_name = provider_name
-        credentials = current_app.config['OAUTH_CREDENTIALS'][provider_name]
+        env = current_app.config['ENV']
+        credentials = current_app.config['OAUTH_CREDENTIALS'][env][provider_name]
         self.consumer_id = credentials['id']
         self.consumer_secret = credentials['secret']
 
@@ -23,8 +24,7 @@ class OAuthSignIn:
         pass
 
     def get_callback_url(self):
-        return url_for('oauth_callback', provider=self.provider_name,
-                       _external=True)
+        return url_for('oauth_callback', provider=self.provider_name, _external=True)
 
     @classmethod
     def get_provider(self, provider_name):
