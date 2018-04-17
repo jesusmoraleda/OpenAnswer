@@ -56,6 +56,18 @@ $(document).ready(function () {
     /**--------------------------------Sockets------------------------------------**/
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
+    socket.on('connect', function () {
+        $.notify("Connected to chat", "success");
+    });
+
+    socket.on('disconnect', function (reason) {
+        $.notify(
+            "Disconnected from chat\n"+reason,
+            "error",
+            {clickToHide: true,}
+        );
+    });
+
     socket.on('received', function (msg) {
         addMessage(msg, markdown);
         if (!is_visible()) {
