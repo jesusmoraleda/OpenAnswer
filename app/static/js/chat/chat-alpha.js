@@ -1,4 +1,4 @@
-window.onload(function () {
+$(document).ready(function () {
     var is_visible = visibility();
     var unread = 0;
     var favicon = new Favico({
@@ -47,7 +47,7 @@ window.onload(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('received', function (msg) {
-        addMessage(msg, markdown)
+        addMessage(msg, markdown);
         if (!is_visible()) {
             unread += 1;
             favicon.badge(unread)
@@ -65,15 +65,18 @@ window.onload(function () {
         }
     });
 
-    /**------------------------------Golden Layout---------------------------------**/
+    window.onload = function() {initGoldenLayout(socket, open_rooms, markdown)};
+});
 
+function initGoldenLayout(socket, open_rooms, markdown) {
+    /**------------------------------Golden Layout---------------------------------**/
     var config = {
         settings: {showPopoutIcon: false},
         content: [
             {
                 type: 'row',
                 isClosable: false,
-                content: [],
+                content: []
             }
         ]
     };
@@ -140,13 +143,13 @@ window.onload(function () {
     layoutContainer.on('mouseleave touchend', '.chatWindow .chatMessages #chatMessage', hide_timestamp);
     layoutContainer.on('focus', '.chatEntry', function (e) {
         unread = 0;
-    favicon.badge(unread)});
+        favicon.badge(unread)
+    });
 
     $(window).resize(function () {
         myLayout.updateSize()
     })
-
-});
+}
 
 function initalizeRoomList(layout) {
     layout.root.contentItems[0].addChild({
