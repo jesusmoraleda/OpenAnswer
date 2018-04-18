@@ -9,13 +9,8 @@ $(document).ready(function () {
         $('.browser_warning')[0].innerHTML = '<h2>Unsupported browser detected. Please switch to the <a href='+legacy_chat+'>legacy chat</a></h2>';
         return;
     }
-    var is_visible = visibility();
-    var unread = 0;
-    var favicon = new Favico({
-        animation: 'none',
-        bgColor: '#26436B'
-    });
-    loadStoredStyleSheet();
+
+    /**--------------------------------Notify Settings----------------------------**/
     $.notify.addStyle('unread', {
       html: "<div><span data-notify-text/></div>",
       classes: {
@@ -27,6 +22,14 @@ $(document).ready(function () {
         },
       }
     });
+
+    var is_visible = visibility();
+    var unread = 0;
+    var favicon = new Favico({
+        animation: 'none',
+        bgColor: '#26436B'
+    });
+    loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
@@ -57,15 +60,56 @@ $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('connect', function () {
-        $.notify("Connected to chat", "success");
+        $.notify('Connected to chat',
+                 {className:'success', globalPosition: 'right bottom'});
+    });
+
+    socket.on('connect_error', function(error){
+        $.notify('Connection failed:\n' + error,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('connect_timeout', function(timeout){
+        $.notify('Connection timed out:\n' + timeout,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('error', function(error){
+        $.notify('Error: ' + error,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('disconnect', function (reason) {
-        $.notify(
-            "Disconnected from chat\n"+reason,
-            "error",
-            {clickToHide: true,}
-        );
+        $.notify('Disconnected from chat\n' + reason,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('reconnect', function (attemptNumber) {
+        for (i = 0; i < open_rooms.length; i++) {
+            socket.emit('joined', {room: open_rooms[i]});
+        }
+        $.notify('Reconnected after ' + attemptNumber + ' attempt(s)',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'success'});
+    });
+
+    socket.on('reconnect_attempt', function (attemptNumber) {
+        $.notify('Attempting to reconnect: ' + attemptNumber + ' attempt(s)',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'warn'});
+    });
+
+    socket.on('reconnecting', function (attemptNumber) {
+        $.notify('Reconnecting: ' + attemptNumber + ' attempt(s)',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'info'});
+    });
+
+    socket.on('reconnect_error', function (error) {
+        $.notify('Error reconnecting:\n' + error,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('reconnect_failed', function () {
+        $.notify('Failed to reconnect.',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('received', function (msg) {
@@ -97,7 +141,7 @@ function initGoldenLayout(socket, open_rooms, markdown) {
         content: [
             {
                 type: 'row',
-                isClosable: false,
+                //isClosable: false,
                 content: []
             }
         ]
@@ -106,9 +150,7 @@ function initGoldenLayout(socket, open_rooms, markdown) {
     var layoutContainer = $('#layoutContainer');
     var myLayout, savedState = localStorage.getItem('savedState');
     if (savedState !== null) {
-        var saved = JSON.parse(savedState);
-        console.log(saved);
-        myLayout = new window.GoldenLayout(saved, layoutContainer);
+        myLayout = new window.GoldenLayout(JSON.parse(savedState), layoutContainer);
     } else {
         myLayout = new window.GoldenLayout(config, layoutContainer);
     }
@@ -184,7 +226,7 @@ function initalizeRoomList(layout) {
             '</div>',
             name: 'Room List'
         },
-        isClosable: false
+        //isClosable: false
     });
 }
 
