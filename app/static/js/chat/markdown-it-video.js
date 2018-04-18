@@ -1,5 +1,5 @@
 // Taken (and slightly modified) from https://github.com/brianjgeiger/markdown-it-video on July 30th, 2017.
-// Process @[youtube](youtubeVideoID)
+// Process @[yt](youtubeVideoID)
 ;(function (root, factory) {
     root.markdownitVideo = factory()
 })(this, function () {
@@ -35,7 +35,7 @@
             var videoID = match[2];
             var serviceLower = service.toLowerCase();
 
-            if (serviceLower === 'youtube') {
+            if (serviceLower === 'yt') {
                 videoID = youtube_parser(videoID);
             } else if (!options[serviceLower]) {
                 return false;
@@ -76,7 +76,7 @@
 
     function video_url(service, videoID, options) {
         switch (service) {
-            case 'youtube':
+            case 'yt':
                 return '//www.youtube.com/embed/' + videoID;
         }
     }
@@ -108,7 +108,7 @@
     return function (options) {
         var defaults = {
             url: video_url,
-            youtube: {width: 160, height: 200},
+            yt: {width: 160, height: 200},
         };
 
         options = extend(options || {}, defaults)
