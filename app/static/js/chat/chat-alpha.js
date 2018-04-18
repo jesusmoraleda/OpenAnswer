@@ -1,4 +1,15 @@
 $(document).ready(function () {
+    /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
+    // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
+    // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+    // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+    if (isIE) {
+        var legacy_chat = location.protocol + '//' + document.domain + '/chat/lobby';
+        $('.browser_warning')[0].innerHTML = '<h2>Unsupported browser detected. Please switch to the <a href='+legacy_chat+'>legacy chat</a></h2>';
+        return;
+    }
+
     /**--------------------------------Notify Settings----------------------------**/
     $.notify.addStyle('unread', {
       html: "<div><span data-notify-text/></div>",
@@ -12,16 +23,6 @@ $(document).ready(function () {
       }
     });
 
-    /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
-    // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
-    // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-    // Internet Explorer 6-11
-    var isIE = /*@cc_on!@*/false || !!document.documentMode;
-    if (isIE) {
-        var legacy_chat = location.protocol + '//' + document.domain + '/chat/lobby';
-        $('.browser_warning')[0].innerHTML = '<h2>Unsupported browser detected. Please switch to the <a href='+legacy_chat+'>legacy chat</a></h2>';
-        return;
-    }
     var is_visible = visibility();
     var unread = 0;
     var favicon = new Favico({
@@ -84,6 +85,9 @@ $(document).ready(function () {
     });
 
     socket.on('reconnect', function (attemptNumber) {
+        for (i = 0; i < open_rooms.length; i++) {
+            socket.emit('joined', {room: open_rooms[i]});
+        }
         $.notify('Reconnected after ' + attemptNumber + ' attempt(s)',
                  {autoHide: true, globalPosition: 'right bottom', className: 'success'});
     });
@@ -222,7 +226,7 @@ function initalizeRoomList(layout) {
             '</div>',
             name: 'Room List'
         },
-        isClosable: false
+        //isClosable: false
     });
 }
 
