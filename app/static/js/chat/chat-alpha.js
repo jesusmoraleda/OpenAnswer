@@ -1,4 +1,17 @@
 $(document).ready(function () {
+    /**--------------------------------Notify Settings----------------------------**/
+    $.notify.addStyle('unread', {
+      html: "<div><span data-notify-text/></div>",
+      classes: {
+          //FIXME: Move to css file
+        base: {
+          "white-space": "nowrap",
+          "background-color": "#757373",
+          "padding": "5px",
+        },
+      }
+    });
+
     /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
     // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
     // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
@@ -16,17 +29,6 @@ $(document).ready(function () {
         bgColor: '#26436B'
     });
     loadStoredStyleSheet();
-    $.notify.addStyle('unread', {
-      html: "<div><span data-notify-text/></div>",
-      classes: {
-          //FIXME: Move to css file
-        base: {
-          "white-space": "nowrap",
-          "background-color": "#757373",
-          "padding": "5px",
-        },
-      }
-    });
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
@@ -57,15 +59,53 @@ $(document).ready(function () {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('connect', function () {
-        $.notify("Connected to chat", "success");
+        $.notify('Connected to chat',
+                 {className:'success', globalPosition: 'right bottom'});
+    });
+
+    socket.on('connect_error', function(error){
+        $.notify('Connection failed:\n' + error,
+                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('connect_timeout', function(timeout){
+        $.notify('Connection timed out:\n' + timeout,
+                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('error', function(error){
+        $.notify('Error: ' + error,
+                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('disconnect', function (reason) {
-        $.notify(
-            "Disconnected from chat\n"+reason,
-            "error",
-            {clickToHide: true,}
-        );
+        $.notify('Disconnected from chat\n' + reason,
+                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('reconnect', function (attemptNumber) {
+        $.notify('Reconnected after ' + attemptNumber + ' attempt(s)',
+                 {autoHide: false, globalPosition: 'right bottom', className: 'success'});
+    });
+
+    socket.on('reconnect_attempt', function (attemptNumber) {
+        $.notify('Attempting to reconnect: ' + attemptNumber + ' attempt(s)',
+                 {autoHide: false, globalPosition: 'right bottom', className: 'warn'});
+    });
+
+    socket.on('reconnecting', function (attemptNumber) {
+        $.notify('Reconnecting: ' + attemptNumber + ' attempt(s)',
+                 {autoHide: false, globalPosition: 'right bottom', className: 'info'});
+    });
+
+    socket.on('reconnect_error', function (error) {
+        $.notify('Error reconnecting:\n' + error,
+                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('reconnect_failed', function () {
+        $.notify('Failed to reconnect.',
+                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('received', function (msg) {
@@ -97,7 +137,7 @@ function initGoldenLayout(socket, open_rooms, markdown) {
         content: [
             {
                 type: 'row',
-                isClosable: false,
+                //isClosable: false,
                 content: []
             }
         ]
@@ -106,9 +146,7 @@ function initGoldenLayout(socket, open_rooms, markdown) {
     var layoutContainer = $('#layoutContainer');
     var myLayout, savedState = localStorage.getItem('savedState');
     if (savedState !== null) {
-        var saved = JSON.parse(savedState);
-        console.log(saved);
-        myLayout = new window.GoldenLayout(saved, layoutContainer);
+        myLayout = new window.GoldenLayout(JSON.parse(savedState), layoutContainer);
     } else {
         myLayout = new window.GoldenLayout(config, layoutContainer);
     }
