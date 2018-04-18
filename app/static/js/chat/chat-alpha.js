@@ -65,47 +65,47 @@ $(document).ready(function () {
 
     socket.on('connect_error', function(error){
         $.notify('Connection failed:\n' + error,
-                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('connect_timeout', function(timeout){
         $.notify('Connection timed out:\n' + timeout,
-                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('error', function(error){
         $.notify('Error: ' + error,
-                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('disconnect', function (reason) {
         $.notify('Disconnected from chat\n' + reason,
-                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('reconnect', function (attemptNumber) {
         $.notify('Reconnected after ' + attemptNumber + ' attempt(s)',
-                 {autoHide: false, globalPosition: 'right bottom', className: 'success'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'success'});
     });
 
     socket.on('reconnect_attempt', function (attemptNumber) {
         $.notify('Attempting to reconnect: ' + attemptNumber + ' attempt(s)',
-                 {autoHide: false, globalPosition: 'right bottom', className: 'warn'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'warn'});
     });
 
     socket.on('reconnecting', function (attemptNumber) {
         $.notify('Reconnecting: ' + attemptNumber + ' attempt(s)',
-                 {autoHide: false, globalPosition: 'right bottom', className: 'info'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'info'});
     });
 
     socket.on('reconnect_error', function (error) {
         $.notify('Error reconnecting:\n' + error,
-                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('reconnect_failed', function () {
         $.notify('Failed to reconnect.',
-                 {autoHide: false, globalPosition: 'right bottom', className: 'error'});
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
     });
 
     socket.on('received', function (msg) {
