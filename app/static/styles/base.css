@@ -134,11 +134,3 @@ li #send_whisper_to {
     position: absolute;
     display: none;
 }
-
-#large_image_container.show {
-    display: block;
-}
-
-#large_image_container.show > #image_large {
-    display: block;
-}
