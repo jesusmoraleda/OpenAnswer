@@ -110,4 +110,30 @@ li #send_whisper_to {
 #chat_username[user^="x"]{color: #13a7ff; font-weight:bold;}
 #chat_username[user^="y"]{color: #fffa70; font-weight:bold;}
 #chat_username[user^="z"]{color: #a922b7; font-weight:bold;}
-#chat_username[user^="1"]{color: #ff60b1; font-weight:bold;}
+
+
+/*CSS for image zoom-in*/
+#large_image_container {
+    position: fixed;
+    width: 100vw;
+    z-index: 150000;
+    height: 100vh;
+    left: 0px;
+    top: 0px;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+}
+
+#image_large {
+    max-height: 90%;
+    max-width: 90%;
+    right: 50%;
+    bottom: 50%;
+    transform: translate(50%, 50%);
+    position: absolute;
+    display: none;
+}
+
+#chatMessage img {
+    cursor: zoom-in;
+}

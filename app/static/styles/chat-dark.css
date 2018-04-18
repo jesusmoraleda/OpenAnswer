@@ -93,6 +93,7 @@ html, body {
     height: calc(100% - 25px);
     width: 100%;
     position: absolute;
+    transform: translateZ(0);
 }
 
 .chatMessages li:nth-child(odd) {
