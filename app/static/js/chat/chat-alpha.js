@@ -1,3 +1,13 @@
+$.fn.showBigImage = function(url){
+	var src = this.attr('src') || url;
+	if (!src) return;
+	var imagelarge = $('#image_large');
+	var imagecontainer = $('#large_image_container');
+	imagelarge.attr('src', src);
+	imagecontainer.show();
+	imagelarge.show();
+};
+
 $(document).ready(function () {
     /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
     // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
@@ -22,13 +32,19 @@ $(document).ready(function () {
         },
       }
     });
+    
+    /**-----------------------------Big Image Preview-----------------------------**/
+    $('#large_image_container').click(function(){
+	    $(this).hide();
+	    $(this).find('#image_large').hide();
+    });
+    
+    $(document).on('click', '#chatMessage img', function() {
+	    $(this).showBigImage();
+    })
 
     var is_visible = visibility();
     var unread = 0;
-    var favicon = new Favico({
-        animation: 'none',
-        bgColor: '#26436B'
-    });
     loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
@@ -132,6 +148,11 @@ $(document).ready(function () {
     });
 
     window.onload = function() {initGoldenLayout(socket, open_rooms, markdown)};
+});
+
+var favicon = new Favico({
+    animation: 'none',
+    bgColor: '#26436B'
 });
 
 function initGoldenLayout(socket, open_rooms, markdown) {
