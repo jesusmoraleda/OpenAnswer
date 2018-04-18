@@ -25,10 +25,6 @@ $(document).ready(function () {
 
     var is_visible = visibility();
     var unread = 0;
-    var favicon = new Favico({
-        animation: 'none',
-        bgColor: '#26436B'
-    });
     loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
@@ -132,6 +128,11 @@ $(document).ready(function () {
     });
 
     window.onload = function() {initGoldenLayout(socket, open_rooms, markdown)};
+});
+
+var favicon = new Favico({
+    animation: 'none',
+    bgColor: '#26436B'
 });
 
 function initGoldenLayout(socket, open_rooms, markdown) {
