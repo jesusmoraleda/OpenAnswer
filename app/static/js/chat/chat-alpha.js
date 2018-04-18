@@ -1,11 +1,16 @@
 $(document).ready(function () {
-    var is_visible = visibility();
-    var unread = 0;
-    var favicon = new Favico({
-        animation: 'none',
-        bgColor: '#26436B'
-    });
-    loadStoredStyleSheet();
+    /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
+    // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
+    // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+    // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+    if (isIE) {
+        var legacy_chat = location.protocol + '//' + document.domain + '/chat/lobby';
+        $('.browser_warning')[0].innerHTML = '<h2>Unsupported browser detected. Please switch to the <a href='+legacy_chat+'>legacy chat</a></h2>';
+        return;
+    }
+
+    /**--------------------------------Notify Settings----------------------------**/
     $.notify.addStyle('unread', {
       html: "<div><span data-notify-text/></div>",
       classes: {
@@ -13,10 +18,18 @@ $(document).ready(function () {
         base: {
           "white-space": "nowrap",
           "background-color": "#757373",
-          "padding": "5px"
+          "padding": "5px",
         },
       }
     });
+
+    var is_visible = visibility();
+    var unread = 0;
+    var favicon = new Favico({
+        animation: 'none',
+        bgColor: '#26436B'
+    });
+    loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
@@ -46,8 +59,61 @@ $(document).ready(function () {
     /**--------------------------------Sockets------------------------------------**/
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
+    socket.on('connect', function () {
+        $.notify('Connected to chat',
+                 {className:'success', globalPosition: 'right bottom'});
+    });
+
+    socket.on('connect_error', function(error){
+        $.notify('Connection failed:\n' + error,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('connect_timeout', function(timeout){
+        $.notify('Connection timed out:\n' + timeout,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('error', function(error){
+        $.notify('Error: ' + error,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('disconnect', function (reason) {
+        $.notify('Disconnected from chat\n' + reason,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('reconnect', function (attemptNumber) {
+        for (i = 0; i < open_rooms.length; i++) {
+            socket.emit('joined', {room: open_rooms[i]});
+        }
+        $.notify('Reconnected after ' + attemptNumber + ' attempt(s)',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'success'});
+    });
+
+    socket.on('reconnect_attempt', function (attemptNumber) {
+        $.notify('Attempting to reconnect: ' + attemptNumber + ' attempt(s)',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'warn'});
+    });
+
+    socket.on('reconnecting', function (attemptNumber) {
+        $.notify('Reconnecting: ' + attemptNumber + ' attempt(s)',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'info'});
+    });
+
+    socket.on('reconnect_error', function (error) {
+        $.notify('Error reconnecting:\n' + error,
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
+    socket.on('reconnect_failed', function () {
+        $.notify('Failed to reconnect.',
+                 {autoHide: true, globalPosition: 'right bottom', className: 'error'});
+    });
+
     socket.on('received', function (msg) {
-        addMessage(msg, markdown)
+        addMessage(msg, markdown);
         if (!is_visible()) {
             unread += 1;
             favicon.badge(unread)
@@ -65,15 +131,18 @@ $(document).ready(function () {
         }
     });
 
-    /**------------------------------Golden Layout---------------------------------**/
+    window.onload = function() {initGoldenLayout(socket, open_rooms, markdown)};
+});
 
+function initGoldenLayout(socket, open_rooms, markdown) {
+    /**------------------------------Golden Layout---------------------------------**/
     var config = {
         settings: {showPopoutIcon: false},
         content: [
             {
                 type: 'row',
-                isClosable: false,
-                content: [],
+                //isClosable: false,
+                content: []
             }
         ]
     };
@@ -81,9 +150,7 @@ $(document).ready(function () {
     var layoutContainer = $('#layoutContainer');
     var myLayout, savedState = localStorage.getItem('savedState');
     if (savedState !== null) {
-        var saved = JSON.parse(savedState);
-        console.log(saved);
-        myLayout = new window.GoldenLayout(saved, layoutContainer);
+        myLayout = new window.GoldenLayout(JSON.parse(savedState), layoutContainer);
     } else {
         myLayout = new window.GoldenLayout(config, layoutContainer);
     }
@@ -140,13 +207,13 @@ $(document).ready(function () {
     layoutContainer.on('mouseleave touchend', '.chatWindow .chatMessages #chatMessage', hide_timestamp);
     layoutContainer.on('focus', '.chatEntry', function (e) {
         unread = 0;
-    favicon.badge(unread)});
+        favicon.badge(unread)
+    });
 
     $(window).resize(function () {
         myLayout.updateSize()
     })
-
-});
+}
 
 function initalizeRoomList(layout) {
     layout.root.contentItems[0].addChild({
@@ -159,7 +226,7 @@ function initalizeRoomList(layout) {
             '</div>',
             name: 'Room List'
         },
-        isClosable: false
+        //isClosable: false
     });
 }
 
