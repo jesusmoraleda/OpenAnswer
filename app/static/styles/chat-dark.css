@@ -46,7 +46,8 @@ html, body {
 }
 
 #roomEntry {
-    padding: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
     width: inherit;
     position: absolute;
     bottom: 0px;
@@ -66,7 +67,8 @@ html, body {
 }
 
 .chatEntry {
-    padding: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
     position: absolute;
     bottom: 0px;
     color: #BBB;
