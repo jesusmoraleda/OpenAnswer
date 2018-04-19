@@ -8,6 +8,8 @@ $.fn.showBigImage = function(url){
 	imagelarge.show();
 };
 
+var unread = 0;
+
 $(document).ready(function () {
     /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
     // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
@@ -42,10 +44,9 @@ $(document).ready(function () {
     
     $(document).on('click', '#chatMessage img', function() {
 	    $(this).showBigImage();
-    })
+    });
 
     var is_visible = visibility();
-    var unread = 0;
     loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
