@@ -20,9 +20,12 @@ function getMessageTemplate(msg, markdown) {
 
 function getRoomListElement(roomName) {
     var roomListElement =
-        '<li data-toggle="collapse" data-target="#chatContent-' + roomName + '">> ' +
+        '<button class="btn btn-dark btn-sm"' +
+                'type="button"' +
+                'data-toggle="collapse"' +
+                'data-target="#chatContent-' + roomName + '">' +
             roomName +
-        '</li>' +
+        '</button>' +
         '<div id="chatContent-' + roomName + '" class="collapse in">' +
             'Online:' +
         '</div>';
