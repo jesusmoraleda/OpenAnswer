@@ -202,7 +202,7 @@ function initGoldenLayout(socket, open_rooms, markdown) {
 	    //old
             //scrollChatToBottom(state.name, 0);
 	    var messageContainer = getMessageContainer(room);
-	    setTimout(function() {
+	    setTimeout(function() {
 		    messageContainer.scrollTop(messageContainer.prop('scrollHeight'))
 	    },5);
 	});
