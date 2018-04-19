@@ -4,7 +4,42 @@ body {
     padding-top: 57px;
 }
 
-.fa {
+.navbar {
+    background-color: #1e1f1f;
+    color: rgb(196, 192, 197);
+    border-bottom: 1px solid;
+    border-color: #757373;
+    margin-bottom: 5px !important; /* Can't get this to work*/
+}
+
+.navbar .navbar-brand {
+    color: rgb(205, 200, 206);
+}
+
+.navbar .navbar-toggler {
+    /*background-color: rgb(205, 200, 206);*/
+}
+
+.navbar .nav-item {
+    font-size: 17px;
+}
+
+.fa, .fas, .fa-fw {
+    font-size: 24px;
+    color: gray;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.fa:hover, .fas:hover, .fab:hover {
+    opacity: 0.7;
+    background-color: rgb(205, 200, 206);
+}
+
+
+.fa-google {
+    background: #dd4b39;
+    color: white;
     padding: 30px;
     font-size: 30px;
     width: 100px;
@@ -12,60 +47,6 @@ body {
     text-decoration: none;
     margin: 5px 2px;
     border-radius: 10%;
-}
-
-.fa:hover {
-    opacity: 0.7;
-}
-
-.fa-facebook {
-    background: #3B5998;
-    color: white;
-}
-
-.fa-google {
-    background: #dd4b39;
-    color: white;
-}
-
-.fa-github {
-    font-size: 17px;
-}
-
-.navbar-custom {
-    background-color:#102031;
-    color: rgb(205, 200, 206);
-    border-radius:0;
-    border-color: #080808;
-    border-bottom-width: thin;
-}
-
-.navbar-custom .navbar-nav > li > a {
-    color: rgb(205, 200, 206);
-}
-
-.navbar-custom .navbar-nav > .active > a {
-    color: rgb(205, 200, 206);
-    background-color:transparent;
-}
-
-.navbar-custom .navbar-nav > li > a:hover,
-.navbar-custom .navbar-nav > li > a:focus,
-.navbar-custom .navbar-nav > .active > a:hover,
-.navbar-custom .navbar-nav > .active > a:focus,
-.navbar-custom .navbar-nav > .open >a {
-    text-decoration: none;
-    background-color: #080808;
-}
-
-.navbar-custom .navbar-brand {
-    color: rgb(205, 200, 206);
-}
-.navbar-custom .navbar-toggle {
-    background-color: rgb(205, 200, 206);
-}
-.navbar-custom .icon-bar {
-    background-color: #102031;
 }
 
 .glyphicon {
