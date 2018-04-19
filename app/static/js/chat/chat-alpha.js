@@ -248,8 +248,9 @@ function initalizeRoomList(layout) {
         componentName: 'tab',
         componentState: {
             text: '<div id="roomList">' +
-            '<input class="chatEntry" id="roomListEntry" type="text">' +
-            '</div>',
+                        '<div id="roomButtons" class="btn-group-vertical"></div>' +
+                        '<input class="chatEntry" id="roomListEntry" type="text">' +
+                  '</div>',
             name: 'Room List'
         },
         //isClosable: false
@@ -268,7 +269,7 @@ function addRoom(roomName, layout, openChatTab) {
     };
     var roomListElement = $(getRoomListElement(roomName));
 
-    $('#roomList').prepend(roomListElement);
+    $('#roomButtons').prepend(roomListElement);
     layout.createDragSource(roomListElement, newRoom);
     if (openChatTab) {
         layout.root.contentItems[0].addChild(newRoom);
