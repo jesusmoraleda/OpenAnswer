@@ -3,7 +3,10 @@ function getChatRoomTemplate(roomName) {
         '<div class="chatWindow" id="' + roomName + '">' +
             '<ul class="chatMessages">' +
             '</ul>' +
-            '<input class="chatEntry" id="' + roomName + '" ' + 'type="text">' +
+            '<input class="chatEntry" ' +
+                    'id="' + roomName + '" ' +
+                    'type="text" ' +
+                    'placeholder="Message '+roomName+'...">' +
         '</div>';
     return chatWindowHtml;
 }

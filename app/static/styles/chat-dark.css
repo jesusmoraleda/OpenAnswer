@@ -34,7 +34,6 @@ html, body {
     cursor: move;
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
-    cursor: pointer;
     padding: 10px 5px;
     color: #BBB;
     background: #1a1a1a;
@@ -47,12 +46,13 @@ html, body {
 }
 
 #roomEntry {
+    padding-left: 5px;
+    padding-right: 5px;
     width: inherit;
     position: absolute;
     bottom: 0px;
     color: #BBB;
     background: #1a1a1a;
-    color: #fff;
     box-sizing: border-box;
     border: 1px solid #fff;
     border-radius: 4px;
@@ -63,10 +63,12 @@ html, body {
     height: 100%;
     position: absolute;
     top: 0;
-    left: 0%;
+    left: 0;
 }
 
 .chatEntry {
+    padding-left: 5px;
+    padding-right: 5px;
     position: absolute;
     bottom: 0px;
     color: #BBB;
@@ -107,6 +109,7 @@ html, body {
 }
 .chatMessages::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
 }
 .chatMessages::-webkit-scrollbar-track {
     background-color: #565555;
