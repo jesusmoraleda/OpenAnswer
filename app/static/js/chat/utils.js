@@ -13,13 +13,20 @@ function getMessageContainer(room) {
     return $('#' + room + '.chatWindow .chatMessages')
 }
 
-function scrollChatToBottom(room, delay) {
+function scrollChatToBottom(room, delay, forceScroll) {
     var delay = 500 * delay;
+    forceScroll = typeof forceScroll !== 'undefined' ? forceScroll : false;
     setTimeout(function () {
         var messageContainer = getMessageContainer(room);
         if (!messageContainer.prop('pauseScroll')) {
-            //QC method of autoscroll
-            if (Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop()) - 150 < messageContainer.height() && Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop()) + 150 > messageContainer.height()) {
+            var delta = Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop());
+            if (
+                //forceScroll when we don't care about sizes and just want to scroll down (i.e. on first load)
+                forceScroll || (
+                    //Jay's QC scroll variant
+                    (delta - 150 < messageContainer.height()) && (delta + 150 > messageContainer.height())
+                )
+            ) {
                 messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
             }
         } else {

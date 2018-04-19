@@ -157,8 +157,8 @@ var favicon = new Favico({
     bgColor: '#26436B'
 });
 
+/**------------------------------Golden Layout---------------------------------**/
 function initGoldenLayout(socket, open_rooms, markdown) {
-    /**------------------------------Golden Layout---------------------------------**/
     var config = {
         settings: {showPopoutIcon: false},
         content: [
@@ -189,6 +189,10 @@ function initGoldenLayout(socket, open_rooms, markdown) {
         }
         container.getElement().html(state.text);
         container.on('tab', function (tab) {
+            if (state.name !== 'Room List') {
+                // Scroll down chat when a room is opened
+                scrollChatToBottom(state.name, 1, true);
+            }
             tab
                 .closeElement
                 .off('click') //unbind the current click handler
@@ -200,10 +204,6 @@ function initGoldenLayout(socket, open_rooms, markdown) {
             $.each(data.messages, function (idx, msg) {
                 addMessage(msg, markdown);
             });
-	    var messageContainer = getMessageContainer(state.name);
-	    setTimeout(function() {
-		    messageContainer.scrollTop(messageContainer.prop('scrollHeight'))
-	    }, 5);
 	});
         socket.emit('joined', {room: state.name});
     });
