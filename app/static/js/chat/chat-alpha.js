@@ -200,8 +200,13 @@ function initGoldenLayout(socket, open_rooms, markdown) {
             $.each(data.messages, function (idx, msg) {
                 addMessage(msg, markdown);
             });
-            scrollChatToBottom(state.name, 0);
-        });
+	    //old
+            //scrollChatToBottom(state.name, 0);
+	    var messageContainer = getMessageContainer(room);
+	    setTimeout(function() {
+		    messageContainer.scrollTop(messageContainer.prop('scrollHeight'))
+	    },5);
+	});
         socket.emit('joined', {room: state.name});
     });
 

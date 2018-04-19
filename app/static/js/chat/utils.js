@@ -23,15 +23,11 @@ function scrollChatToBottom(room, delay) {
                 messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
             }
         } else {
-            //FIXME: Subscribe to onclick events on these and hide/scroll them down
-            //Fixed I believe
-            $('#' + room + ' .chatEntry').notify(
-                'New messages', {
-                    elementPosition: 'top center',
-                    autoHide: false,
-                    style: 'unread',
-                }
-            ).click(function() {
+            $('#' + room + ' .chatEntry').notify('New messages', {
+                elementPosition: 'top center',
+                autoHide: false,
+                style: 'unread',
+            }).parent().find('.notifyjs-wrapper').click(function() {
                 messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
             });
         }
