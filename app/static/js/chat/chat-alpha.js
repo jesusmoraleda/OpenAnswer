@@ -16,7 +16,8 @@ $(document).ready(function () {
     var isIE = /*@cc_on!@*/false || !!document.documentMode;
     if (isIE) {
         var legacy_chat = location.protocol + '//' + document.domain + '/chat/lobby';
-        $('.browser_warning')[0].innerHTML = '<h2>Unsupported browser detected. Please switch to the <a href='+legacy_chat+'>legacy chat</a></h2>';
+        $('.browser_warning')[0].innerHTML = '<h2>Unsupported browser detected.<br>' +
+            '                                     Please switch to one of the following browser: Chrome, Edge, Firefox, Opera</h2>';
         return;
     }
 
