@@ -18,17 +18,22 @@ function scrollChatToBottom(room, delay) {
     setTimeout(function () {
         var messageContainer = getMessageContainer(room);
         if (!messageContainer.prop('pauseScroll')) {
-            messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
-        }
-        else {
+            //QC method of autoscroll
+            if (Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop()) - 150 < messageContainer.height() && Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop()) + 150 > messageContainer.height()) {
+                messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
+            }
+        } else {
             //FIXME: Subscribe to onclick events on these and hide/scroll them down
+            //Fixed I believe
             $('#' + room + ' .chatEntry').notify(
                 'New messages', {
                     elementPosition: 'top center',
                     autoHide: false,
                     style: 'unread',
                 }
-            );
+            ).click(function() {
+                messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
+            });
         }
     }, delay);
 }
