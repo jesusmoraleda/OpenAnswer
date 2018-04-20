@@ -66,6 +66,10 @@ html, body {
     top: 0;
 }
 
+#roomButtons .fas:hover {
+    background: inherit;
+}
+
 .btn-group-vertical .btn {
     margin: 2px 0px 2px 0px; /*top right bottom left*/
     /*By default bootstrap groups only round the top and bottom buttons.
