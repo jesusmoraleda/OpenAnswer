@@ -1,4 +1,5 @@
 function addYoutube(message) {
+	//QC youtube auto-embed
 	var r1 = /youtube.com\/watch.*[?&]v=(.{11})/i;
 	var r2 = /youtu.be\/(.{11})/i;
 	var isYoutube = r1.test(message) || r2.test(message);
@@ -11,6 +12,7 @@ function addYoutube(message) {
 }
 
 function checkScroll(element) {
+	//QC Scroll Variant
 	var delta = Math.floor(element[0].scrollHeight) - Math.floor(element.scrollTop());
 	return (delta - 150 < element.height()) && (delta + 150 > element.height());
 }
