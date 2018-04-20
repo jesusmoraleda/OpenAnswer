@@ -30,12 +30,14 @@ def hashed_static_file(endpoint, values):
             fp = os.path.join(static_folder, filename)
             if os.path.exists(fp):
                 values['_'] = int(os.stat(fp).st_mtime)
-            print('Endpoint', endpoint)
-            print('Values', values)
-            print('Blueprint', blueprint)
-            print('Static folder', static_folder)
-            print('Filepath', fp)
 
+
+# TODO might not be the best idea to invalidate all HTML caches; should revisit
+@app.after_request
+def apply_cache_headers(response):
+    if 'html' in request.headers.get('Accept', ''):
+        response.headers["Cache-Control"] = "no-store, must-revalidate"
+    return response
 
 # Set up the database and login manager
 db = SQLAlchemy(app)
