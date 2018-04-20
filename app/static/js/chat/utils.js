@@ -5,8 +5,9 @@ function addYoutube(message) {
 	var isYoutube = r1.test(message) || r2.test(message);
 	if (isYoutube) {
 		var videoId = RegExp.$1;
-		var message = message + '<br/>';
-		return (message + '<iframe width="160" height="200" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
+		//Rejex from https://stackoverflow.com/questions/2964678/10315969#10315969
+		var message = message.replace(/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/,"");
+		return (message + '<br><div class="embed-responsive embed-responsive-16by9"><iframe width="200" height="160" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe></div>');
 	}
 	return message;
 }
