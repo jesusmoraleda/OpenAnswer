@@ -23,22 +23,6 @@ body {
     font-size: 17px;
 }
 
-#roomButtons {
-    width: 100%; /* Expand buttons to fill room list column */
-}
-
-#roomButtons .btn-group-vertical {
-    position: absolute;
-    top: 0px;
-}
-
-.btn-group-vertical .btn {
-    margin: 2px 0px 2px 0px; /*top right bottom left*/
-    /*By default bootstrap groups only round the top and bottom buttons.
-      Override with important. Other styling didn't work.*/
-    border-radius: 10px !important;
-}
-
 .fa, .fas, .fa-fw {
     font-size: 24px;
     color: gray;
@@ -73,15 +57,10 @@ li #send_whisper_to {
     cursor: pointer;
 }
 
-#roomButtons #chat_username {
-    display: block;
-}
-
 #chat_username {
     max-width: 50%;
     color: #75bcd1;
     background: inherit;
-    display: inline-block;
     font-weight:bold;
 }
 
@@ -138,8 +117,4 @@ li #send_whisper_to {
     transform: translate(50%, 50%);
     position: absolute;
     display: none;
-}
-
-#chatMessage img {
-    cursor: zoom-in;
 }

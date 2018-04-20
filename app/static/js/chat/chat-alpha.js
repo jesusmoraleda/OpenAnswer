@@ -145,7 +145,8 @@ $(document).ready(function () {
     socket.on('status', function (data) {
         var roomElem = $('#chatContent-' + data.room)[0];
         if (roomElem != null) {
-            roomElem.innerHTML = data.online_users.join(' ');
+            //FIXME Do the div setup in JS instead of python
+            roomElem.innerHTML = data.online_users.join('</br>');
         }
     });
 
