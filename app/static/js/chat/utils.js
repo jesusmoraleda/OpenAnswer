@@ -1,3 +1,23 @@
+function addYoutube(message) {
+	//QC youtube auto-embed
+	var r1 = /youtube.com\/watch.*[?&]v=(.{11})/i;
+	var r2 = /youtu.be\/(.{11})/i;
+	var isYoutube = r1.test(message) || r2.test(message);
+	if (isYoutube) {
+		var videoId = RegExp.$1;
+		//Rejex from https://stackoverflow.com/questions/2964678/10315969#10315969
+		var message = message.replace(/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/,"");
+		return (message + '<br><div class="embed-responsive embed-responsive-16by9"><iframe width="200" height="160" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe></div>');
+	}
+	return message;
+}
+
+function checkScroll(element) {
+	//QC Scroll Variant
+	var delta = Math.floor(element[0].scrollHeight) - Math.floor(element.scrollTop());
+	return (delta - 150 < element.height()) && (delta + 150 > element.height());
+}
+
 function show_timestamp() {
     var ts = $.timeago(new Date(this.getAttribute('timestamp')));
     var ts_div = $(this).children("#timestamp");
@@ -19,14 +39,8 @@ function scrollChatToBottom(room, delay, forceScroll) {
     setTimeout(function () {
         var messageContainer = getMessageContainer(room);
         if (!messageContainer.prop('pauseScroll')) {
-            var delta = Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop());
-            if (
-                //forceScroll when we don't care about sizes and just want to scroll down (i.e. on first load)
-                forceScroll || (
-                    //Jay's QC scroll variant
-                    (delta - 150 < messageContainer.height()) && (delta + 150 > messageContainer.height())
-                )
-            ) {
+            //forceScroll when we don't care about sizes and just want to scroll down (i.e. on first load)
+            if (forceScroll || checkScroll(messageContainer)) {
                 messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
             }
         } else {
