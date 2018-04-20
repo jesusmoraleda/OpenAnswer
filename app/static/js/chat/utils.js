@@ -19,14 +19,8 @@ function scrollChatToBottom(room, delay, forceScroll) {
     setTimeout(function () {
         var messageContainer = getMessageContainer(room);
         if (!messageContainer.prop('pauseScroll')) {
-            var delta = Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop());
-            if (
-                //forceScroll when we don't care about sizes and just want to scroll down (i.e. on first load)
-                forceScroll || (
-                    //Jay's QC scroll variant
-                    (delta - 150 < messageContainer.height()) && (delta + 150 > messageContainer.height())
-                )
-            ) {
+            //forceScroll when we don't care about sizes and just want to scroll down (i.e. on first load)
+            if (forceScroll || ultrilliam.checkScroll(messageContainer)) {
                 messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
             }
         } else {
