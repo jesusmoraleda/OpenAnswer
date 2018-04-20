@@ -1,12 +1,13 @@
 from datetime import datetime
 from app import app, db
 from app.oauth import OAuthSignIn
-from flask import flash, g, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, url_for
 from flask_admin.contrib.sqla import ModelView
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
 from . import models
+from .utils.utils import get_remote_addr
 from .utils.decorators.admin import admin_required
 import os
 import logging
