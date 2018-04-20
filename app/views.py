@@ -1,13 +1,13 @@
 from datetime import datetime
-
 from app import app, db
 from app.oauth import OAuthSignIn
-from flask import flash, g, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, url_for
 from flask_admin.contrib.sqla import ModelView
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.sql import exists
 from .forms import SignupForm, PostForm
 from . import models
+from .utils.utils import get_remote_addr
 from .utils.decorators.admin import admin_required
 import os
 import logging
@@ -22,17 +22,8 @@ def before_request():
         db.session.commit()
 
 
-# Taken from https://github.com/mattupstate/flask-security/blob/f3948038ece799267597bf63b00fd02f4e6daedb/flask_security/utils.py#L64
-def _get_remote_addr():
-    if 'X-Forwarded-For' in request.headers:
-        remote_addr = request.headers.getlist('X-Forwarded-For')[0].rpartition(' ')[-1]
-    else:
-        remote_addr = request.remote_addr or 'IP not found'
-    return remote_addr
-
-
 def _login_user_and_record_ip(usr, remember=True):
-    db.session.add(models.UserIp(user_id=usr.id, ip_address=_get_remote_addr(), timestamp=datetime.utcnow()))
+    db.session.add(models.UserIp(user_id=usr.id, ip_address=get_remote_addr(), timestamp=datetime.utcnow()))
     db.session.commit()
     login_user(usr, remember)
 

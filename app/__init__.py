@@ -1,4 +1,5 @@
-from flask import Flask
+import os
+from flask import Flask, request
 from flask_admin import Admin
 from flask_login import LoginManager
 from flask_socketio import SocketIO
@@ -11,6 +12,33 @@ app = Flask(__name__)
 
 app.config.from_object('config')
 app.jinja_env.globals['momentjs'] = MomentJs
+
+
+
+# TODO remember to add rules for nginx once we start serving static content there
+@app.url_defaults
+def hashed_static_file(endpoint, values):
+    if endpoint == 'static':
+        filename = values.get('filename')
+        if filename:
+            blueprint = request.blueprint if '.' not in endpoint else endpoint.rsplit('.', 1)[0]
+
+            # needed for os.path
+            static_folder = app.static_folder
+            if blueprint and app.blueprints[blueprint].static_folder:
+                static_folder = app.blueprints[blueprint].static_folder
+
+            fp = os.path.join(static_folder, filename)
+            if os.path.exists(fp):
+                values['_'] = int(os.stat(fp).st_mtime)
+
+
+# TODO might not be the best idea to invalidate all HTML caches; should revisit
+@app.after_request
+def apply_cache_headers(response):
+    if 'html' in request.headers.get('Accept', ''):
+        response.headers["Cache-Control"] = "no-store, must-revalidate"
+    return response
 
 # Set up the database and login manager
 db = SQLAlchemy(app)

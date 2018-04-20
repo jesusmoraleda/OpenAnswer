@@ -13,13 +13,20 @@ function getMessageContainer(room) {
     return $('#' + room + '.chatWindow .chatMessages')
 }
 
-function scrollChatToBottom(room, delay) {
+function scrollChatToBottom(room, delay, forceScroll) {
     var delay = 500 * delay;
+    forceScroll = typeof forceScroll !== 'undefined' ? forceScroll : false;
     setTimeout(function () {
         var messageContainer = getMessageContainer(room);
         if (!messageContainer.prop('pauseScroll')) {
-            //QC method of autoscroll
-            if (Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop()) - 150 < messageContainer.height() && Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop()) + 150 > messageContainer.height()) {
+            var delta = Math.floor(messageContainer[0].scrollHeight) - Math.floor(messageContainer.scrollTop());
+            if (
+                //forceScroll when we don't care about sizes and just want to scroll down (i.e. on first load)
+                forceScroll || (
+                    //Jay's QC scroll variant
+                    (delta - 150 < messageContainer.height()) && (delta + 150 > messageContainer.height())
+                )
+            ) {
                 messageContainer.scrollTop(messageContainer.prop('scrollHeight'));
             }
         } else {
@@ -43,26 +50,26 @@ function renderMathJax() {
     }
 }
 
-function loadStoredStyleSheet() {
-    var styleSheet = localStorage.getItem('goldenLayoutTheme');
-    var goldenLayoutTheme = $('#goldenLayoutTheme');
-    var chatTheme = $('#chatTheme');
-    var dict = {
-        'light': ["//golden-layout.com/assets/css/goldenlayout-light-theme.css", "/static/styles/chat-light.css"],
-        'dark': ["//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css", "/static/styles/chat-dark.css"],
-        //'soda' : "//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css",
-        //'translucent' : "//golden-layout.com/files/latest/css/goldenlayout-translucent-theme.css"
-    };
-    if ((styleSheet == 'undefined' || styleSheet == undefined)) {
-        goldenLayoutTheme.attr('href', dict['dark'][0]);
-        chatTheme.attr('href', dict['dark'][1]);
-
-    }
-    else {
-        goldenLayoutTheme.attr('href', dict[styleSheet][0]);
-        chatTheme.attr('href', dict[styleSheet][1]);
-    }
-}
+// function loadStoredStyleSheet() {
+//     var styleSheet = localStorage.getItem('goldenLayoutTheme');
+//     var goldenLayoutTheme = $('#goldenLayoutTheme');
+//     var chatTheme = $('#chatTheme');
+//     var dict = {
+//         'light': ["//golden-layout.com/assets/css/goldenlayout-light-theme.css", "/static/styles/chat-light.css"],
+//         'dark': ["//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css", "/static/styles/chat-dark.css"],
+//         //'soda' : "//golden-layout.com/files/latest/css/goldenlayout-dark-theme.css",
+//         //'translucent' : "//golden-layout.com/files/latest/css/goldenlayout-translucent-theme.css"
+//     };
+//     if ((styleSheet == 'undefined' || styleSheet == undefined)) {
+//         goldenLayoutTheme.attr('href', dict['dark'][0]);
+//         chatTheme.attr('href', dict['dark'][1]);
+//
+//     }
+//     else {
+//         goldenLayoutTheme.attr('href', dict[styleSheet][0]);
+//         chatTheme.attr('href', dict[styleSheet][1]);
+//     }
+// }
 
 function enterKeyPressed(e) {
     var code = e.keyCode || e.which;

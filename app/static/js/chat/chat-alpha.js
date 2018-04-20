@@ -8,6 +8,8 @@ $.fn.showBigImage = function(url){
 	imagelarge.show();
 };
 
+var unread = 0;
+
 $(document).ready(function () {
     /**---------------------------IE, Y U MAKE ME DO DIS???-----------------------**/
     // Disabling the alpha chat in IE for now as we have users constantly asking us how to use the site, without realizing that it's actually broken.
@@ -42,11 +44,11 @@ $(document).ready(function () {
     
     $(document).on('click', '#chatMessage img', function() {
 	    $(this).showBigImage();
-    })
+    });
 
     var is_visible = visibility();
-    var unread = 0;
-    loadStoredStyleSheet();
+    /**Disabled because cache needs to go bust**/
+    // loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;
@@ -74,6 +76,23 @@ $(document).ready(function () {
     };
 
     /**--------------------------------Sockets------------------------------------**/
+    var socketAdmin = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/admin');
+
+    socketAdmin.on('all_users_announce', function(data){
+        $.notify(data['message'],
+                 {className: data['type'], globalPosition: 'right top', autoHide: false});
+    });
+
+    socketAdmin.on('all_users_clear_layout', function(){
+        delete(window.localStorage.savedState);
+        $.notify('Your layout has been cleared.',
+                 {className: 'warn', globalPosition: 'right top', autoHide: false});
+    });
+
+    socketAdmin.on('all_users_reload', function(){
+        window.location.reload();
+    });
+
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('connect', function () {
@@ -144,7 +163,8 @@ $(document).ready(function () {
     socket.on('status', function (data) {
         var roomElem = $('#chatContent-' + data.room)[0];
         if (roomElem != null) {
-            roomElem.innerHTML = data.online_users.join(' ');
+            //FIXME Do the div setup in JS instead of python
+            roomElem.innerHTML = data.online_users.join('</br>');
         }
     });
 
@@ -156,8 +176,8 @@ var favicon = new Favico({
     bgColor: '#26436B'
 });
 
+/**------------------------------Golden Layout---------------------------------**/
 function initGoldenLayout(socket, open_rooms, markdown) {
-    /**------------------------------Golden Layout---------------------------------**/
     var config = {
         settings: {showPopoutIcon: false},
         content: [
@@ -188,6 +208,10 @@ function initGoldenLayout(socket, open_rooms, markdown) {
         }
         container.getElement().html(state.text);
         container.on('tab', function (tab) {
+            if (state.name !== 'Room List') {
+                // Scroll down chat when a room is opened
+                scrollChatToBottom(state.name, 1, true);
+            }
             tab
                 .closeElement
                 .off('click') //unbind the current click handler
@@ -199,12 +223,6 @@ function initGoldenLayout(socket, open_rooms, markdown) {
             $.each(data.messages, function (idx, msg) {
                 addMessage(msg, markdown);
             });
-	    //old
-            //scrollChatToBottom(state.name, 0);
-	    var messageContainer = getMessageContainer(room);
-	    setTimeout(function() {
-		    messageContainer.scrollTop(messageContainer.prop('scrollHeight'))
-	    },5);
 	});
         socket.emit('joined', {room: state.name});
     });
@@ -249,8 +267,9 @@ function initalizeRoomList(layout) {
         componentName: 'tab',
         componentState: {
             text: '<div id="roomList">' +
-            '<input class="chatEntry" id="roomListEntry" type="text">' +
-            '</div>',
+                        '<div id="roomButtons" class="btn-group-vertical"></div>' +
+                        '<input class="chatEntry" id="roomListEntry" type="text" placeholder="Join a room...">' +
+                  '</div>',
             name: 'Room List'
         },
         //isClosable: false
@@ -269,7 +288,7 @@ function addRoom(roomName, layout, openChatTab) {
     };
     var roomListElement = $(getRoomListElement(roomName));
 
-    $('#roomList').prepend(roomListElement);
+    $('#roomButtons').prepend(roomListElement);
     layout.createDragSource(roomListElement, newRoom);
     if (openChatTab) {
         layout.root.contentItems[0].addChild(newRoom);

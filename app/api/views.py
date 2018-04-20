@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
-from flask import jsonify
+from flask import jsonify, request, Response
 from flask_login import login_required
-
+from flask_socketio import emit
+from app.utils.decorators.admin import admin_or_localhost_required
 from app import models
 
 from . import api
@@ -43,3 +44,16 @@ def get_user(username=None):
         ).first()
         results = user.to_dict() if user else {}
     return jsonify(results)
+
+
+@api.route('/all_users_admin', methods=['POST'])
+@admin_or_localhost_required
+def all_users_admin():
+    action = request.form['action']
+    if action == 'all_users_announce':
+        data = {'message': request.form['message'],
+                'type': request.form.get('type', 'info')}
+    else:
+        data = {}
+    emit(action, data, namespace='/admin', broadcast=True)
+    return Response(response=action + ' submitted', status=200)

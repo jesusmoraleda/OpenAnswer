@@ -34,7 +34,6 @@ html, body {
     cursor: move;
     border-bottom: 1px solid #000;
     border-top: 1px solid #333;
-    cursor: pointer;
     padding: 10px 5px;
     color: #BBB;
     background: #1a1a1a;
@@ -46,13 +45,46 @@ html, body {
     color: #CCC;
 }
 
+#roomList #chat_username {
+    padding: 5px;
+    display: inline;
+}
+
+#roomButtons {
+    width: 100%; /* Expand buttons to fill room list column */
+}
+
+#roomButtons .btn-group-vertical {
+    position: absolute;
+    top: 0;
+}
+
+#roomButtons .fas {
+    color: #BBB;
+    position: absolute;
+    right: 5%;
+    top: 0;
+}
+
+#roomButtons .fas:hover {
+    background: inherit;
+}
+
+.btn-group-vertical .btn {
+    margin: 2px 0px 2px 0px; /*top right bottom left*/
+    /*By default bootstrap groups only round the top and bottom buttons.
+      Override with important. Other styling didn't work.*/
+    border-radius: 10px !important;
+}
+
 #roomEntry {
+    padding-left: 5px;
+    padding-right: 5px;
     width: inherit;
     position: absolute;
     bottom: 0px;
     color: #BBB;
     background: #1a1a1a;
-    color: #fff;
     box-sizing: border-box;
     border: 1px solid #fff;
     border-radius: 4px;
@@ -63,10 +95,12 @@ html, body {
     height: 100%;
     position: absolute;
     top: 0;
-    left: 0%;
+    left: 0;
 }
 
 .chatEntry {
+    padding-left: 5px;
+    padding-right: 5px;
     position: absolute;
     bottom: 0px;
     color: #BBB;
@@ -105,11 +139,18 @@ html, body {
     background-color: #000000;
     border: 2px solid #555555;
 }
+
 .chatMessages::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
 }
+
 .chatMessages::-webkit-scrollbar-track {
     background-color: #565555;
+}
+
+.chatMessages #chat_username {
+    display: inline-block;
 }
 
 #chatMessage img {
@@ -117,6 +158,7 @@ html, body {
     max-width: 200px;
     width: auto;
     height: auto;
+    cursor: zoom-in;
 }
 
 #chatMessage .emoji{
