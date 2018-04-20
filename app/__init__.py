@@ -1,4 +1,5 @@
 import os
+import hashlib
 from flask import Flask, request
 from flask_admin import Admin
 from flask_login import LoginManager
@@ -13,6 +14,14 @@ app = Flask(__name__)
 app.config.from_object('config')
 app.jinja_env.globals['momentjs'] = MomentJs
 
+
+# https://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 # TODO remember to add rules for nginx once we start serving static content there
 @app.url_defaults
@@ -29,9 +38,12 @@ def hashed_static_file(endpoint, values):
 
             fp = os.path.join(static_folder, filename)
             if os.path.exists(fp):
-                values['_'] = int(os.stat(fp).st_mtime)
+                values['_'] = md5(fp)
+                print(fp, md5(fp))
 
-
+#96c7f4078ad8fa7f953d052c1e76dec8
+#96c7f4078ad8fa7f953d052c1e76dec8
+# 5129b11e5a3aa636c0aafbc6c5075615
 # TODO might not be the best idea to invalidate all HTML caches; should revisit
 @app.after_request
 def apply_cache_headers(response):
