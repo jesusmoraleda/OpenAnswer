@@ -146,7 +146,7 @@ $(document).ready(function () {
         var roomElem = $('#chatContent-' + data.room)[0];
         if (roomElem != null) {
             //FIXME Do the div setup in JS instead of python
-            roomElem.innerHTML = data.online_users.join(' ');
+            roomElem.innerHTML = data.online_users.join('</br>');
         }
     });
 

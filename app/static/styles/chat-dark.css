@@ -45,6 +45,26 @@ html, body {
     color: #CCC;
 }
 
+#roomButtons {
+    width: 100%; /* Expand buttons to fill room list column */
+}
+
+#roomButtons .btn-group-vertical {
+    position: absolute;
+    top: 0px;
+}
+
+.btn-group-vertical .btn {
+    margin: 2px 0px 2px 0px; /*top right bottom left*/
+    /*By default bootstrap groups only round the top and bottom buttons.
+      Override with important. Other styling didn't work.*/
+    border-radius: 10px !important;
+}
+
+#roomButtons #chat_username {
+    /*display: block;*/
+}
+
 #roomEntry {
     padding-left: 5px;
     padding-right: 5px;
@@ -120,6 +140,7 @@ html, body {
     max-width: 200px;
     width: auto;
     height: auto;
+    cursor: zoom-in;
 }
 
 #chatMessage .emoji{
