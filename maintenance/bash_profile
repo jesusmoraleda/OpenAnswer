@@ -1,0 +1,31 @@
+### Some useful functions for installing updates
+
+function rld() {
+  ### Pull the changes from the repo
+  echo 'Pulling changes from git'
+  cd ~/OpenAnswer
+  git pull
+  ### Identify and kill the processes
+  pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
+  for p in $pids;
+  do
+    echo "Killing process $p"
+    kill -9 $p
+  done
+  echo 'Gunicorn processes killed - activating virtual environment'
+  source ve/bin/activate
+  pip install -r requirements.txt
+  ### Start gunicorn back up
+  echo 'Starting gunicorn'
+  gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
+}
+
+function killunicorns() {
+  ### Identify and kill the processes
+  pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
+  for p in $pids;
+  do
+    echo "Killing process $p"
+    kill -9 $p
+  done
+}
