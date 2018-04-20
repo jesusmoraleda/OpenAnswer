@@ -45,6 +45,11 @@ html, body {
     color: #CCC;
 }
 
+#roomList #chat_username {
+    padding: 5px;
+    display: inline;
+}
+
 #roomButtons {
     width: 100%; /* Expand buttons to fill room list column */
 }
@@ -59,10 +64,6 @@ html, body {
     /*By default bootstrap groups only round the top and bottom buttons.
       Override with important. Other styling didn't work.*/
     border-radius: 10px !important;
-}
-
-#roomButtons #chat_username {
-    /*display: block;*/
 }
 
 #roomEntry {
@@ -127,12 +128,18 @@ html, body {
     background-color: #000000;
     border: 2px solid #555555;
 }
+
 .chatMessages::-webkit-scrollbar {
     width: 7px;
     height: 7px;
 }
+
 .chatMessages::-webkit-scrollbar-track {
     background-color: #565555;
+}
+
+.chatMessages #chat_username {
+    display: inline-block;
 }
 
 #chatMessage img {

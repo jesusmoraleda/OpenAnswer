@@ -61,7 +61,6 @@ li #send_whisper_to {
     max-width: 50%;
     color: #75bcd1;
     background: inherit;
-    display: inline-block;
     font-weight:bold;
 }
 
