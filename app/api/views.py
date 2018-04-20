@@ -46,9 +46,9 @@ def get_user(username=None):
     return jsonify(results)
 
 
-@api.route('/all_user_admin', methods=['POST'])
+@api.route('/all_users_admin', methods=['POST'])
 @admin_or_localhost_required
-def all_user_admin():
+def all_users_admin():
     action = request.form['action']
     if action == 'all_users_announce':
         data = {'message': request.form['message'],
