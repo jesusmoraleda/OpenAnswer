@@ -79,7 +79,7 @@ $(document).ready(function () {
 
     socketBroadcast.on('announcement', function(data){
         $.notify(data['message'],
-                 {className: data['type'], globalPosition: 'right top'});
+                 {className: data['type'], globalPosition: 'right top', autoHide: false});
     });
 
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
