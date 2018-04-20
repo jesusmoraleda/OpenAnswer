@@ -75,11 +75,21 @@ $(document).ready(function () {
     };
 
     /**--------------------------------Sockets------------------------------------**/
-    var socketBroadcast = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/broadcast');
+    var socketAdmin = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/admin');
 
-    socketBroadcast.on('announcement', function(data){
+    socketAdmin.on('all_users_announce', function(data){
         $.notify(data['message'],
                  {className: data['type'], globalPosition: 'right top', autoHide: false});
+    });
+
+    socketAdmin.on('all_users_clear_layout', function(){
+        delete(window.localStorage.savedState);
+        $.notify('Your layout has been cleared.',
+                 {className: 'warn', globalPosition: 'right top', autoHide: false});
+    });
+
+    socketAdmin.on('all_users_reload', function(){
+        window.location.reload();
     });
 
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
