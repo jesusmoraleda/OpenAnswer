@@ -47,7 +47,8 @@ $(document).ready(function () {
     });
 
     var is_visible = visibility();
-    loadStoredStyleSheet();
+    /**Disabled because cache needs to go bust**/
+    // loadStoredStyleSheet();
     /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
     var twemoji = window.twemoji;

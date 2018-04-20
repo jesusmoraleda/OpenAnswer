@@ -14,6 +14,7 @@ app.config.from_object('config')
 app.jinja_env.globals['momentjs'] = MomentJs
 
 
+
 # TODO remember to add rules for nginx once we start serving static content there
 @app.url_defaults
 def hashed_static_file(endpoint, values):

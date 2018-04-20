@@ -56,7 +56,14 @@ html, body {
 
 #roomButtons .btn-group-vertical {
     position: absolute;
-    top: 0px;
+    top: 0;
+}
+
+#roomButtons .fas {
+    color: #BBB;
+    position: absolute;
+    right: 5%;
+    top: 0;
 }
 
 .btn-group-vertical .btn {
