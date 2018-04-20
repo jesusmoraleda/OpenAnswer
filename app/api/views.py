@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
-from flask import jsonify
+from flask import jsonify, request, Response
 from flask_login import login_required
-
+from flask_socketio import emit
+from app.utils.decorators.admin import admin_required, admin_or_localhost_required
+from app.utils.utils import get_remote_addr
 from app import models
 
 from . import api
@@ -43,3 +45,12 @@ def get_user(username=None):
         ).first()
         results = user.to_dict() if user else {}
     return jsonify(results)
+
+
+@api.route('/broadcast', methods=['POST'])
+@admin_or_localhost_required
+def broadcast():
+    message = request.form['message']
+    announcement_type = request.form.get('type', 'info')
+    emit('announcement', {'message': message, 'type': announcement_type}, namespace='/broadcast', broadcast=True)
+    return Response(response=message, status=200)

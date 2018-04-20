@@ -75,6 +75,13 @@ $(document).ready(function () {
     };
 
     /**--------------------------------Sockets------------------------------------**/
+    var socketBroadcast = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/broadcast');
+
+    socketBroadcast.on('announcement', function(data){
+        $.notify(data['message'],
+                 {className: data['type'], globalPosition: 'right top', autoHide: false});
+    });
+
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/chat');
 
     socket.on('connect', function () {
