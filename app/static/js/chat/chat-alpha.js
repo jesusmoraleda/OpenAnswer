@@ -268,7 +268,7 @@ function initalizeRoomList(layout) {
         componentState: {
             text: '<div id="roomList">' +
                         '<div id="roomButtons" class="btn-group-vertical"></div>' +
-                        '<input class="chatEntry" id="roomListEntry" type="text" placeholder="Join a room...">' +
+                        '<input class="chatEntry" id="roomListEntry" type="text" placeholder="Create or Join a room...">' +
                   '</div>',
             name: 'Room List'
         },
