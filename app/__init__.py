@@ -4,6 +4,7 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from .utils.markup.momentjs import MomentJs
 
@@ -42,6 +43,8 @@ def apply_cache_headers(response):
 
 # Set up the database and login manager
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 lm = LoginManager(app)
 lm.login_view = 'home'
 
