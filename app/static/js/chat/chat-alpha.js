@@ -308,8 +308,11 @@ function addRoom(roomName, layout, openChatTab) {
 
 /**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
-    socket.emit('left', {room: tab.contentItem.config.title});
+    var roomName = tab.contentItem.config.title;
+    socket.emit('left', {room: roomName});
     tab.contentItem.remove();
+    $('#chatContent-' + roomName).remove()
+    $('.btn.btn-dark.btn-sm[data-target="#chatContent-' + roomName + '"]').remove()
 }
 
 function addToRoomList(e, roomEntry, layout) {
