@@ -304,6 +304,7 @@ function addRoom(roomName, layout, openChatTab) {
         }
         this.lastScroll = currentScroll;
     });
+    $('.chatEntry#' + roomName).focus();
 }
 
 /**------------------------------Chat Windows---------------------------------**/
