@@ -289,7 +289,7 @@ function addRoom(roomName, layout, openChatTab) {
     var roomListElement = $(getRoomListElement(roomName));
 
     $('#roomButtons').prepend(roomListElement);
-    layout.createDragSource(roomListElement, newRoom);
+    // layout.createDragSource(roomListElement, newRoom);
     if (openChatTab) {
         layout.root.contentItems[0].addChild(newRoom);
     }
