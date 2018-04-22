@@ -15,7 +15,6 @@ app.config.from_object('config')
 app.jinja_env.globals['momentjs'] = MomentJs
 
 
-
 # TODO remember to add rules for nginx once we start serving static content there
 @app.url_defaults
 def hashed_static_file(endpoint, values):
@@ -71,5 +70,9 @@ app.register_blueprint(chat_blueprint)
 # Api
 from app.api import api as api_blueprint
 app.register_blueprint(api_blueprint)
+
+# Admin console
+from app.admin_console import admin_console as admin_console_blueprint
+app.register_blueprint(admin_console_blueprint)
 
 
