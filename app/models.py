@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
     ips = db.relationship('UserIp', backref='owner', lazy='dynamic')
     last_seen = db.Column(db.DateTime)
     beta = db.Column(db.Boolean, default=False)
+    is_banned = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return self.username
@@ -25,6 +26,7 @@ class User(UserMixin, db.Model):
             'is_admin': self.is_admin,
             'last_seen': self.last_seen,
             'beta': self.beta,
+            'is_banned': self.is_banned,
             'gravatar': self.gravatar(60),
         }
 

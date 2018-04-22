@@ -312,8 +312,8 @@ function chatWindowClosed(tab, socket) {
     var roomName = tab.contentItem.config.title;
     socket.emit('left', {room: roomName});
     tab.contentItem.remove();
-    $('#chatContent-' + roomName).remove()
-    $('.btn.btn-dark.btn-sm[data-target="#chatContent-' + roomName + '"]').remove()
+    $('#chatContent-' + roomName).remove();
+    $('.btn.btn-dark.btn-sm[data-target="#chatContent-' + roomName + '"]').remove();
 }
 
 function addToRoomList(e, roomEntry, layout) {

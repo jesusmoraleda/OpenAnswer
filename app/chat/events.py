@@ -3,13 +3,15 @@ from datetime import datetime
 from email import utils
 from flask import request
 from flask_login import current_user
-from flask_socketio import emit, join_room, leave_room
+import flask_socketio
 from app import socketio, db
 from app.models import Message
 
 # OnlineUsers.sockets_to_usernames maps socket ids to usernames.
 # PRIVATE_ROOMS maps usernames to socket ids.
 # I think it's okay to keep both so we can quickly identify which "SID"s a user is in, and which users are in a given "SID"
+
+
 PRIVATE_ROOMS = defaultdict(set)
 
 
@@ -56,6 +58,11 @@ class OnlineUsers:
 ONLINE_USERS = OnlineUsers()
 
 
+@socketio.on('connect', namespace='/chat')
+def connect():
+    return not current_user.is_banned
+
+
 @socketio.on('joined', namespace='/chat')
 def joined(data):
     """Sent by clients when they enter a room.
@@ -66,15 +73,15 @@ def joined(data):
     # FIXME: FIX SPECIAL ROOM LIST TREATMENT!!!!! Why did I write this comment?
     sid = request.sid
     if not current_user.is_anonymous:
-        join_room(sid)
-        join_room(room)
+        flask_socketio.join_room(sid)
+        flask_socketio.join_room(room)
         ONLINE_USERS.joined(sid, room)
 
 
 @socketio.on('left', namespace='/chat')
 def left(data):
     room = data['room']
-    leave_room(room)
+    flask_socketio.leave_room(room)
     ONLINE_USERS.disconnected(request.sid, room)
 
 
@@ -93,7 +100,7 @@ def receive(data):
     m = Message(user_id=current_user.id, content=content, room=room, namespace=namespace)
     db.session.add(m)
     db.session.commit()
-    emit('received',
+    flask_socketio.emit('received',
          {
              'content': content,
              'username': username,
@@ -115,7 +122,7 @@ def receive_whisper(data):
         content = 'Not delivered: ' + content
     else:
         for room in recipient_rooms:
-            emit('received',
+            flask_socketio.emit('received',
                  {
                      'content': content,
                      'username': username,
@@ -125,7 +132,7 @@ def receive_whisper(data):
 
     for room in my_rooms:
         # Also emit to myself to see whether the message was delivered or not
-        emit('received',
+        flask_socketio.emit('received',
              {
                  'content': content,
                  'username': username,
@@ -135,7 +142,8 @@ def receive_whisper(data):
 
 
 def update_online_userlist(room):
+    # FIXME: Change to broadcast?
     online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-    emit('status', {'online_users': online, 'room': room}, room=room)
+    flask_socketio.emit('status', {'online_users': online, 'room': room}, room=room)
     # Also update the list of users in Room List
-    emit('status', {'online_users': online, 'room': room}, room='Room List')
+    flask_socketio.emit('status', {'online_users': online, 'room': room}, room='Room List')
