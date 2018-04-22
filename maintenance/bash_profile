@@ -4,8 +4,8 @@ function rld() {
   echo 'Announcing changes' $(announce)
   ### Pull the changes from the repo
   echo 'Pulling changes from git'
-  cd ~/Projects/OpenAnswer
-  git pull origin dev 
+  cd $OPENANSWER_PATH
+  git pull origin $GIT_BRANCH
   ### Identify and kill the processes
   pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
   for p in $pids;
@@ -26,12 +26,12 @@ function migration_rld() {
   echo 'Announcing changes' $(announce)
   ### Pull the changes from the repo
   echo 'Pulling changes from git'
-  cd ~/Projects/OpenAnswer
-  git pull origin dev 
+  cd $OPENANSWER_PATH
+  git pull origin $GIT_BRANCH
   ### Identify and kill the processes
   pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
   for p in $pids;
-  do  
+  do
     echo "Killing process $p"
     kill -9 $p
   done
@@ -43,7 +43,7 @@ function migration_rld() {
   ### Create a backup directory
   echo 'Creating backup directories'
   # Double quotes are needed for eval
-  backup_path="../db_backups/$(date +%Y-%m-%d)/"
+  backup_path="../db_backups/$(date +%Y-%m-%d)"
   mkdir -p $backup_path
 
   ### Backup the db
@@ -83,3 +83,4 @@ function killunicorns() {
 }
 
 alias d='deactivate'
+
