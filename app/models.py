@@ -47,7 +47,18 @@ class UserIp(db.Model):
 
 @lm.user_loader
 def load_user(user_id):
+    # FIXME: memoize this (maybe with expiry)
     u = User.query.get(int(user_id))
+    # https://flask-login.readthedocs.io/en/latest/#how-it-works
+    # You will need to provide a user_loader callback.
+    # This callback is used to reload the user object from the user ID stored in the session.
+    # It should take the unicode ID of a user, and return the corresponding user object.
+    # It should return None (not raise an exception) if the ID is not valid.
+    # (In that case, the ID will manually be removed from the session and processing will continue.).
+    # If the user is banned, we don't want to authenticate the user.
+    # Returning None leaves them unauthenticated.
+    if u.is_banned:
+        return None
     return u
 
 
