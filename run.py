@@ -3,4 +3,5 @@ from app import app, socketio
 
 if __name__ == '__main__':
     socketio.run(app)
-    app.run(debug=True)
+    # We're okay manually restarting the server during the development for now
+    app.run(debug=False)
