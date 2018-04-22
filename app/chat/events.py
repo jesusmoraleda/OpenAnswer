@@ -60,7 +60,12 @@ ONLINE_USERS = OnlineUsers()
 
 @socketio.on('connect', namespace='/chat')
 def connect():
-    return not current_user.is_banned
+    return current_user.is_authenticated
+
+
+@socketio.on('reconnect', namespace='/chat')
+def reconnect():
+    return current_user.is_authenticated
 
 
 @socketio.on('joined', namespace='/chat')
@@ -88,11 +93,15 @@ def left(data):
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
     sid = request.sid
-    ONLINE_USERS.disconnected(sid)
+    if current_user.is_authenticated:
+        ONLINE_USERS.disconnected(sid)
 
 
 @socketio.on('sent', namespace='/chat')
 def receive(data):
+    # Banned users aren't authenticated, current_user.is_banned check is redundant.
+    if not current_user.is_authenticated:
+        return flask_socketio.disconnect()
     content = data['msg']
     room = data['room']
     username = current_user.username
