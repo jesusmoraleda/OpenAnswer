@@ -1,24 +1,76 @@
 ### Some useful functions for installing updates
 
 function rld() {
+  echo 'Announcing changes' $(announce)
   ### Pull the changes from the repo
   echo 'Pulling changes from git'
-  cd ~/OpenAnswer
-  git pull
+  cd ~/Projects/OpenAnswer
+  git pull origin dev 
   ### Identify and kill the processes
   pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
   for p in $pids;
-  do
+  do  
     echo "Killing process $p"
     kill -9 $p
   done
   echo 'Gunicorn processes killed - activating virtual environment'
   source ve/bin/activate
+  echo 'Installing dependencies'
   pip install -r requirements.txt
   ### Start gunicorn back up
   echo 'Starting gunicorn'
   gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
 }
+
+function migration_rld() {
+  echo 'Announcing changes' $(announce)
+  ### Pull the changes from the repo
+  echo 'Pulling changes from git'
+  cd ~/Projects/OpenAnswer
+  git pull origin dev 
+  ### Identify and kill the processes
+  pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
+  for p in $pids;
+  do  
+    echo "Killing process $p"
+    kill -9 $p
+  done
+  echo 'Gunicorn processes killed - activating virtual environment'
+  source ve/bin/activate
+  echo 'Installing dependencies'
+  pip install -r requirements.txt
+
+  ### Create a backup directory
+  echo 'Creating backup directories'
+  # Double quotes are needed for eval
+  backup_path="../db_backups/$(date +%Y-%m-%d)/"
+  mkdir -p $backup_path
+
+  ### Backup the db
+  echo 'Backing up the database'
+  new_path="$backup_path/$(date +%s)_app.db"
+  cp app.db $new_path
+  echo "DB backed up to $new_path"
+
+  ### Migrate the db
+  echo 'Migrating the database'
+  flask db upgrade
+  echo 'Migrated the database'
+
+  ### Start gunicorn back up
+  echo 'Starting gunicorn'
+  gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
+}
+
+function announce() {
+  echo "Sending an announcement"
+  for T in 10 9 8 7 6 5 4 3 2 1
+  do
+     wget 127.0.0.1:5000/all_users_admin --post-data "action=all_users_announce&message=Restarting the server in $T&type=info" -O /dev/null
+     sleep 1
+  done
+}
+
 
 function killunicorns() {
   ### Identify and kill the processes
@@ -29,3 +81,5 @@ function killunicorns() {
     kill -9 $p
   done
 }
+
+alias d='deactivate'
