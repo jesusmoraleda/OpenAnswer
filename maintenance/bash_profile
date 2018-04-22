@@ -71,7 +71,6 @@ function announce() {
   done
 }
 
-
 function killunicorns() {
   ### Identify and kill the processes
   pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
@@ -80,6 +79,13 @@ function killunicorns() {
     echo "Killing process $p"
     kill -9 $p
   done
+}
+
+function reviveunicorns() {
+  echo "Reviving unicorns"
+  cd $OPENANSWER_PATH
+  source ve/bin/activate
+  gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
 }
 
 alias d='deactivate'
