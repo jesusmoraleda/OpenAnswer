@@ -180,6 +180,9 @@ class AdminModelView(ModelView):
     def is_accessible(self):
         return g.user.is_authenticated and g.user.is_admin
 
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('home'))
+
 
 class AdminUserModelView(AdminModelView):
     column_editable_list = ['username']
