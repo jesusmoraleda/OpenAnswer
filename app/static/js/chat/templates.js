@@ -14,12 +14,12 @@ function getChatRoomTemplate(roomName) {
 function getMessageTemplate(msg, markdown) {
     var sender_username = msg.username;
     var messageTemplate =
-        '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
-            '<div id="chat_username" user="' + sender_username +'">' + sender_username + ':</div> ' +
-            addYoutube(
-                markdown.renderInline(msg.content)
-            ) +
-        '<div id="timestamp"></div></li>';
+          '<li id="chatMessage" timestamp="' + msg.timestamp + '">'
+        + '<div id="chat_username" user="' + sender_username + '">' 
+        + sender_username 
+        + ':</div> '
+        + markdown.renderInline(addYoutube(msg.content))
+        + '<div id="timestamp"></div></li>';
     return messageTemplate;
 }
 
