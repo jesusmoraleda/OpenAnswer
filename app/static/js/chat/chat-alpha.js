@@ -268,7 +268,7 @@ function initalizeRoomList(layout) {
         componentState: {
             text: '<div id="roomList">' +
                         '<div id="roomButtons" class="btn-group-vertical"></div>' +
-                        '<input class="chatEntry" id="roomListEntry" type="text" placeholder="Join a room...">' +
+                        '<input class="chatEntry" id="roomListEntry" type="text" placeholder="Create or Join a room...">' +
                   '</div>',
             name: 'Room List'
         },
@@ -289,7 +289,7 @@ function addRoom(roomName, layout, openChatTab) {
     var roomListElement = $(getRoomListElement(roomName));
 
     $('#roomButtons').prepend(roomListElement);
-    layout.createDragSource(roomListElement, newRoom);
+    // layout.createDragSource(roomListElement, newRoom);
     if (openChatTab) {
         layout.root.contentItems[0].addChild(newRoom);
     }
@@ -304,12 +304,16 @@ function addRoom(roomName, layout, openChatTab) {
         }
         this.lastScroll = currentScroll;
     });
+    $('.chatEntry#' + roomName).focus();
 }
 
 /**------------------------------Chat Windows---------------------------------**/
 function chatWindowClosed(tab, socket) {
-    socket.emit('left', {room: tab.contentItem.config.title});
+    var roomName = tab.contentItem.config.title;
+    socket.emit('left', {room: roomName});
     tab.contentItem.remove();
+    $('#chatContent-' + roomName).remove();
+    $('.btn.btn-dark.btn-sm[data-target="#chatContent-' + roomName + '"]').remove();
 }
 
 function addToRoomList(e, roomEntry, layout) {

@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from hashlib import md5
 from app import db, lm
@@ -14,6 +15,7 @@ class User(UserMixin, db.Model):
     ips = db.relationship('UserIp', backref='owner', lazy='dynamic')
     last_seen = db.Column(db.DateTime)
     beta = db.Column(db.Boolean, default=False)
+    is_banned = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return self.username
@@ -25,6 +27,7 @@ class User(UserMixin, db.Model):
             'is_admin': self.is_admin,
             'last_seen': self.last_seen,
             'beta': self.beta,
+            'is_banned': self.is_banned,
             'gravatar': self.gravatar(60),
         }
 
@@ -45,7 +48,18 @@ class UserIp(db.Model):
 
 @lm.user_loader
 def load_user(user_id):
+    # FIXME: memoize this (maybe with expiry)
     u = User.query.get(int(user_id))
+    # https://flask-login.readthedocs.io/en/latest/#how-it-works
+    # You will need to provide a user_loader callback.
+    # This callback is used to reload the user object from the user ID stored in the session.
+    # It should take the unicode ID of a user, and return the corresponding user object.
+    # It should return None (not raise an exception) if the ID is not valid.
+    # (In that case, the ID will manually be removed from the session and processing will continue.).
+    # If the user is banned, we don't want to authenticate the user.
+    # Returning None leaves them unauthenticated.
+    if u and u.is_banned:
+        return None
     return u
 
 
@@ -73,8 +87,14 @@ class Message(db.Model):
 
     def to_dict(self):
         # FIXME: Is this how backrefs are supposed to work? Seems like a waste to query user.. investigate
-        user = User.query.get(self.user_id)
-        username = user.username if user else '!id %s' % self.user_id
+        try:
+            user = User.query.get(self.user_id)
+        except TypeError:
+            logging.debug(
+                'Could not look up user_id {user_id}. The user must have been deleted.'.format(user_id=self.user_id)
+            )
+            user = None
+        username = user.username if user else '_missing_user_'
         return {
             'id': self.id,
             'timestamp': self.timestamp,

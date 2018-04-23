@@ -4,6 +4,7 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from .utils.markup.momentjs import MomentJs
 
@@ -12,7 +13,6 @@ app = Flask(__name__)
 
 app.config.from_object('config')
 app.jinja_env.globals['momentjs'] = MomentJs
-
 
 
 # TODO remember to add rules for nginx once we start serving static content there
@@ -42,6 +42,8 @@ def apply_cache_headers(response):
 
 # Set up the database and login manager
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 lm = LoginManager(app)
 lm.login_view = 'home'
 
@@ -68,5 +70,9 @@ app.register_blueprint(chat_blueprint)
 # Api
 from app.api import api as api_blueprint
 app.register_blueprint(api_blueprint)
+
+# Admin console
+from app.admin_console import admin_console as admin_console_blueprint
+app.register_blueprint(admin_console_blueprint)
 
 
