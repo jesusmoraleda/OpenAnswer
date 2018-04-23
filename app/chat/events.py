@@ -40,7 +40,12 @@ class OnlineUsers:
         # Remove them from those rooms so when the status is updated, you don't see them there
         self.sockets_to_rooms.pop(sid, None)
         self.sockets_to_usernames.pop(sid, None)
-        PRIVATE_ROOMS[current_user.username].remove(sid)
+        # FIXME get rid of try catch block
+        try:
+            PRIVATE_ROOMS[current_user.username].remove(sid)
+        except KeyError:
+            logging.debug("{username} has no open rooms".format(username=current_user.username))
+        
         # Update the statuses for the rooms that the user disconnected from
         for room in old_rooms:
             update_online_userlist(room)
