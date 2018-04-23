@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from hashlib import md5
 from app import db, lm
@@ -57,7 +58,7 @@ def load_user(user_id):
     # (In that case, the ID will manually be removed from the session and processing will continue.).
     # If the user is banned, we don't want to authenticate the user.
     # Returning None leaves them unauthenticated.
-    if u.is_banned:
+    if u and u.is_banned:
         return None
     return u
 
@@ -86,8 +87,14 @@ class Message(db.Model):
 
     def to_dict(self):
         # FIXME: Is this how backrefs are supposed to work? Seems like a waste to query user.. investigate
-        user = User.query.get(self.user_id)
-        username = user.username if user else '!id %s' % self.user_id
+        try:
+            user = User.query.get(self.user_id)
+        except TypeError:
+            logging.debug(
+                'Could not look up user_id {user_id}. The user must have been deleted.'.format(user_id=self.user_id)
+            )
+            user = None
+        username = user.username if user else '_missing_user_'
         return {
             'id': self.id,
             'timestamp': self.timestamp,
