@@ -72,6 +72,16 @@ body {
     overflow-y: scroll;
 }
 
+#roomButtons button.collapsed i {
+    transform: rotate(0deg);
+    transition: 500ms transform;
+}
+
+#roomButtons button:not(.collapsed) i{
+    transform: rotate(180deg);
+    transition: 500ms transform;
+}
+
 /*MathJax generated output - inspected the element to discover the class name*/
 /*#chat_messages .mjx-chtml {*/
     /*display: inline-block;*/
