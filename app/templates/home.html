@@ -3,7 +3,6 @@
 
 {% block content %}
     {% if current_user.is_anonymous %}
-        </br> <!-- FIXME: Because css won't assign margins properly -->
         <h1 style="font-family: Arial">Please Register or Sign in via the below:</h1>
         <div class="text-left">
              {# <a href="{{ url_for('oauth_authorize', provider='facebook') }}" class="fa fa-facebook"></a> #}

@@ -16,6 +16,7 @@ body {
 }
 
 .navbar .navbar-toggler {
+    /*Edit this for the hamburger toggle menu*/
     /*background-color: rgb(205, 200, 206);*/
 }
 
@@ -32,7 +33,6 @@ body {
 
 .fa:hover, .fas:hover, .fab:hover {
     opacity: 0.7;
-    background-color: rgb(205, 200, 206);
 }
 
 
