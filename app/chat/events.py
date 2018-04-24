@@ -88,6 +88,11 @@ class OnlineUsers:
             {self.sockets_to_usernames[sid]: (room, sid)} for (sid, room) in self.sockets_to_rooms.items()
         ]
 
+    def push_online_user_updates(self, rooms):
+        for room in rooms:
+            # FIXME: Change to broadcast, also get rid of divs in here.
+            online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
+            flask_socketio.emit('status', {'online_users': online, 'room': room}, room=room)
 
 ONLINE_USERS = OnlineUsers()
 
@@ -184,9 +189,3 @@ def receive_whisper(data):
                  'timestamp': utils.format_datetime(ts),
              }, room=room)
 
-
-def push_online_user_updates(rooms):
-    for room in rooms:
-        # FIXME: Change to broadcast, also get rid of divs in here.
-        online = ['<div id="chat_username" user="%s">%s</div>' % (u, u) for u in ONLINE_USERS.get_users(room)]
-        flask_socketio.emit('status', {'online_users': online, 'room': room}, room=room)
