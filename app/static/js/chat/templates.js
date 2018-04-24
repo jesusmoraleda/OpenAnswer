@@ -14,12 +14,12 @@ function getChatRoomTemplate(roomName) {
 function getMessageTemplate(msg, markdown) {
     var sender_username = msg.username;
     var messageTemplate =
-        '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
-            '<div id="chat_username" user="' + sender_username +'">' + sender_username + ':</div> ' +
-            addYoutube(
-                markdown.renderInline(msg.content)
-            ) +
-        '<div id="timestamp"></div></li>';
+          '<li id="chatMessage" timestamp="' + msg.timestamp + '">' +
+              '<div id="chat_username" user="' + sender_username + '">' +
+                  sender_username + ':' +
+              '</div> ' +
+              addYoutube(markdown.renderInline(msg.content)) +
+          '<div id="timestamp"></div></li>';
     return messageTemplate;
 }
 
@@ -29,10 +29,9 @@ function getRoomListElement(roomName) {
                 'type="button"' +
                 'data-toggle="collapse"' +
                 'data-target="#chatContent-' + roomName + '">' +
-            roomName +
-        '<i class="fas fa-chevron-circle-down"></i>' +
+            '<i class="fas fa-angle-down"></i>' + roomName +
         '</button>' +
-        '<div id="chatContent-' + roomName + '" class="collapse in">' +
+        '<div id="chatContent-' + roomName + '" class="collapse show">' +
             'Online:' +
         '</div>';
     return roomListElement

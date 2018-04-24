@@ -30,20 +30,21 @@ html, body {
     background: #222;
 }
 
-#roomList li {
-    cursor: move;
-    border-bottom: 1px solid #000;
-    border-top: 1px solid #333;
-    padding: 10px 5px;
-    color: #BBB;
-    background: #1a1a1a;
-    font: 12px Arial, sans-serif;
-}
+/* Was needed when rooms were draggable */
+/*#roomList li {*/
+    /*cursor: move;*/
+    /*border-bottom: 1px solid #000;*/
+    /*border-top: 1px solid #333;*/
+    /*padding: 10px 5px;*/
+    /*color: #BBB;*/
+    /*background: #1a1a1a;*/
+    /*font: 12px Arial, sans-serif;*/
+/*}*/
 
-#roomList li:hover {
-    background: #111;
-    color: #CCC;
-}
+/*#roomList li:hover {*/
+    /*background: #111;*/
+    /*color: #CCC;*/
+/*}*/
 
 #roomList #chat_username {
     padding: 5px;
@@ -60,21 +61,29 @@ html, body {
 }
 
 #roomButtons .fas {
-    color: #BBB;
+    color: #6f6f6f;
     position: absolute;
-    right: 5%;
+    left: 0;
     top: 0;
 }
 
 #roomButtons .fas:hover {
-    background: inherit;
+    background-color: inherit;
 }
 
 .btn-group-vertical .btn {
-    margin: 2px 0px 2px 0px; /*top right bottom left*/
+    margin: 1px 0px 1px 0px; /*top right bottom left*/
     /*By default bootstrap groups only round the top and bottom buttons.
-      Override with important. Other styling didn't work.*/
-    border-radius: 10px !important;
+      Override with important. Other styling didn't work.
+      border-radius is unused, but keeping here for reference.*/
+    /*border-radius: 0px !important;*/
+    border-width: 0px;
+    color: rgb(162, 162, 162);
+    background-color: #1a1a1a;
+}
+
+.btn-group-vertical .btn:hover {
+    opacity: 0.7;
 }
 
 #roomEntry {
@@ -87,7 +96,7 @@ html, body {
     background: #1a1a1a;
     box-sizing: border-box;
     border: 1px solid #fff;
-    border-radius: 4px;
+    border-radius: 0px;
 }
 
 #layoutContainer {
@@ -108,8 +117,8 @@ html, body {
     width: 100%;
     display: block;
     box-sizing: border-box;
-    border: 1px solid #BBB;
-    border-radius: 4px;
+    border: 1px solid #939393;
+    border-radius: 2px;
 }
 
 .chatMessages {
@@ -117,6 +126,7 @@ html, body {
     bottom: 25px;
     display: block;
     overflow-y: auto;
+    /*Removing height below breaks chat scroll*/
     height: calc(100% - 25px);
     width: 100%;
     position: absolute;
@@ -177,4 +187,14 @@ html, body {
     background: inherit;
     display: none;
     float: right;
+}
+
+#roomButtons button.collapsed i {
+    transform: rotate(-90deg);
+    transition: 100ms transform;
+}
+
+#roomButtons button:not(.collapsed) i{
+    transform: rotate(0deg);
+    transition: 100ms transform;
 }
