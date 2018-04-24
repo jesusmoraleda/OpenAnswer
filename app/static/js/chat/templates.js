@@ -18,7 +18,7 @@ function getMessageTemplate(msg, markdown) {
         + '<div id="chat_username" user="' + sender_username + '">' 
         + sender_username 
         + ':</div> '
-        + markdown.renderInline(addYoutube(msg.content))
+        + addYoutube(markdown.renderInline(msg.content)
         + '<div id="timestamp"></div></li>';
     return messageTemplate;
 }
