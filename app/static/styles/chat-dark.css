@@ -178,3 +178,13 @@ html, body {
     display: none;
     float: right;
 }
+
+#roomButtons button.collapsed i {
+    transform: rotate(0deg);
+    transition: 500ms transform;
+}
+
+#roomButtons button:not(.collapsed) i{
+    transform: rotate(180deg);
+    transition: 500ms transform;
+}
