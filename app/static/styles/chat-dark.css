@@ -62,7 +62,7 @@ html, body {
 #roomButtons .fas {
     color: #BBB;
     position: absolute;
-    right: 5%;
+    left: 0%;
     top: 0;
 }
 

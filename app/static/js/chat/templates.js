@@ -29,8 +29,7 @@ function getRoomListElement(roomName) {
                 'type="button"' +
                 'data-toggle="collapse"' +
                 'data-target="#chatContent-' + roomName + '">' +
-            roomName +
-        '<i class="fas fa-chevron-circle-down"></i>' +
+            '<i class="fas fa-chevron-circle-down"></i>' + roomName +
         '</button>' +
         '<div id="chatContent-' + roomName + '" class="collapse show">' +
             'Online:' +
