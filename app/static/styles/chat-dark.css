@@ -180,11 +180,11 @@ html, body {
 }
 
 #roomButtons button.collapsed i {
-    transform: rotate(0deg);
+    transform: rotate(-90deg);
     transition: 500ms transform;
 }
 
 #roomButtons button:not(.collapsed) i{
-    transform: rotate(180deg);
+    transform: rotate(0deg);
     transition: 500ms transform;
 }
