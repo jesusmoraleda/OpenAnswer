@@ -14,10 +14,12 @@
 # Default server configuration
 #
 http {
+    limit_req_zone $binary_remote_addr zone=rate_limited_zone:10m rate=10r/s;
+    limit_req zone=rate_limited_zone burst=100 nodelay;
     server {
 
         server_name openanswer.io www.openanswer.io;
-        location / { 
+        location / {
             proxy_pass http://127.0.0.1:5000;
             proxy_http_version 1.1;
             proxy_redirect default;
@@ -25,6 +27,7 @@ http {
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
             proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header X-Real-IP $remote_addr;
         }
 
         location ~  /.well-known {
@@ -43,7 +46,8 @@ http {
             proxy_set_header Host $http_host;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
-            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Real-IP $remote_addr;
         }
     }
 }
