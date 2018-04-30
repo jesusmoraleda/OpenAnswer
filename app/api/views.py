@@ -6,7 +6,7 @@ from app import models
 from . import api
 
 
-MESSAGES_PER_PAGE = 75
+MESSAGES_PER_PAGE = 20
 
 
 @api.route('/messages/<room>', methods=['GET'])
@@ -14,7 +14,8 @@ MESSAGES_PER_PAGE = 75
 @login_required
 # Pages are in reverse (1 being the most recent).
 def get_messages(room, page=1):
-    oldest = datetime.utcnow() - timedelta(days=1)
+    # Only go back a week
+    oldest = datetime.utcnow() - timedelta(days=7)
     messages = models.Message.query.filter(
         models.Message.room == room,
         models.Message.timestamp > oldest,
@@ -24,8 +25,8 @@ def get_messages(room, page=1):
         models.Message.timestamp.desc()
     ).paginate(page, MESSAGES_PER_PAGE, False).items
     # Setting to descending also flips the order
-    # We want to see ghi in chat, but the query gave us ihg, so reverse that (hence reversed(messages))
-    return jsonify({'messages': [msg.to_dict() for msg in reversed(messages)]})
+    # We want to see ghi in chat, but the query gave us ihg, so the UI has to reverse this
+    return jsonify({'messages': [msg.to_dict() for msg in messages]})
 
 
 @api.route('/users')
