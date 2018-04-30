@@ -55,8 +55,7 @@ $(document).ready(function () {
     var markdown = window.markdownit({
         linkify: true
     }).use(window.markdownitEmoji)
-        .use(window.markdownitMathjax())
-        .use(window.markdownitVideo());
+        .use(window.markdownitMathjax());
     markdown.renderer.rules.emoji = function (token, idx) {
         return twemoji.parse(token[idx].content);
     };
