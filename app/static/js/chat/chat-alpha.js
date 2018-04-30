@@ -55,13 +55,13 @@ $(document).ready(function () {
     var markdown = window.markdownit({
         linkify: true
     }).use(window.markdownitEmoji)
-        .use(window.markdownitMathjax());
+      .use(window.markdownitMathjax());
     markdown.renderer.rules.emoji = function (token, idx) {
         return twemoji.parse(token[idx].content);
     };
     var defaultRender = markdown.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-            return self.renderToken(tokens, idx, options);
-        };
+        return self.renderToken(tokens, idx, options);
+    };
     markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         // If you are sure other plugins can't add `target` - drop check below
         var aIndex = tokens[idx].attrIndex('target');
@@ -148,7 +148,7 @@ $(document).ready(function () {
     });
 
     socket.on('received', function (msg) {
-        addMessage(msg, markdown);
+        appendMessage(msg, markdown);
         if (!is_visible()) {
             unread += 1;
             favicon.badge(unread)
@@ -220,27 +220,27 @@ function initGoldenLayout(socket, open_rooms, markdown) {
         });
         $.getJSON('../messages/' + state.name, function (data) {
             $.each(data.messages, function (idx, msg) {
-                addMessage(msg, markdown);
+                prependMessage(msg, markdown);
             });
-	});
+	    });
         socket.emit('joined', {room: state.name});
     });
 
     myLayout.init();
-    // FIXME: Remove from open_rooms when the room is closed??
+
     for (i = 0; i < open_rooms.length; i++) {
-        addRoom(open_rooms[i], myLayout);
+        addRoom(open_rooms[i], myLayout, false, markdown);
     }
 
     if (!savedState) {
         initalizeRoomList(myLayout);
-        addRoom('lobby', myLayout, true);
+        addRoom('lobby', myLayout, true, markdown);
     }
 
     var roomEntry = $('#roomList #roomListEntry');
 
     roomEntry.keypress(function (e) {
-        addToRoomList(e, roomEntry, myLayout);
+        addToRoomList(e, roomEntry, myLayout, markdown);
     });
 
     layoutContainer.on('keypress', '.chatEntry', function (e) {
@@ -275,7 +275,7 @@ function initalizeRoomList(layout) {
     });
 }
 
-function addRoom(roomName, layout, openChatTab) {
+function addRoom(roomName, layout, openChatTab, markdown) {
     var newRoom = {
         title: roomName,
         type: 'component',
@@ -295,11 +295,28 @@ function addRoom(roomName, layout, openChatTab) {
 
     //Set up scroll events
     var messageContainer = getMessageContainer(roomName);
+
+    //We start with page 1, scrolling up increments this
+    messageContainer.prop('pageNo', 1);
+
+    // FIXME: Refactor
     messageContainer.scroll(function (e) {
         messageContainer.prop('pauseScroll', false);
+        var currentPage = messageContainer.prop('pageNo');
         var currentScroll = $(this).scrollTop();
         if (currentScroll < this.lastScroll) {
             messageContainer.prop('pauseScroll', true);
+            // Load older messages if we reached the top
+            // Don't load more than 5 pages; server only lets you go back 7 days anyway
+            if (currentScroll <= 0 && messageContainer.prop('pageNo') < 5) {
+                var nextPage = currentPage + 1;
+                $.getJSON('../messages/' + roomName + '/' + nextPage.toString(), function (data) {
+                    $.each(data.messages, function (idx, msg) {
+                        $('#' + roomName + '.chatWindow .chatMessages').prepend(getMessageTemplate(msg, markdown));
+                    });
+                });
+                messageContainer.prop('pageNo', nextPage);
+            }
         }
         this.lastScroll = currentScroll;
     });
@@ -315,12 +332,12 @@ function chatWindowClosed(tab, socket) {
     $('.btn.btn-dark.btn-sm[data-target="#chatContent-' + roomName + '"]').remove();
 }
 
-function addToRoomList(e, roomEntry, layout) {
+function addToRoomList(e, roomEntry, layout, markdown) {
     if (enterKeyPressed(e)) {
         var roomName = $.trim(roomEntry.val());
         roomEntry.val('');
         if (roomName !== '' && roomName !== 'Room List') {
-            addRoom(roomName, layout, openChatTab = true);
+            addRoom(roomName, layout, true, markdown);
         }
     }
 }
@@ -335,8 +352,15 @@ function sendMessage(e, socket, messageEntry) {
     }
 }
 
-function addMessage(msg, markdown) {
+function appendMessage(msg, markdown) {
     $('#' + msg.room + '.chatWindow .chatMessages').append(getMessageTemplate(msg, markdown));
+    renderMathJax();
+    scrollChatToBottom(msg.room, 0);
+}
+
+// FIXME: Refactor
+function prependMessage(msg, markdown) {
+    $('#' + msg.room + '.chatWindow .chatMessages').prepend(getMessageTemplate(msg, markdown));
     renderMathJax();
     scrollChatToBottom(msg.room, 0);
 }
