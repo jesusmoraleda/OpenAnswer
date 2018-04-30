@@ -6,7 +6,7 @@ from app import models
 from . import api
 
 
-MESSAGES_PER_PAGE = 20
+MESSAGES_PER_PAGE = 75
 
 
 @api.route('/messages/<room>', methods=['GET'])

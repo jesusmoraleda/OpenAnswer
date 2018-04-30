@@ -308,7 +308,7 @@ function addRoom(roomName, layout, openChatTab, markdown) {
             messageContainer.prop('pauseScroll', true);
             // Load older messages if we reached the top
             // Don't load more than 5 pages; server only lets you go back 7 days anyway
-            if (currentScroll <= 0 && messageContainer.prop('pageNo') < 20) {
+            if (currentScroll <= 0 && messageContainer.prop('pageNo') < 5) {
                 var nextPage = currentPage + 1;
                 $.getJSON('../messages/' + roomName + '/' + nextPage.toString(), function (data) {
                     $.each(data.messages, function (idx, msg) {
