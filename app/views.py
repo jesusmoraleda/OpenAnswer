@@ -75,11 +75,8 @@ def beta_keys():
 @admin_required
 def gen_beta_keys():
     uuids = [str(uuid.uuid4()) for _ in range(10)]
-    try:
-        with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
-            f.write('\n'.join(uuids))
-    except Exception:
-        logging.exception('Beta keys not generated')
+    with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
+        f.write('\n'.join(uuids))
     return redirect(url_for('beta_keys'))
 
 
