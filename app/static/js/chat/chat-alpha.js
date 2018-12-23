@@ -49,31 +49,7 @@ $(document).ready(function () {
     var is_visible = visibility();
     /**Disabled because cache needs to go bust**/
     // loadStoredStyleSheet();
-    /**--------------------------------Renderer------------------------------------**/
     var open_rooms = [];
-    var twemoji = window.twemoji;
-    var markdown = window.markdownit({
-        linkify: true
-    }).use(window.markdownitEmoji)
-      .use(window.markdownitMathjax());
-    markdown.renderer.rules.emoji = function (token, idx) {
-        return twemoji.parse(token[idx].content);
-    };
-    var defaultRender = markdown.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-        return self.renderToken(tokens, idx, options);
-    };
-    markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-        // If you are sure other plugins can't add `target` - drop check below
-        var aIndex = tokens[idx].attrIndex('target');
-        if (aIndex < 0) {
-            tokens[idx].attrPush(['target', '_blank']); // add new attribute
-        } else {
-            tokens[idx].attrs[aIndex][1] = '_blank';    // replace value of existing attr
-        }
-        // pass token to default renderer.
-        return defaultRender(tokens, idx, options, env, self);
-    };
-
     /**--------------------------------Sockets------------------------------------**/
     var socketAdmin = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/admin');
 
@@ -148,7 +124,7 @@ $(document).ready(function () {
     });
 
     socket.on('received', function (msg) {
-        appendMessage(msg, markdown);
+        appendMessage(msg);
         if (!is_visible()) {
             unread += 1;
             favicon.badge(unread)
@@ -167,7 +143,7 @@ $(document).ready(function () {
         }
     });
 
-    window.onload = function() {initGoldenLayout(socket, open_rooms, markdown)};
+    window.onload = function() {initGoldenLayout(socket, open_rooms)};
 });
 
 var favicon = new Favico({
@@ -176,7 +152,7 @@ var favicon = new Favico({
 });
 
 /**------------------------------Golden Layout---------------------------------**/
-function initGoldenLayout(socket, open_rooms, markdown) {
+function initGoldenLayout(socket, open_rooms) {
     var config = {
         settings: {showPopoutIcon: false},
         content: [
@@ -220,7 +196,7 @@ function initGoldenLayout(socket, open_rooms, markdown) {
         });
         $.getJSON('../messages/' + state.name, function (data) {
             $.each(data.messages, function (idx, msg) {
-                prependMessage(msg, markdown);
+                prependMessage(msg);
             });
 	    });
         socket.emit('joined', {room: state.name});
@@ -229,18 +205,18 @@ function initGoldenLayout(socket, open_rooms, markdown) {
     myLayout.init();
 
     for (i = 0; i < open_rooms.length; i++) {
-        addRoom(open_rooms[i], myLayout, false, markdown);
+        addRoom(open_rooms[i], myLayout, false);
     }
 
     if (!savedState) {
         initalizeRoomList(myLayout);
-        addRoom('lobby', myLayout, true, markdown);
+        addRoom('lobby', myLayout, true);
     }
 
     var roomEntry = $('#roomList #roomListEntry');
 
     roomEntry.keypress(function (e) {
-        addToRoomList(e, roomEntry, myLayout, markdown);
+        addToRoomList(e, roomEntry, myLayout);
     });
 
     layoutContainer.on('keypress', '.chatEntry', function (e) {
@@ -275,7 +251,7 @@ function initalizeRoomList(layout) {
     });
 }
 
-function addRoom(roomName, layout, openChatTab, markdown) {
+function addRoom(roomName, layout, openChatTab) {
     var newRoom = {
         title: roomName,
         type: 'component',
@@ -312,7 +288,7 @@ function addRoom(roomName, layout, openChatTab, markdown) {
                 var nextPage = currentPage + 1;
                 $.getJSON('../messages/' + roomName + '/' + nextPage.toString(), function (data) {
                     $.each(data.messages, function (idx, msg) {
-                        $('#' + roomName + '.chatWindow .chatMessages').prepend(getMessageTemplate(msg, markdown));
+                        $('#' + roomName + '.chatWindow .chatMessages').prepend(getMessageTemplate(msg));
                     });
                 });
                 messageContainer.prop('pageNo', nextPage);
@@ -332,12 +308,12 @@ function chatWindowClosed(tab, socket) {
     $('.btn.btn-dark.btn-sm[data-target="#chatContent-' + roomName + '"]').remove();
 }
 
-function addToRoomList(e, roomEntry, layout, markdown) {
+function addToRoomList(e, roomEntry, layout) {
     if (enterKeyPressed(e)) {
         var roomName = $.trim(roomEntry.val());
         roomEntry.val('');
         if (roomName !== '' && roomName !== 'Room List') {
-            addRoom(roomName, layout, true, markdown);
+            addRoom(roomName, layout, true);
         }
     }
 }
@@ -352,15 +328,15 @@ function sendMessage(e, socket, messageEntry) {
     }
 }
 
-function appendMessage(msg, markdown) {
-    $('#' + msg.room + '.chatWindow .chatMessages').append(getMessageTemplate(msg, markdown));
+function appendMessage(msg) {
+    $('#' + msg.room + '.chatWindow .chatMessages').append(getMessageTemplate(msg));
     renderMathJax();
     scrollChatToBottom(msg.room, 0);
 }
 
 // FIXME: Refactor
-function prependMessage(msg, markdown) {
-    $('#' + msg.room + '.chatWindow .chatMessages').prepend(getMessageTemplate(msg, markdown));
+function prependMessage(msg) {
+    $('#' + msg.room + '.chatWindow .chatMessages').prepend(getMessageTemplate(msg));
     renderMathJax();
     scrollChatToBottom(msg.room, 0);
 }

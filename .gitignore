@@ -11,4 +11,4 @@ gunicorn_logs
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 app/static/js/draw/*
-*betakeys.txt
+*keys.txt

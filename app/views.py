@@ -11,6 +11,7 @@ from .utils.utils import get_remote_addr
 from .utils.decorators.admin import admin_required
 import os
 import logging
+import uuid
 
 
 @app.before_request
@@ -73,15 +74,9 @@ def beta_keys():
 @app.route('/gen_beta_keys')
 @admin_required
 def gen_beta_keys():
-    try:
-        # FIXME: This is stupid, we should generate this ourselves
-        # >>> import uuid
-        # >>> uuid.uuid4()
-        os.system(
-            'wget -qO- uuidgenerator.net/version4/bulk?amount4=10 >> {path}'.format(path=os.environ['BETA_KEYS_PATH'])
-        )
-    except Exception as e:
-        logging.exception('Beta keys not generated', )
+    uuids = [str(uuid.uuid4()) for _ in range(10)]
+    with open(os.environ['BETA_KEYS_PATH'], 'w') as f:
+        f.write('\n'.join(uuids))
     return redirect(url_for('beta_keys'))
 
 
