@@ -37,6 +37,8 @@ function migration_rld() {
   done
   echo 'Gunicorn processes killed - activating virtual environment'
   source ve/bin/activate
+  echo 'Upgrading pip'
+  pip install --upgrade pip
   echo 'Installing dependencies'
   pip install -r requirements.txt
 

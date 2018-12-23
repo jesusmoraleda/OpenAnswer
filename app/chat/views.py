@@ -4,12 +4,6 @@ from flask_login import login_required, current_user
 from . import chat
 
 
-@chat.route('/chat/<room>')
-@login_required
-def chat_room(room):
-    return render_template('chat/chat.html', title='(0) %s' % room.capitalize(), user=current_user, navtab='chat')
-
-
 @chat.route('/alpha-chat')
 @login_required
 def alpha_chat():
