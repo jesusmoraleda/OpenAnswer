@@ -75,4 +75,6 @@ app.register_blueprint(api_blueprint)
 from app.admin_console import admin_console as admin_console_blueprint
 app.register_blueprint(admin_console_blueprint)
 
-
+# Reactjs demo
+from app.reactjs import reactjs as reactjs_blueprint
+app.register_blueprint(reactjs_blueprint)
