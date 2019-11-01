@@ -1,5 +1,18 @@
 ### Some useful functions for installing updates
 
+
+function build_ui() {
+  currdir=$(pwd)
+  echo "CDing from $currdir to $OPENANSWER_REACTJS_PATH"
+  cd $OPENANSWER_REACTJS_PATH
+  echo "Installing npm dependencies in $(pwd)"
+  npm install
+  echo "Running npm build in $(pwd)"
+  npm run build
+  echo "Going back to $currdir"
+  cd $currdir
+}
+
 function rld() {
   echo 'Announcing changes' $(announce)
   ### Pull the changes from the repo
@@ -15,8 +28,13 @@ function rld() {
   done
   echo 'Gunicorn processes killed - activating virtual environment'
   source ve/bin/activate
+  echo 'Upgrading pip'
+  pip install --upgrade pip
   echo 'Installing dependencies'
   pip install -r requirements.txt
+  echo 'Building ui'
+  build_ui
+
   ### Start gunicorn back up
   echo 'Starting gunicorn'
   gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
@@ -37,10 +55,10 @@ function migration_rld() {
   done
   echo 'Gunicorn processes killed - activating virtual environment'
   source ve/bin/activate
-  echo 'Upgrading pip'
-  pip install --upgrade pip
   echo 'Installing dependencies'
   pip install -r requirements.txt
+  echo 'Building ui'
+  build_ui
 
   ### Create a backup directory
   echo 'Creating backup directories'
@@ -73,6 +91,7 @@ function announce() {
   done
 }
 
+
 function killunicorns() {
   ### Identify and kill the processes
   pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
@@ -89,6 +108,3 @@ function reviveunicorns() {
   source ve/bin/activate
   gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
 }
-
-alias d='deactivate'
-
