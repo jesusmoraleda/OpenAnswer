@@ -51,9 +51,9 @@ def unban():
 @admin_console.route('/redeploy', methods=['POST'])
 def redeploy():
     with open('payload_contents.txt', 'w') as f:
-        f.write(request.data)
+        f.write(str(request.data))
     with open('request_headers.txt', 'w') as f:
-        f.write(request.headers)
+        f.write(str(request.headers))
     signature = request.headers.get('X-Hub-Signature')
     payload = request.data
     if not signature or not verify_git_signature(payload, signature):
@@ -62,13 +62,14 @@ def redeploy():
         try:
             # This is stupid, the server will be dead after this command, so why even send it back
             # I suppose this might suffice for testing purposes.
-            output = subprocess.Popen(['bash', '-c', '. rld; test'])
+            path_to_rld = os.path.join(os.environ['OPENANSWER_PATH'], 'maintenance', 'rld')
+            output = subprocess.Popen(['bash', '-c', '. %s; rld' % path_to_rld])
         except Exception:
             return abort(500, 'Redeploy failed')
     return Response(response=str(output), status=200)
 
 
 def verify_git_signature(data, signature):
-    secret = bytes(os.environ['GIT_HOOK_SECRET'])
+    secret = bytes(os.environ['GIT_HOOK_SECRET'], 'utf-8')
     mac = hmac.new(secret, msg=data, digestmod=hashlib.sha1)
     return hmac.compare_digest('sha1='+mac.hexdigest(), signature)
