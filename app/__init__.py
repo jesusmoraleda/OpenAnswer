@@ -48,7 +48,9 @@ lm = LoginManager(app)
 lm.login_view = 'home'
 
 # Set up socketio for chat
-socketio = SocketIO()
+# FIXME: reenable CORS once we get the urls together, maybe store them in an environment:
+# i.e. cors_allowed_origins=os.environ['OA_ALLOWED_ORIGINS']
+socketio = SocketIO(cors_allowed_origins=[])
 socketio.init_app(app)
 
 # Bootstrap fix the forms please
