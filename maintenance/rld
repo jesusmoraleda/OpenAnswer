@@ -1,0 +1,57 @@
+#!/bin/bash
+### Some useful functions for installing updates
+
+source ~/.profile
+
+function test() {
+  echo 'testing cmd'
+  echo $_TEST > testing_redeploy.txt
+}
+
+function announce() {
+  echo "Sending an announcement"
+  for T in 10 9 8 7 6 5 4 3 2 1
+  do
+     wget 127.0.0.1:5000/all_users_admin --post-data "action=all_users_announce&message=Restarting the server in $T&type=info" -O /dev/null
+     sleep 1
+  done
+}
+
+function build_ui() {
+  currdir=$(pwd)
+  echo "CDing from $currdir to $OPENANSWER_REACTJS_PATH"
+  cd $OPENANSWER_REACTJS_PATH
+  echo "Installing npm dependencies in $(pwd)"
+  npm install
+  echo "Running npm build in $(pwd)"
+  npm run build
+  echo "Going back to $currdir"
+  cd $currdir
+}
+
+function rld() {
+  echo 'Announcing changes' $(announce)
+  ### Pull the changes from the repo
+  echo 'Pulling changes from git'
+  cd $OPENANSWER_PATH
+  git pull origin $GIT_BRANCH
+  ### Identify and kill the processes
+  pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
+  for p in $pids;
+  do  
+    echo "Killing process $p"
+    kill -9 $p
+  done
+  echo 'Gunicorn processes killed - activating virtual environment'
+  source ve/bin/activate
+  echo 'Upgrading pip'
+  pip install --upgrade pip
+  echo 'Installing dependencies'
+  pip install -r requirements.txt
+  echo 'Building ui'
+  build_ui
+
+  ### Start gunicorn back up
+  echo 'Starting gunicorn'
+  gunicorn --worker-class eventlet -w 1 app:app -b localhost:5000 --error-logfile gunicorn_errors, --log-file gunicorn_logs &
+}
