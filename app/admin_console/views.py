@@ -49,26 +49,33 @@ def unban():
 
 
 @admin_console.route('/redeploy', methods=['POST'])
-def redeploy():
-    with open('payload_contents.txt', 'w') as f:
-        f.write(request.data)
-    with open('request_headers.txt', 'w') as f:
-        f.write(request.headers)
-    signature = request.headers.get('X-Hub-Signature')
+def redeploy_hook():
     payload = request.data
+    # with open('payload_contents.txt', 'w') as f:
+    #     f.write(str(payload))
+    # with open('request_headers.txt', 'w') as f:
+    #     f.write(str(request.headers))
+    signature = request.headers.get('X-Hub-Signature')
     if not signature or not verify_git_signature(payload, signature):
         return abort(400, 'Missing signature header, cannot verify request')
     else:
-        try:
-            # This is stupid, the server will be dead after this command, so why even send it back
-            # I suppose this might suffice for testing purposes.
-            output = subprocess.Popen(['bash', '-c', '. rld; test'])
-        except Exception:
-            return abort(500, 'Redeploy failed')
+        if payload['ref'] == "refs/heads/master":
+            try:
+                # This is stupid, the server will be dead after this command, so why even send it back
+                # I suppose this might suffice for testing purposes.
+                output = _redeploy()
+            except Exception:
+                return abort(500, 'Redeploy failed')
     return Response(response=str(output), status=200)
 
 
+def _redeploy():
+    path_to_rld = os.path.join(os.environ['OPENANSWER_PATH'], 'maintenance', 'rld')
+    output = subprocess.Popen(['bash', '-c', '. %s; rld' % path_to_rld])
+    return output
+
+
 def verify_git_signature(data, signature):
-    secret = bytes(os.environ['GIT_HOOK_SECRET'])
+    secret = bytes(os.environ['GIT_HOOK_SECRET'], 'utf-8')
     mac = hmac.new(secret, msg=data, digestmod=hashlib.sha1)
     return hmac.compare_digest('sha1='+mac.hexdigest(), signature)
