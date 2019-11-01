@@ -1,4 +1,9 @@
-from flask import request, Response
+import hashlib
+import hmac
+import os
+import subprocess
+
+from flask import abort, request, Response
 from flask_socketio import emit
 
 from app import db, models
@@ -41,3 +46,29 @@ def unban():
     user.is_banned = False
     db.session.commit()
     return Response(response='Unbanned {username}'.format(username=username), status=200)
+
+
+@admin_console.route('/redeploy', methods=['POST'])
+def redeploy():
+    with open('payload_contents.txt', 'w') as f:
+        f.write(request.data)
+    with open('request_headers.txt', 'w') as f:
+        f.write(request.headers)
+    signature = request.headers.get('X-Hub-Signature')
+    payload = request.data
+    if not signature or not verify_git_signature(payload, signature):
+        return abort(400, 'Missing signature header, cannot verify request')
+    else:
+        try:
+            # This is stupid, the server will be dead after this command, so why even send it back
+            # I suppose this might suffice for testing purposes.
+            output = subprocess.Popen(['bash', '-c', '. rld; test'])
+        except Exception:
+            return abort(500, 'Redeploy failed')
+    return Response(response=str(output), status=200)
+
+
+def verify_git_signature(data, signature):
+    secret = bytes(os.environ['GIT_HOOK_SECRET'])
+    mac = hmac.new(secret, msg=data, digestmod=hashlib.sha1)
+    return hmac.compare_digest('sha1='+mac.hexdigest(), signature)
