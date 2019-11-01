@@ -59,7 +59,7 @@ def redeploy_hook():
     if not signature or not verify_git_signature(payload, signature):
         return abort(400, 'Missing signature header, cannot verify request')
     else:
-        if payload['ref'] == "refs/heads/master":
+        if request.json['ref'] == "refs/heads/master":
             try:
                 # This is stupid, the server will be dead after this command, so why even send it back
                 # I suppose this might suffice for testing purposes.

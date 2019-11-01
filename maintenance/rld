@@ -34,6 +34,7 @@ function rld() {
   ### Pull the changes from the repo
   echo 'Pulling changes from git'
   cd $OPENANSWER_PATH
+  git reset --hard
   git pull origin $GIT_BRANCH
   ### Identify and kill the processes
   pids=$(ps -aux | grep gunicorn | grep -v grep | awk '{print$2}')
