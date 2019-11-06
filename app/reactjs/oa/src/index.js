@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import ChatLayout from './chat.js';
 
 function Square(props) {
     return (
@@ -38,7 +39,7 @@ class Board extends React.Component {
 
     render() {
         const winner = calculateWinner(this.state.squares);
-        const status = (winner)? ('Winner: ' + winner) : ('Next user: ' + (this.state.xIsNext ? 'X' : 'O'));
+        const status = (winner)? ('Winner: ' + winner) : ('Next player: ' + (this.state.xIsNext ? 'X' : 'O'));
 
         return (
             <div>
@@ -81,9 +82,14 @@ class Game extends React.Component {
 
 // ========================================
 
+// ReactDOM.render(
+//   <Game />,
+//   document.getElementById('root')
+// );
+
 ReactDOM.render(
-  <Game />,
-  document.getElementById('root')
+  <ChatLayout />,
+  document.getElementById('chat')
 );
 
 function calculateWinner(squares) {
