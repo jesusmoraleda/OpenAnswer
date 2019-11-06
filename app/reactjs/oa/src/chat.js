@@ -1,35 +1,38 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 import GoldenLayout from 'golden-layout';
+import {InputField} from './core_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
-
-function getRooms(name) {
-    return ['lobby', 'test', name]
-}
 
 
 class RoomList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            rooms: getRooms(props.name),
+            rooms: ['lobby'],
             name: props.name,
         };
     }
 
-    render() {
-        return [
-            <ul className="roomList" key="roomListContainer">
-                {this.state.rooms.map(getRoomListElement)}
-            </ul>,
-            <input className="enterRoom" key="roomCreateTextbox"
-                   id="roomList"
-                   type="text"
-                   placeholder="Create or join room..."></input>
-        ]
+    joinRoom(roomName) {
+        console.log('Would join '+roomName);
     }
 
+    render() {
+        return (
+            <div>
+                <ul className="roomList" key="roomListContainer">
+                    {this.state.rooms.map(getRoomListElement)}
+                </ul>
+                <InputField
+                    value='test'
+                    name={this.name}
+                    placeholder='Create or join room...'
+                    onSubmit={this.joinRoom} />
+            </div>
+        )
+    }
 }
 
 function getRoomListElement(roomName) {
@@ -38,7 +41,7 @@ function getRoomListElement(roomName) {
 
 class ChatLayout extends React.PureComponent {
     componentDidMount(){
-        var config = {
+        let config = {
             settings: {showPopoutIcon: false},
             content: [{
                 type: 'row',
@@ -65,6 +68,7 @@ class ChatLayout extends React.PureComponent {
         return <div />
     }
 }
+
 window.React = React;
 window.ReactDOM = ReactDOM;
 export default ChatLayout;
