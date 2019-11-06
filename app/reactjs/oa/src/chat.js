@@ -1,70 +1,94 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 import GoldenLayout from 'golden-layout';
+import {Tab} from './chat_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
 
-function getRooms(name) {
-    return ['lobby', 'test', name]
-}
 
-
-class RoomList extends React.Component {
+// FIXME: Pure components are immutable, and faster.
+//  For a given set of props PureComponent should always return the same view
+class ChatLayout extends React.Component {
     constructor(props) {
         super(props);
+        let config = this.getConfig();
         this.state = {
-            rooms: getRooms(props.name),
-            name: props.name,
+            config: config,
+            layout: null,
         };
+        this.saveLayout = this.saveLayout.bind(this);
     }
 
-    render() {
-        return [
-            <ul className="roomList" key="roomListContainer">
-                {this.state.rooms.map(getRoomListElement)}
-            </ul>,
-            <input className="enterRoom" key="roomCreateTextbox"
-                   id="roomList"
-                   type="text"
-                   placeholder="Create or join room..."></input>
-        ]
-    }
-
-}
-
-function getRoomListElement(roomName) {
-    return <div id={roomName} key={roomName}>{roomName}</div>
-}
-
-class ChatLayout extends React.PureComponent {
-    componentDidMount(){
-        var config = {
-            settings: {showPopoutIcon: false},
-            content: [{
-                type: 'row',
-                //isClosable: false,
-                content: [{
-                    title: 'Room List',
-                    type: 'react-component',
-                    component: 'chat-window',
-                    props: {name: 'Room List'}
-                },{
-                    title: 'Room List1',
-                    type: 'react-component',
-                    component: 'chat-window',
-                    props: {name: 'Room List1'}
-                }]
-            }]
-        };
-        const instance = new GoldenLayout(config);
-        instance.registerComponent('chat-window', RoomList);
-        instance.init();
+    componentDidMount() {
+        // Lazily initialize Golden Layout
+        let layout = new GoldenLayout(this.state.config);
+        layout.registerComponent('room-list', Tab);
+        layout.registerComponent('chat-window', Tab);
+        layout.on('stateChanged', this.saveLayout);
+        layout.init();
+        this.setState({layout: layout});
     }
 
     render() {
         return <div />
     }
+
+    saveLayout() {
+        const layoutInstance = this.state.layout;
+        if (layoutInstance) {
+            this.setState({config: layoutInstance.toConfig()});
+            const currentConfig = this.state.config;
+            localStorage.setItem('savedState', JSON.stringify(currentConfig));
+        }
+    }
+
+    getConfig() {
+        let storedConfig = localStorage.getItem('savedState');
+
+        const config = storedConfig? JSON.parse(storedConfig) : {
+            settings: {showPopoutIcon: false},
+            content: [{
+                type: 'row',
+                content: [{
+                    title: 'Room List',
+                    type: 'react-component',
+                    component: 'room-list',
+                    props: {
+                        items: ['lobby'],
+                        title: 'Room List',
+                        inputPlaceholder: 'Create or join room...',
+                        onSubmit: (e) => {console.log('Joined: ' + e)},
+                    },
+                },{
+                    title: 'Lobby',
+                    type: 'react-component',
+                    component: 'chat-window',
+                    props: {
+                        items: ['sample message'],
+                        title: 'Lobby',
+                        inputPlaceholder: 'Send a message...',
+                        onSubmit: (e) => {console.log('Sent: ' + e)}
+                    },
+                }]
+            }]
+        };
+        return config;
+    }
 }
+
+// class Chat extends React.Component {
+//     render() {
+//         return
+//     }
+//
+//     join(room) {
+//         console.log('Joined: ' + room)
+//     }
+//     send(message) {
+//         console.log('Sent: ' + message)
+//     }
+// }
+
 window.React = React;
 window.ReactDOM = ReactDOM;
 export default ChatLayout;

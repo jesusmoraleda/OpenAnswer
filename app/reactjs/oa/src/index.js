@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import ChatLayout from './chat.js';
+import Chat from './chat.js';
 
 function Square(props) {
     return (
@@ -88,7 +88,7 @@ class Game extends React.Component {
 // );
 
 ReactDOM.render(
-  <ChatLayout />,
+  <Chat title="Room List"/>,
   document.getElementById('chat')
 );
 
