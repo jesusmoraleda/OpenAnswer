@@ -88,7 +88,7 @@ class Game extends React.Component {
 // );
 
 ReactDOM.render(
-  <Chat />,
+  <Chat title="Room List"/>,
   document.getElementById('chat')
 );
 
