@@ -38,13 +38,14 @@ class ChatLayout extends React.Component {
         if (layoutInstance) {
             this.setState({config: layoutInstance.toConfig()});
             const currentConfig = this.state.config;
-            localStorage.setItem('savedState', JSON.stringify(currentConfig));
+            // This interferes with the savedLayout we use on the functional chat
+            localStorage.setItem('savedReactLayout', JSON.stringify(currentConfig));
         }
     }
 
     getConfig() {
-        let storedConfig = localStorage.getItem('savedState');
-
+        // This interferes with the savedLayout we use on the functional chat
+        let storedConfig = localStorage.getItem('savedReactLayout');
         const config = storedConfig? JSON.parse(storedConfig) : {
             settings: {showPopoutIcon: false},
             content: [{
