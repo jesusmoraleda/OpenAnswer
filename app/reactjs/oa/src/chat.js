@@ -12,6 +12,7 @@ class RoomList extends React.Component {
         this.state = {
             rooms: ['lobby'],
             name: props.name,
+            placeholder: props.placeholder,
         };
     }
 
@@ -28,7 +29,7 @@ class RoomList extends React.Component {
                 <InputField
                     value='test'
                     name={this.name}
-                    placeholder='Create or join room...'
+                    placeholder={this.state.placeholder}
                     onSubmit={this.joinRoom} />
             </div>
         )
@@ -39,7 +40,17 @@ function getRoomListElement(roomName) {
     return <div id={roomName} key={roomName}>{roomName}</div>
 }
 
-class ChatLayout extends React.PureComponent {
+class Chat extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            roomList: new RoomList({
+                name: 'Room List',
+                placeholder: 'Create or join room...',
+            })
+        };
+    }
+
     componentDidMount(){
         let config = {
             settings: {showPopoutIcon: false},
@@ -47,10 +58,10 @@ class ChatLayout extends React.PureComponent {
                 type: 'row',
                 //isClosable: false,
                 content: [{
-                    title: 'Room List',
+                    title: this.state.roomList.state.name,
                     type: 'react-component',
-                    component: 'chat-window',
-                    props: {name: 'Room List'}
+                    component: 'room-list',
+                    props: this.state.roomList.props
                 },{
                     title: 'Room List1',
                     type: 'react-component',
@@ -60,6 +71,7 @@ class ChatLayout extends React.PureComponent {
             }]
         };
         const instance = new GoldenLayout(config);
+        instance.registerComponent('room-list', RoomList);
         instance.registerComponent('chat-window', RoomList);
         instance.init();
     }
@@ -71,5 +83,5 @@ class ChatLayout extends React.PureComponent {
 
 window.React = React;
 window.ReactDOM = ReactDOM;
-export default ChatLayout;
+export default Chat;
 
