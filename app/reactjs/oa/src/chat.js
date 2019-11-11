@@ -21,8 +21,10 @@ class ChatLayout extends React.Component {
         this.send = this.send.bind(this);
         this.socketReceived = this.socketReceived.bind(this);
         this.componentCreated = this.componentCreated.bind(this);
+        this.loadedMessages = this.loadedMessages.bind(this);
         this.chatSocket = io(
-            window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat'
+            window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat',
+            {'reconnection': false,}
         );
         this.chatSocket.on('received', this.socketReceived);
     }
@@ -52,11 +54,17 @@ class ChatLayout extends React.Component {
         return this.state.layout.eventHub.emit('receive', data);
     }
 
+    loadedMessages(room, data) {
+        return this.state.layout.eventHub.emit('receive', {room: room, messages: data});
+    }
+
     componentCreated(e) {
         const config = e.config;
         if (config.component === 'chat-window') {
             const roomName = config.title.toLowerCase();
-            console.log('Joining ' + roomName);
+            fetch('../messages/' + roomName)
+                .then(data => {return data.json()})
+                .then(jsonData => {this.loadedMessages(roomName, jsonData.messages)});
             this.chatSocket.emit('joined', {room: roomName});
         }
     }
@@ -96,12 +104,20 @@ class ChatLayout extends React.Component {
                     type: 'react-component',
                     component: 'chat-window',
                     props: {
-                        items: ['sample message'],
                         title: 'lobby',
                         textValue: '',
                         inputPlaceholder: 'Message lobby...',
                     },
-                }, ]
+                }, {
+                    title: 'reactjs',
+                    type: 'react-component',
+                    component: 'chat-window',
+                    props: {
+                        title: 'reactjs',
+                        textValue: '',
+                        inputPlaceholder: 'Message reactjs...',
+                    },
+                }]
             }]
         };
         return config;
