@@ -58,9 +58,8 @@ class ChatLayout extends React.Component {
                         items: ['lobby'],
                         title: 'Room List',
                         inputPlaceholder: 'Create or join room...',
-                        onSubmit: (e) => {console.log('Joined: ' + e)},
                     },
-                },{
+                }, {
                     title: 'Lobby',
                     type: 'react-component',
                     component: 'chat-window',
@@ -68,7 +67,6 @@ class ChatLayout extends React.Component {
                         items: ['sample message'],
                         title: 'Lobby',
                         inputPlaceholder: 'Send a message...',
-                        onSubmit: (e) => {console.log('Sent: ' + e)}
                     },
                 }]
             }]
