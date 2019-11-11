@@ -32,7 +32,9 @@ class Tab extends React.Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.send = this.send.bind(this);
         this.join = this.join.bind(this);
+        this.receive = this.receive.bind(this);
         this.glEventHub = props.glEventHub;
+        this.glEventHub.on('receive', this.receive);
         this.isChatWindow = !(props.title === 'Room List');
     }
 
@@ -48,16 +50,25 @@ class Tab extends React.Component {
     handleKeyPress(e) {
         if(enterKeyPressed(e)) {
             const txt = this.state.textValue;
+            this.setState({textValue: ''});
             return this.isChatWindow? this.send(txt) : this.join(txt);
         }
     }
 
+    receive(data) {
+        // Don't display messages sent to other rooms
+        if (data.room === this.state.title) {
+            console.log('chat tab received');
+            console.log(data);
+        }
+    }
+
     join(room) {
-        this.glEventHub.emit('join', {room: room});
+        return this.glEventHub.emit('join', {room: room});
     }
 
     send(msg) {
-        this.glEventHub.emit('send', {msg: msg, room: this.state.title});
+        return this.glEventHub.emit('send', {msg: msg, room: this.state.title});
     }
 
     render() {

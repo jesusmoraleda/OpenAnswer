@@ -16,13 +16,15 @@ class ChatLayout extends React.Component {
             config: config,
             layout: null,
         };
-        this.chatSocket = io(
-            window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat'
-        );
         this.saveLayout = this.saveLayout.bind(this);
         this.join = this.join.bind(this);
         this.send = this.send.bind(this);
+        this.socketReceived = this.socketReceived.bind(this);
         this.componentCreated = this.componentCreated.bind(this);
+        this.chatSocket = io(
+            window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat'
+        );
+        this.chatSocket.on('received', this.socketReceived);
     }
 
     componentDidMount() {
@@ -39,17 +41,23 @@ class ChatLayout extends React.Component {
     }
 
     join(data) {
-        console.log('Joining ' + data.room);
+        return this.chatSocket.emit('joined', {room: data.room});
     }
 
     send(data) {
-        console.log('Sending ' + data.msg + ' to ' + data.room);
+        return this.chatSocket.emit('sent', {msg: data.msg, room: data.room, sid: this.chatSocket.id});
+    }
+
+    socketReceived(data) {
+        return this.state.layout.eventHub.emit('receive', data);
     }
 
     componentCreated(e) {
         const config = e.config;
         if (config.component === 'chat-window') {
-            console.log('Joining ' + config.title);
+            const roomName = config.title.toLowerCase();
+            console.log('Joining ' + roomName);
+            this.chatSocket.emit('joined', {room: roomName});
         }
     }
 
@@ -84,24 +92,14 @@ class ChatLayout extends React.Component {
                         inputPlaceholder: 'Create or join room...',
                     },
                 }, {
-                    title: 'ReactJS',
-                    type: 'react-component',
-                    component: 'chat-window',
-                    props: {
-                        items: ['sample message'],
-                        title: 'reactjs',
-                        textValue: 'reactjs msg in progress',
-                        inputPlaceholder: 'Send a message...',
-                    },
-                }, {
-                    title: 'Lobby',
+                    title: 'lobby',
                     type: 'react-component',
                     component: 'chat-window',
                     props: {
                         items: ['sample message'],
                         title: 'lobby',
                         textValue: '',
-                        inputPlaceholder: 'Send a message...',
+                        inputPlaceholder: 'Message lobby...',
                     },
                 }, ]
             }]
