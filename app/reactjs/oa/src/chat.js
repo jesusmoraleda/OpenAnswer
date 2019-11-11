@@ -4,7 +4,7 @@ import GoldenLayout from 'golden-layout';
 import {Tab} from './chat_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
-
+import io from 'socket.io-client';
 
 // FIXME: Pure components are immutable, and faster.
 //  For a given set of props PureComponent should always return the same view
@@ -16,7 +16,13 @@ class ChatLayout extends React.Component {
             config: config,
             layout: null,
         };
+        this.chatSocket = io(
+            window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat'
+        );
         this.saveLayout = this.saveLayout.bind(this);
+        this.join = this.join.bind(this);
+        this.send = this.send.bind(this);
+        this.componentCreated = this.componentCreated.bind(this);
     }
 
     componentDidMount() {
@@ -25,8 +31,26 @@ class ChatLayout extends React.Component {
         layout.registerComponent('room-list', Tab);
         layout.registerComponent('chat-window', Tab);
         layout.on('stateChanged', this.saveLayout);
+        layout.on('componentCreated', this.componentCreated);
+        layout.eventHub.on('join', this.join);
+        layout.eventHub.on('send', this.send);
         layout.init();
         this.setState({layout: layout});
+    }
+
+    join(data) {
+        console.log('Joining ' + data.room);
+    }
+
+    send(data) {
+        console.log('Sending ' + data.msg + ' to ' + data.room);
+    }
+
+    componentCreated(e) {
+        const config = e.config;
+        if (config.component === 'chat-window') {
+            console.log('Joining ' + config.title);
+        }
     }
 
     render() {
@@ -66,6 +90,7 @@ class ChatLayout extends React.Component {
                     props: {
                         items: ['sample message'],
                         title: 'reactjs',
+                        textValue: 'reactjs msg in progress',
                         inputPlaceholder: 'Send a message...',
                     },
                 }, {
@@ -75,6 +100,7 @@ class ChatLayout extends React.Component {
                     props: {
                         items: ['sample message'],
                         title: 'lobby',
+                        textValue: '',
                         inputPlaceholder: 'Send a message...',
                     },
                 }, ]
