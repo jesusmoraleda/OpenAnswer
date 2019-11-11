@@ -17,8 +17,6 @@ class Tab extends React.Component {
         title: PropTypes.string,
         /** Placeholder text for the input at the bottom of each tab */
         inputPlaceholder: PropTypes.string,
-        /** Callback to trigger when enter is pressed on the input box */
-        onSubmit: PropTypes.func,
     };
 
     constructor(props) {
@@ -27,12 +25,26 @@ class Tab extends React.Component {
             items: props.items,
             title: props.title,
             inputPlaceholder: props.inputPlaceholder,
-            onSubmit: props.onSubmit,
         };
+        this.onSubmit = this.onSubmit.bind(this);
+        this.send = this.send.bind(this);
     }
 
     renderItem(item) {
         return <div id={item} key={item}>{item}</div>
+    }
+
+    onSubmit(e) {
+        const joining = (this.state.title === 'Room List');
+        return joining? this.join(e) : this.send(e);
+    }
+
+    join(e) {
+        console.log('Joining ' + e);
+    }
+
+    send(e) {
+        console.log('Sent ' + e + ' to ' + this.state.title);
     }
 
     render() {
@@ -44,8 +56,8 @@ class Tab extends React.Component {
                 <InputField
                     value=''
                     name={'input-'+this.state.title}
-                    placeholder={this.state.placeholder}
-                    onSubmit={this.state.onSubmit} />
+                    placeholder={this.state.inputPlaceholder}
+                    onSubmit={this.onSubmit} />
             </div>
         )
     }
