@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import {InputField} from "./core_elems";
-
+import io from 'socket.io-client';
 
 /** A Tab in our Layout - can be used for (and not limited to)
  *   conversations
@@ -23,11 +23,16 @@ class Tab extends React.Component {
         super(props);
         this.state = {
             items: props.items,
-            title: props.title,
+            isChatWindow: !(props.title === 'Room List'),
+            title: props.title.toLowerCase(),
             inputPlaceholder: props.inputPlaceholder,
         };
         this.onSubmit = this.onSubmit.bind(this);
         this.send = this.send.bind(this);
+        this.join = this.join.bind(this);
+        // FIXME: We should not be creating sockets per chat window. Move this to chat.js somehow.
+        console.log('creating a socket');
+        this.chatSocket = io(window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat');
     }
 
     renderItem(item) {
@@ -35,16 +40,27 @@ class Tab extends React.Component {
     }
 
     onSubmit(e) {
-        const joining = (this.state.title === 'Room List');
-        return joining? this.join(e) : this.send(e);
+        return this.state.isChatWindow? this.send(e) : this.join(e);
     }
 
     join(e) {
         console.log('Joining ' + e);
+        return this.chatSocket.emit('joined', {room: e});
     }
 
-    send(e) {
-        console.log('Sent ' + e + ' to ' + this.state.title);
+    send(msg) {
+        // FIXME:
+        // Why am I connected to lobby? Don't join "Lobby" in /reactjs/ ui, just send a message.
+        // If you have the working front end open, the message will go through. Why??
+        // I suspect you can always send, but you can't receive unless you "join" a room. Test this.
+        // How come this hasn't come up before? Why don't we know this already?
+        const roomName = this.state.title;
+        console.log('Sent ' + msg + ' to ' + roomName);
+        return this.chatSocket.emit('sent', {
+            room: this.state.title,
+            msg: msg,
+            sid: this.chatSocket.id,
+        });
     }
 
     render() {

@@ -60,15 +60,24 @@ class ChatLayout extends React.Component {
                         inputPlaceholder: 'Create or join room...',
                     },
                 }, {
+                    title: 'ReactJS',
+                    type: 'react-component',
+                    component: 'chat-window',
+                    props: {
+                        items: ['sample message'],
+                        title: 'reactjs',
+                        inputPlaceholder: 'Send a message...',
+                    },
+                }, {
                     title: 'Lobby',
                     type: 'react-component',
                     component: 'chat-window',
                     props: {
                         items: ['sample message'],
-                        title: 'Lobby',
+                        title: 'lobby',
                         inputPlaceholder: 'Send a message...',
                     },
-                }]
+                }, ]
             }]
         };
         return config;
