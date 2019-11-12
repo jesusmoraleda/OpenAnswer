@@ -1,0 +1,202 @@
+h2 {
+    font: 14px Arial, sans-serif;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+html, body {
+    height: 100%;
+}
+
+* {
+    padding: 0;
+    list-style-type: none;
+}
+
+#wrapper {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+#roomList {
+    width: inherit;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #222;
+}
+
+/* Was needed when rooms were draggable */
+/*#roomList li {*/
+    /*cursor: move;*/
+    /*border-bottom: 1px solid #000;*/
+    /*border-top: 1px solid #333;*/
+    /*padding: 10px 5px;*/
+    /*color: #BBB;*/
+    /*background: #1a1a1a;*/
+    /*font: 12px Arial, sans-serif;*/
+/*}*/
+
+/*#roomList li:hover {*/
+    /*background: #111;*/
+    /*color: #CCC;*/
+/*}*/
+
+#roomList #chat_username {
+    padding: 5px;
+    display: inline;
+}
+
+#roomButtons {
+    width: 100%; /* Expand buttons to fill room list column */
+}
+
+#roomButtons .btn-group-vertical {
+    position: absolute;
+    top: 0;
+}
+
+#roomButtons .fas {
+    color: #6f6f6f;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#roomButtons .fas:hover {
+    background-color: inherit;
+}
+
+.btn-group-vertical .btn {
+    margin: 1px 0px 1px 0px; /*top right bottom left*/
+    /*By default bootstrap groups only round the top and bottom buttons.
+      Override with important. Other styling didn't work.
+      border-radius is unused, but keeping here for reference.*/
+    /*border-radius: 0px !important;*/
+    border-width: 0px;
+    color: rgb(162, 162, 162);
+    background-color: #1a1a1a;
+}
+
+.btn-group-vertical .btn:hover {
+    opacity: 0.7;
+}
+
+#roomEntry {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: inherit;
+    position: absolute;
+    bottom: 0px;
+    color: #BBB;
+    background: #1a1a1a;
+    box-sizing: border-box;
+    border: 1px solid #fff;
+    border-radius: 0px;
+}
+
+#layoutContainer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.chatEntry {
+    padding-left: 5px;
+    padding-right: 5px;
+    position: absolute;
+    bottom: 0px;
+    color: #BBB;
+    background: #1a1a1a;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    border: 1px solid #939393;
+    border-radius: 2px;
+}
+
+.chatMessages {
+    margin-bottom: 0px;
+    bottom: 20px;
+    display: block;
+    overflow-y: auto;
+    /*Removing height below breaks chat scroll*/
+    /*px diff must be the same as the bottom value above*/
+    /*I'm guessing we had added it because we added an outline around chat entry which made it thicker*/
+    height: calc(100% - 20px);
+    width: 100%;
+    position: absolute;
+    transform: translateZ(0);
+}
+
+.chatMessages li:nth-child(odd) {
+    background: #1a1a1a;
+    color: rgb(162, 162, 162);
+}
+
+.chatMessages li {
+    padding: 5px 10px;
+    color: rgb(162, 162, 162);
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.chatMessages::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    border: 2px solid #555555;
+}
+
+.chatMessages::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+.chatMessages::-webkit-scrollbar-track {
+    background-color: #565555;
+}
+
+.chatMessages #chat_username {
+    display: inline-block;
+}
+
+#chatMessage img {
+    max-height: 160px;
+    max-width: 200px;
+    width: auto;
+    height: auto;
+    cursor: zoom-in;
+}
+
+#chatMessage .emoji{
+    height: 1.2em;
+}
+
+/*Overriding bootstrap defaults for youtube preview*/
+#chatMessage .embed-responsive-16by9 {
+    height: 198px;
+    width: 352px;
+    padding-bottom: 0;
+}
+
+#timestamp {
+    font-size: 60%;
+    background: inherit;
+    display: none;
+    float: right;
+}
+
+#roomButtons button.collapsed i {
+    transform: rotate(-90deg);
+    transition: 100ms transform;
+}
+
+#roomButtons button:not(.collapsed) i{
+    transform: rotate(0deg);
+    transition: 100ms transform;
+}
