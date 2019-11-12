@@ -123,11 +123,13 @@ html, body {
 
 .chatMessages {
     margin-bottom: 0px;
-    bottom: 25px;
+    bottom: 20px;
     display: block;
     overflow-y: auto;
     /*Removing height below breaks chat scroll*/
-    height: calc(100% - 25px);
+    /*px diff must be the same as the bottom value above*/
+    /*I'm guessing we had added it because we added an outline around chat entry which made it thicker*/
+    height: calc(100% - 20px);
     width: 100%;
     position: absolute;
     transform: translateZ(0);
