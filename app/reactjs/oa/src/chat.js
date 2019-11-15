@@ -43,6 +43,18 @@ class ChatLayout extends React.Component {
     }
 
     join(data) {
+        // FIXME check if we actually connected before making a room
+        const newRoom = {
+            title: data.room,
+            type: 'react-component',
+            component: 'chat-window',
+            props: {
+                title: data.room,
+                textValue: '',
+                inputPlaceholder: 'Message ' + data.room + '...',
+            }
+        };
+        this.state.layout.root.contentItems[0].addChild(newRoom);
         return this.chatSocket.emit('joined', {room: data.room});
     }
 
