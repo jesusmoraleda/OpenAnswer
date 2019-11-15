@@ -139,5 +139,5 @@ class ChatLayout extends React.Component {
 
 window.React = React;
 window.ReactDOM = ReactDOM;
-export default ChatLayout;
+export {ChatLayout};
 
