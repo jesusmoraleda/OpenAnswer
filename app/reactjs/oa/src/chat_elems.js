@@ -62,7 +62,7 @@ class Tab extends React.Component {
     }
 
     handleKeyPress(e) {
-        if(enterKeyPressed(e)) {
+        if(enterKeyPressed(e) && this.state.textValue!=='') {
             const txt = this.state.textValue;
             this.setState({textValue: ''});
             return this.isChatWindow? this.send(txt) : this.join(txt);
