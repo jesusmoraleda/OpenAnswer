@@ -87,6 +87,7 @@ class Tab extends React.Component {
     }
 
     join(room) {
+        this.setState({items: this.state.items.concat(room)});
         return this.glEventHub.emit('join', {room: room});
     }
 
