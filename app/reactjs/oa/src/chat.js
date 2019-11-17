@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 import GoldenLayout from 'golden-layout';
-import {Tab} from './chat_elems.js';
+import {Tab} from './core_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
 import io from 'socket.io-client';
@@ -15,75 +15,27 @@ class ChatLayout extends React.Component {
         this.state = {
             config: config,
             layout: null,
+            openRooms: [],
         };
-        this.saveLayout = this.saveLayout.bind(this);
-        this.join = this.join.bind(this);
-        this.send = this.send.bind(this);
-        this.socketReceived = this.socketReceived.bind(this);
         this.componentCreated = this.componentCreated.bind(this);
-        this.loadedMessages = this.loadedMessages.bind(this);
-        this.chatSocket = io(
-            `${window.location.protocol}//${document.domain}:${window.location.port}/chat`,
-            // FIXME: Set this to true at some point
-            {'reconnection': false,}
-        );
-        this.chatSocket.on('received', this.socketReceived);
+        this.saveLayout = this.saveLayout.bind(this);
+        this.received = this.received.bind(this);
+        this.submit = this.submit.bind(this);
+        const loc = window.location;
+        this.socket = io(`${loc.protocol}//${document.domain}:${loc.port}/chat`, {'reconnection': false,});
+        this.socket.on('received', this.received);
     }
 
     componentDidMount() {
         // Lazily initialize Golden Layout
         let layout = new GoldenLayout(this.state.config);
-        layout.registerComponent('room-list', Tab);
-        layout.registerComponent('chat-window', Tab);
-        layout.on('stateChanged', this.saveLayout);
+        layout.registerComponent('list', Tab);
+        layout.registerComponent('room', Tab);
         layout.on('componentCreated', this.componentCreated);
-        layout.eventHub.on('join', this.join);
-        layout.eventHub.on('send', this.send);
+        layout.on('stateChanged', this.saveLayout);
+        layout.eventHub.on('submit', this.submit);
         layout.init();
         this.setState({layout: layout});
-    }
-
-    join(data) {
-        // FIXME check if we actually connected before making a room
-        const newRoom = {
-            title: data.room,
-            type: 'react-component',
-            component: 'chat-window',
-            props: {
-                title: data.room,
-                textValue: '',
-                inputPlaceholder: `Message ${data.room}...`,
-            }
-        };
-        this.state.layout.root.contentItems[0].addChild(newRoom);
-        return this.chatSocket.emit('joined', {room: data.room});
-    }
-
-    send(data) {
-        return this.chatSocket.emit('sent', {msg: data.msg, room: data.room, sid: this.chatSocket.id});
-    }
-
-    socketReceived(data) {
-        return this.state.layout.eventHub.emit('receive', data);
-    }
-
-    loadedMessages(room, data) {
-        return this.state.layout.eventHub.emit('receive', {room: room, messages: data});
-    }
-
-    componentCreated(e) {
-        const config = e.config;
-        if (config.component === 'chat-window') {
-            const roomName = config.title.toLowerCase();
-            fetch(`../messages/${roomName}`)
-                .then(data => {return data.json()})
-                .then(jsonData => {this.loadedMessages(roomName, jsonData.messages)});
-            this.chatSocket.emit('joined', {room: roomName});
-        }
-    }
-
-    render() {
-        return <div />
     }
 
     saveLayout() {
@@ -96,39 +48,108 @@ class ChatLayout extends React.Component {
         }
     }
 
+    received(item) {
+        const ts = item.timestamp;
+        const user = item.username;
+        const title = item.room;
+        const key = `${title}_${user}_${ts.toString()}`;
+        return this.state.layout.eventHub.emit(
+            'append',
+            {title: title, key: key, msg: item.content, user: user, timestamp: ts}
+        );
+    }
+
+    submit(type, title, txt){
+        switch (type) {
+            case "room":
+                return this.socket.emit('sent', {msg: txt, room: title, sid: this.socket.id});
+            case "list":
+                const roomName = txt.toLowerCase();
+                const newRoom = {
+                    type: 'react-component',
+                    component: 'room',
+                    title: roomName,
+                    props: {
+                        tabType: 'room',
+                        title: roomName,
+                        items: [],
+                        inputPlaceholder: `Message ${roomName}...`,
+                    },
+                };
+                this.state.layout.root.contentItems[0].addChild(newRoom);
+        }
+    }
+
+    componentCreated(e) {
+        const config = e.config;
+        const ts = Date.now();
+        switch (config.component) {
+            case 'room':
+                const room = config.title.toLowerCase();
+                fetch(
+                    `../messages/${room}`
+                ).then(
+                    data => {return data.json()}
+                ).then(
+                    jsonData => {
+                        this.state.layout.eventHub.emit(
+                            'setItems', room,
+                            // Generate a list of messages our ui understands
+                            jsonData.messages.map((msg) => {
+                                return {
+                                    title: msg.room,
+                                    key: `${msg.room}_${msg.username}_${msg.timestamp.toString()}`,
+                                    msg: msg.content,
+                                    user: msg.username,
+                                    timestamp: msg.timestamp
+                                }
+                            }).reverse()
+                        )
+                    }
+                ).catch(
+                    () => {console.log(`Unable to load messages for ${room}`)}
+                );
+                this.socket.emit('joined', {room: room});
+                let openRooms = this.state.openRooms;
+                openRooms.push({key: `${room}_${ts.toString()}`, val: room});
+                this.setState({openRooms: openRooms});
+                this.state.layout.eventHub.emit('setItems', 'room list', this.state.openRooms);
+                break;
+            case 'list':
+                // maybe subscribe to question list here
+                break;
+        }
+    }
+
+    render() {
+        return <div />
+    }
+
     getConfig() {
         // This interferes with the savedLayout we use on the functional chat
         let storedConfig = localStorage.getItem('savedReactLayout');
         const config = storedConfig? JSON.parse(storedConfig) : {
-            settings: {showPopoutIcon: false},
             content: [{
                 type: 'row',
                 content: [{
                     title: 'Room List',
                     type: 'react-component',
-                    component: 'room-list',
+                    component: 'list',
                     props: {
-                        items: ['lobby'],
+                        tabType: 'list',
+                        items: [],
                         title: 'Room List',
                         inputPlaceholder: 'Create or join room...',
                     },
                 }, {
+                    type: 'react-component',
+                    component: 'room',
                     title: 'lobby',
-                    type: 'react-component',
-                    component: 'chat-window',
                     props: {
+                        tabType: 'room',
+                        items: [],
                         title: 'lobby',
-                        textValue: '',
                         inputPlaceholder: 'Message lobby...',
-                    },
-                }, {
-                    title: 'reactjs',
-                    type: 'react-component',
-                    component: 'chat-window',
-                    props: {
-                        title: 'reactjs',
-                        textValue: '',
-                        inputPlaceholder: 'Message reactjs...',
                     },
                 }]
             }]
