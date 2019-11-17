@@ -65,7 +65,6 @@ class ChatLayout extends React.Component {
                 return this.socket.emit('sent', {msg: txt, room: title, sid: this.socket.id});
             case "list":
                 const roomName = txt.toLowerCase();
-                //should be removed when we add "addChild" for golden layout
                 const newRoom = {
                     type: 'react-component',
                     component: 'room',
