@@ -23,7 +23,8 @@ class ChatLayout extends React.Component {
         this.componentCreated = this.componentCreated.bind(this);
         this.loadedMessages = this.loadedMessages.bind(this);
         this.chatSocket = io(
-            window.location.protocol + '//' + document.domain + ':' + window.location.port + '/chat',
+            `${window.location.protocol}//${document.domain}:${window.location.port}/chat`,
+            // FIXME: Set this to true at some point
             {'reconnection': false,}
         );
         this.chatSocket.on('received', this.socketReceived);
@@ -51,7 +52,7 @@ class ChatLayout extends React.Component {
             props: {
                 title: data.room,
                 textValue: '',
-                inputPlaceholder: 'Message ' + data.room + '...',
+                inputPlaceholder: `Message ${data.room}...`,
             }
         };
         this.state.layout.root.contentItems[0].addChild(newRoom);
@@ -74,7 +75,7 @@ class ChatLayout extends React.Component {
         const config = e.config;
         if (config.component === 'chat-window') {
             const roomName = config.title.toLowerCase();
-            fetch('../messages/' + roomName)
+            fetch(`../messages/${roomName}`)
                 .then(data => {return data.json()})
                 .then(jsonData => {this.loadedMessages(roomName, jsonData.messages)});
             this.chatSocket.emit('joined', {room: roomName});
@@ -135,19 +136,6 @@ class ChatLayout extends React.Component {
         return config;
     }
 }
-
-// class Chat extends React.Component {
-//     render() {
-//         return
-//     }
-//
-//     join(room) {
-//         console.log('Joined: ' + room)
-//     }
-//     send(message) {
-//         console.log('Sent: ' + message)
-//     }
-// }
 
 window.React = React;
 window.ReactDOM = ReactDOM;

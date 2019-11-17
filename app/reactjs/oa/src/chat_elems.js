@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import {enterKeyPressed} from "./core_elems";
 import './chat-dark.css';
 
@@ -10,17 +9,6 @@ import './chat-dark.css';
  *   question list
  */
 class Tab extends React.Component {
-    static propTypes = {
-        /** Tab contents will be populated from these items (e.g. messages, replies, etc.) */
-        items: PropTypes.array,
-        /** Tab title to be displayed in the golden layout tab */
-        title: PropTypes.string,
-        /** Contents of the textbox at the bottom of the chat tab (we may be able to use this to restore the items) */
-        textValue: PropTypes.string,
-        /** Placeholder text for the input at the bottom of each tab */
-        inputPlaceholder: PropTypes.string,
-    };
-
     constructor(props) {
         super(props);
         this.isChatWindow = !(props.title === 'Room List');
