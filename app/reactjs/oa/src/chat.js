@@ -5,7 +5,8 @@ import {Tab} from './core_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
 import io from 'socket.io-client';
-import {testMsgs} from './samplemsg.js';
+// Uncomment to quickly test local changes
+// import {testMsgs} from './samplemsg.js';
 
 // FIXME: Pure components are immutable, and faster.
 //  For a given set of props PureComponent should always return the same view
@@ -81,20 +82,21 @@ class ChatLayout extends React.Component {
         }
     }
 
+    // Uncomment to quickly test local changes
     notLoaded(room) {
-        this.state.layout.eventHub.emit(
-            'setItems', room,
-            // Generate a list of messages our ui understands
-            testMsgs.messages.map((msg) => {
-                return {
-                    title: msg.room,
-                    key: `${room}_${msg.id}`,
-                    msg: msg.content,
-                    user: msg.username,
-                    timestamp: msg.timestamp
-                }
-            }).reverse()
-        )
+    //     this.state.layout.eventHub.emit(
+    //         'setItems', room,
+    //         // Generate a list of messages our ui understands
+    //         testMsgs.messages.map((msg) => {
+    //             return {
+    //                 title: msg.room,
+    //                 key: `${room}_${msg.id}`,
+    //                 msg: msg.content,
+    //                 user: msg.username,
+    //                 timestamp: msg.timestamp
+    //             }
+    //         }).reverse()
+    //     )
     }
 
     componentCreated(e) {

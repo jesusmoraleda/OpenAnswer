@@ -1,4 +1,6 @@
 import React from 'react';
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css' // FIXME use minified
 import './chat-dark.css';
 
 function enterKeyPressed(e) {
@@ -83,6 +85,7 @@ class Tab extends React.Component {
     }
 
     handleKeyPress(e) {
+        // if (enterKeyPressed(e)) {this.notify();} // uncomment and hit enter to test notifications
         if(enterKeyPressed(e) && this.state.textValue!=='') {
             const txt = this.state.textValue;
             this.setState({textValue: ''});
@@ -102,6 +105,16 @@ class Tab extends React.Component {
             // Scrolling multiple components with 'smooth' behavior is impossible, because why would it be ugh.
             this.contentEnd.current.scrollIntoView({behavior: 'auto'});
         }
+        else if (this.pauseScroll) {
+            this.notify();
+        }
+    }
+
+    notify() {
+        toast(
+        `New messages in ${this.state.title}`, {
+            containerId: `notification_${this.state.title}`,
+        });
     }
 
     render() {
@@ -110,6 +123,12 @@ class Tab extends React.Component {
                 <ul className="chatMessages" onScroll={this.handleScroll}>
                     {this.state.items.map(this.renderItem)}
                 </ul>
+                <ToastContainer
+                    enableMultiContainer
+                    containerId={"notification_"+this.state.title}
+                    className="notification"
+                    autoClose={false}
+                />
                 <input
                     className="chatEntry"
                     key={"inputBox_" + this.state.title}
