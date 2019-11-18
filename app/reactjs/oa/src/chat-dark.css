@@ -132,6 +132,8 @@ html, body {
     height: calc(100% - 20px);
     width: 100%;
     position: absolute;
+    scrollbar-width: thin;
+    scrollbar-color: #000 #565555;
 }
 
 .chatMessages li:nth-child(odd) {
