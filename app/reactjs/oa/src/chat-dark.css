@@ -199,3 +199,7 @@ html, body {
     transform: rotate(0deg);
     transition: 100ms transform;
 }
+
+.notification {
+    position: relative;
+}
