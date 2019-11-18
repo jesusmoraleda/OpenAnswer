@@ -86,6 +86,7 @@ class Tab extends React.Component {
         if(enterKeyPressed(e) && this.state.textValue!=='') {
             const txt = this.state.textValue;
             this.setState({textValue: ''});
+            this.pauseScroll = false;
             return this.glEventHub.emit('submit', this.state.tabType, this.state.title, txt);
         }
     }
