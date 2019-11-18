@@ -24,6 +24,7 @@ class Tab extends React.Component {
         this.renderMsg = this.renderMsg.bind(this);
         this.append = this.append.bind(this);
         this.contentEnd = React.createRef();
+        this.scrollToBottom = this.scrollToBottom.bind(this);
         this.glEventHub = props.glEventHub;
         this.glEventHub.on('append', this.append);
         this.glEventHub.on('setItems', this.setItems);
@@ -87,14 +88,18 @@ class Tab extends React.Component {
     }
 
     componentDidMount() {
-        if (this.contentEnd.current) {
-            this.contentEnd.current.scrollIntoView({behavior: 'smooth'});
-        }
+        this.scrollToBottom();
     }
 
     componentDidUpdate() {
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
         if (this.contentEnd.current && !this.props.pauseScroll) {
-            this.contentEnd.current.scrollIntoView({behavior: 'smooth'});
+            // https://stackoverflow.com/questions/57214373/scrollintoview-using-smooth-function-on-multiple-elements-in-chrome
+            // Scrolling multiple components with 'smooth' behavior is impossible, because why would it be ugh.
+            this.contentEnd.current.scrollIntoView({behavior: 'auto'});
         }
     }
 
