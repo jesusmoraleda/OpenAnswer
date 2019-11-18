@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import './chat-dark.css';
 
 function enterKeyPressed(e) {
@@ -15,12 +15,16 @@ class Tab extends React.Component {
             items: props.items || [],                  // tab contents
             textValue: props.textValue || '',          // textbox value
             inputPlaceholder: props.inputPlaceholder,  // textbox placeholder
+            pauseScroll: false,                        // controlling scroll events
         };
         this.handleTextChange = this.handleTextChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.setItems = this.setItems.bind(this); // shortcut to setting all items (used by room list)
         this.renderItem = this.renderItem.bind(this);
+        this.renderMsg = this.renderMsg.bind(this);
         this.append = this.append.bind(this);
+        this.contentEnd = React.createRef();
+        this.scrollToBottom = this.scrollToBottom.bind(this);
         this.glEventHub = props.glEventHub;
         this.glEventHub.on('append', this.append);
         this.glEventHub.on('setItems', this.setItems);
@@ -55,7 +59,9 @@ class Tab extends React.Component {
         return (
             <li id="chatMessage"
                 key={item.key}
-                timestamp={item.timestamp}>
+                timestamp={item.timestamp}
+                ref={this.contentEnd}       // make the last item the anchor for scrolling to the bottom
+            >
                 <div id="chat_username" user={item.user}>
                     {item.user}:
                 </div> {item.msg}
@@ -81,13 +87,28 @@ class Tab extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        if (this.contentEnd.current && !this.props.pauseScroll) {
+            // https://stackoverflow.com/questions/57214373/scrollintoview-using-smooth-function-on-multiple-elements-in-chrome
+            // Scrolling multiple components with 'smooth' behavior is impossible, because why would it be ugh.
+            this.contentEnd.current.scrollIntoView({behavior: 'auto'});
+        }
+    }
+
     render() {
         return (
             <div className="chatWindow">
                 <ul className="chatMessages">
                     {this.state.items.map(this.renderItem)}
                 </ul>
-                <div className="scrollTo"></div>
                 <input
                     className="chatEntry"
                     key={"inputBox_" + this.state.title}

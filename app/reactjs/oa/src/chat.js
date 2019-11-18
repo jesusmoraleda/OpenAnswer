@@ -52,7 +52,7 @@ class ChatLayout extends React.Component {
         const ts = item.timestamp;
         const user = item.username;
         const title = item.room;
-        const key = `${title}_${user}_${ts.toString()}`;
+        const key = `${title}_${item.id}`;
         return this.state.layout.eventHub.emit(
             'append',
             {title: title, key: key, msg: item.content, user: user, timestamp: ts}
@@ -98,7 +98,7 @@ class ChatLayout extends React.Component {
                             jsonData.messages.map((msg) => {
                                 return {
                                     title: msg.room,
-                                    key: `${msg.room}_${msg.username}_${msg.timestamp.toString()}`,
+                                    key: `${room}_${msg.id}`,
                                     msg: msg.content,
                                     user: msg.username,
                                     timestamp: msg.timestamp
