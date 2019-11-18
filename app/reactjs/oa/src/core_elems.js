@@ -15,10 +15,13 @@ class Tab extends React.Component {
             items: props.items || [],                  // tab contents
             textValue: props.textValue || '',          // textbox value
             inputPlaceholder: props.inputPlaceholder,  // textbox placeholder
-            pauseScroll: false,                        // controlling scroll events
         };
+        // Needs to be updated immediately, putting this in state introduces lag until event is fired.
+        //      also, this is a calculated field, not maintained by parent components.
+        this.pauseScroll = false;
         this.handleTextChange = this.handleTextChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
         this.setItems = this.setItems.bind(this); // shortcut to setting all items (used by room list)
         this.renderItem = this.renderItem.bind(this);
         this.renderMsg = this.renderMsg.bind(this);
@@ -32,13 +35,13 @@ class Tab extends React.Component {
 
     append(item) {
         if (item.title === this.state.title){
-            this.setState({items: this.state.items.concat(item)});
+            this.setState({items: this.state.items.concat(item)}, this.scrollToBottom);
         }
     }
 
     setItems(title, items) {
         if (title === this.state.title) {
-            this.setState({items: items});
+            this.setState({items: items}, this.scrollToBottom);
         }
     }
 
@@ -87,16 +90,13 @@ class Tab extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.scrollToBottom();
-    }
-
-    componentDidUpdate() {
-        this.scrollToBottom();
+    handleScroll(e) {
+        const atBottom = (e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight);
+        this.pauseScroll = !atBottom;
     }
 
     scrollToBottom() {
-        if (this.contentEnd.current && !this.props.pauseScroll) {
+        if (this.contentEnd.current && !this.pauseScroll) {
             // https://stackoverflow.com/questions/57214373/scrollintoview-using-smooth-function-on-multiple-elements-in-chrome
             // Scrolling multiple components with 'smooth' behavior is impossible, because why would it be ugh.
             this.contentEnd.current.scrollIntoView({behavior: 'auto'});
@@ -106,7 +106,7 @@ class Tab extends React.Component {
     render() {
         return (
             <div className="chatWindow">
-                <ul className="chatMessages">
+                <ul className="chatMessages" onScroll={this.handleScroll}>
                     {this.state.items.map(this.renderItem)}
                 </ul>
                 <input
