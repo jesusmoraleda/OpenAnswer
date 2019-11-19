@@ -18,35 +18,26 @@ class Tab extends React.Component {
             inputPlaceholder: props.inputPlaceholder,  // textbox placeholder
             notification: null,                        // alert text for new items
         };
-        // Needs to be updated immediately, putting this in state introduces lag until event is fired.
-        //      also, this is a calculated field, not maintained by parent components.
-        this.handleTextChange = this.handleTextChange.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleScroll = this.handleScroll.bind(this);
-        this.setItems = this.setItems.bind(this); // shortcut to setting all items (used by room list)
-        this.renderItem = this.renderItem.bind(this);
-        this.renderMsg = this.renderMsg.bind(this);
-        this.append = this.append.bind(this);
         this.contentEnd = React.createRef();
-        this.scrollToBottom = this.scrollToBottom.bind(this);
         this.glEventHub = props.glEventHub;
         this.glEventHub.on('append', this.append);
         this.glEventHub.on('setItems', this.setItems);
     }
 
-    append(item) {
+    append = (item) => {
         if (item.title === this.state.title){
             this.setState({items: this.state.items.concat(item)}, this.scrollToBottom);
         }
-    }
+    };
 
-    setItems(title, items) {
+    // shortcut to setting all items (used by room list)
+    setItems = (title, items) => {
         if (title === this.state.title) {
             this.setState({items: items}, this.scrollToBottom);
         }
-    }
+    };
 
-    renderItem(item) {
+    renderItem = (item) => {
         let renderer = null;
         switch (this.state.tabType) {
             case 'room':
@@ -57,9 +48,9 @@ class Tab extends React.Component {
                 break;
         }
         return renderer(item);
-    }
+    };
 
-    renderMsg(item) {
+    renderMsg = (item) => {
         return (
             <li id="chatMessage"
                 key={item.key}
@@ -72,27 +63,27 @@ class Tab extends React.Component {
                 <div id="timestamp"></div>
             </li>
         );
-    }
+    };
 
-    renderDefault(item){
+    renderDefault = (item) => {
         return <li key={item.key}>{item.val}</li>;
-    }
+    };
 
-    handleTextChange(e) {
+    handleTextChange = (e) => {
         const new_val = e.target.value;
         this.setState({textValue: new_val});
-    }
+    };
 
-    handleKeyPress(e) {
+    handleKeyPress = (e) => {
         // if (enterKeyPressed(e)) {this.notify();} // uncomment and hit enter to test notifications
         if(enterKeyPressed(e) && this.state.textValue!=='') {
             const txt = this.state.textValue;
             this.setState({textValue: '', scrollPaused: false, notification: null});
             return this.glEventHub.emit('submit', this.state.tabType, this.state.title, txt);
         }
-    }
+    };
 
-    handleScroll(e) {
+    handleScroll = (e) => {
         const atBottom = (e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight);
         const scrolledUp = !atBottom;
         if (scrolledUp !== this.state.scrollPaused) {
@@ -101,9 +92,9 @@ class Tab extends React.Component {
         if (atBottom) {
             this.setState({notification: null});
         }
-    }
+    };
 
-    scrollToBottom(force=false) {
+    scrollToBottom = (force=false) => {
         if (force) {
             // Force scroll down if user clicks on new messages notification
             this.setState({scrollPaused: false, notification: null});
@@ -117,11 +108,7 @@ class Tab extends React.Component {
         else if (this.state.scrollPaused && !this.state.notification) {
             this.setState({notification: 'New messages'})
         }
-    }
-
-    notify() {
-        console.log('new messages');
-    }
+    };
 
     render() {
         return (
@@ -130,7 +117,7 @@ class Tab extends React.Component {
                     {this.state.items.map(this.renderItem)}
                 </ul>
                 {this.state.scrollPaused && this.state.notification &&
-                 <button className='scrollDownIndicator'
+                 <button className='newItemsNotification'
                          onClick={() => {this.scrollToBottom(true)}}>
                     {this.state.notification}
                 </button>}

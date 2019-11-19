@@ -5,8 +5,7 @@ import {Tab} from './core_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
 import io from 'socket.io-client';
-// Uncomment to quickly test local changes
-// import {testMsgs} from './samplemsg.js';
+// import {testMsgs} from './samplemsg.js'; // Uncomment to quickly test local changes
 
 // FIXME: Pure components are immutable, and faster.
 //  For a given set of props PureComponent should always return the same view

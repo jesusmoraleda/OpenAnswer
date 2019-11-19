@@ -202,9 +202,17 @@ html, body {
     transition: 100ms transform;
 }
 
-.scrollDownIndicator {
+.newItemsNotification {
     position: absolute;
     bottom: 20px;
-    right: 0;
     z-index: 1;
+    right: 8px;
+    border-radius: 2%;
+    opacity: 0.9;
+    background: #555555;
+    border-width: thin;
+    border-color: #000000;
+    padding: 3px;
+    color: rgb(162, 162, 162);
+    cursor: pointer;
 }
