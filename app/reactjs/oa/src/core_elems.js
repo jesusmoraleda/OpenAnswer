@@ -1,6 +1,4 @@
 import React from 'react';
-import {ToastContainer, toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css' // FIXME use minified
 import './chat-dark.css';
 
 function enterKeyPressed(e) {
@@ -15,12 +13,13 @@ class Tab extends React.Component {
             tabType: props.tabType,                    //'room', 'question', 'list', FIXME - think of better types
             title: props.title.toLowerCase(),          // tab title
             items: props.items || [],                  // tab contents
+            scrollPaused: false,                       // scroll paused
             textValue: props.textValue || '',          // textbox value
             inputPlaceholder: props.inputPlaceholder,  // textbox placeholder
+            notification: null,                        // alert text for new items
         };
         // Needs to be updated immediately, putting this in state introduces lag until event is fired.
         //      also, this is a calculated field, not maintained by parent components.
-        this.pauseScroll = false;
         this.handleTextChange = this.handleTextChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
@@ -88,33 +87,40 @@ class Tab extends React.Component {
         // if (enterKeyPressed(e)) {this.notify();} // uncomment and hit enter to test notifications
         if(enterKeyPressed(e) && this.state.textValue!=='') {
             const txt = this.state.textValue;
-            this.setState({textValue: ''});
-            this.pauseScroll = false;
+            this.setState({textValue: '', scrollPaused: false, notification: null});
             return this.glEventHub.emit('submit', this.state.tabType, this.state.title, txt);
         }
     }
 
     handleScroll(e) {
         const atBottom = (e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight);
-        this.pauseScroll = !atBottom;
+        const scrolledUp = !atBottom;
+        if (scrolledUp !== this.state.scrollPaused) {
+            this.setState({scrollPaused: scrolledUp});
+        }
+        if (atBottom) {
+            this.setState({notification: null});
+        }
     }
 
-    scrollToBottom() {
-        if (this.contentEnd.current && !this.pauseScroll) {
+    scrollToBottom(force=false) {
+        if (force) {
+            // Force scroll down if user clicks on new messages notification
+            this.setState({scrollPaused: false, notification: null});
+            this.contentEnd.current.scrollIntoView({behavior: 'smooth'});
+        }
+        else if (this.contentEnd.current && !this.state.scrollPaused) {
             // https://stackoverflow.com/questions/57214373/scrollintoview-using-smooth-function-on-multiple-elements-in-chrome
             // Scrolling multiple components with 'smooth' behavior is impossible, because why would it be ugh.
             this.contentEnd.current.scrollIntoView({behavior: 'auto'});
         }
-        else if (this.pauseScroll) {
-            this.notify();
+        else if (this.state.scrollPaused && !this.state.notification) {
+            this.setState({notification: 'New messages'})
         }
     }
 
     notify() {
-        toast(
-        `New messages in ${this.state.title}`, {
-            containerId: `notification_${this.state.title}`,
-        });
+        console.log('new messages');
     }
 
     render() {
@@ -123,12 +129,11 @@ class Tab extends React.Component {
                 <ul className="chatMessages" onScroll={this.handleScroll}>
                     {this.state.items.map(this.renderItem)}
                 </ul>
-                <ToastContainer
-                    enableMultiContainer
-                    containerId={"notification_"+this.state.title}
-                    className="notification"
-                    autoClose={false}
-                />
+                {this.state.scrollPaused && this.state.notification &&
+                 <button className='scrollDownIndicator'
+                         onClick={() => {this.scrollToBottom(true)}}>
+                    {this.state.notification}
+                </button>}
                 <input
                     className="chatEntry"
                     key={"inputBox_" + this.state.title}
