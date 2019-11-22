@@ -5,7 +5,10 @@ import {Tab} from './core_elems.js';
 import "golden-layout/src/css/goldenlayout-base.css";
 import "golden-layout/src/css/goldenlayout-dark-theme.css";
 import io from 'socket.io-client';
-// import {testMsgs} from './samplemsg.js'; // Uncomment to quickly test local changes
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Navbar, Nav, Form, FormControl, Button} from "react-bootstrap";
+//import {testMsgs} from './samplemsg.js'; // Uncomment to quickly test local changes
 
 // FIXME: Pure components are immutable, and faster.
 //  For a given set of props PureComponent should always return the same view
@@ -60,7 +63,7 @@ class ChatLayout extends React.Component {
         );
     }
 
-    submit(type, title, txt){
+    submit(type, title, txt) {
         switch (type) {
             case "room":
                 return this.socket.emit('sent', {msg: txt, room: title, sid: this.socket.id});
@@ -81,21 +84,21 @@ class ChatLayout extends React.Component {
         }
     }
 
-    // Uncomment to quickly test local changes
+    // // Uncomment to quickly test local changes
     notLoaded(room) {
-    //     this.state.layout.eventHub.emit(
-    //         'setItems', room,
-    //         // Generate a list of messages our ui understands
-    //         testMsgs.messages.map((msg) => {
-    //             return {
-    //                 title: msg.room,
-    //                 key: `${room}_${msg.id}`,
-    //                 msg: msg.content,
-    //                 user: msg.username,
-    //                 timestamp: msg.timestamp
-    //             }
-    //         }).reverse()
-    //     )
+        //     this.state.layout.eventHub.emit(
+        //         'setItems', room,
+        //         // Generate a list of messages our ui understands
+        //         testMsgs.messages.map((msg) => {
+        //             return {
+        //                 title: msg.room,
+        //                 key: `${room}_${msg.id}`,
+        //                 msg: msg.content,
+        //                 user: msg.username,
+        //                 timestamp: msg.timestamp
+        //             }
+        //         }).reverse()
+        //     )
     }
 
     componentCreated(e) {
@@ -107,7 +110,9 @@ class ChatLayout extends React.Component {
                 fetch(
                     `../messages/${room}`
                 ).then(
-                    data => {return data.json()}
+                    data => {
+                        return data.json()
+                    }
                 ).then(
                     jsonData => {
                         this.state.layout.eventHub.emit(
@@ -124,7 +129,9 @@ class ChatLayout extends React.Component {
                             }).reverse()
                         )
                     }
-                ).catch(() => {this.notLoaded(room)});
+                ).catch(() => {
+                    this.notLoaded(room)
+                });
                 this.socket.emit('joined', {room: room});
                 let openRooms = this.state.openRooms;
                 openRooms.push({key: `${room}_${ts.toString()}`, val: room});
@@ -138,13 +145,37 @@ class ChatLayout extends React.Component {
     }
 
     render() {
-        return <div />
+        return (
+            <div>
+                <Navbar bg="dark" variant="dark">
+                    <Navbar.Brand href="#home">
+                        <img
+                            alt=""
+                            src="hedgehog_light.svg"
+                            width="30"
+                            height="30"
+                            className="d-inline-block align-top"
+                        />{' '}
+                        StudyHog
+                    </Navbar.Brand>
+                    <Nav className="mr-auto">
+                        <Nav.Link href="#home">Home</Nav.Link>
+                        <Nav.Link href="#features">Features</Nav.Link>
+                        <Nav.Link href="#pricing">Pricing</Nav.Link>
+                    </Nav>
+                    <Form inline>
+                        <FormControl type="text" placeholder="Search" className="mr-sm-2"/>
+                        <Button variant="outline-info">Search</Button>
+                    </Form>
+                </Navbar>
+            </div>
+        )
     }
 
     getConfig() {
         // This interferes with the savedLayout we use on the functional chat
         let storedConfig = localStorage.getItem('savedReactLayout');
-        const config = storedConfig? JSON.parse(storedConfig) : {
+        const config = storedConfig ? JSON.parse(storedConfig) : {
             content: [{
                 type: 'row',
                 content: [{
