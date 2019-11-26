@@ -6,5 +6,5 @@ import {ChatLayout} from './chat.js';
 
 ReactDOM.render(
   <ChatLayout title="Room List"/>,
-  document.getElementById('chat')
+  document.getElementById('root')
 );

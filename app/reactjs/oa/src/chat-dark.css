@@ -9,16 +9,37 @@ html, body {
     height: 100%;
 }
 
-* {
-    padding: 0;
-    list-style-type: none;
+.navbar {
+    background-color: #1e1f1f;
+    color: rgb(196, 192, 197);
+    border-bottom: 1px solid;
+    border-color: #757373;
+    display: flex;
+    max-height: 50px;
 }
 
-#wrapper {
+body {
+    padding-top: 50px; /*bootstrap navbar's height (magic number)*/
+}
+
+#root {
+    height: 100%;
+}
+
+#container {
+    height: 100%;
+}
+
+#layoutContainer {
     height: 100%;
     position: relative;
     width: 100%;
     overflow: hidden;
+}
+
+* {
+    padding: 0;
+    list-style-type: none;
 }
 
 #roomList {
@@ -97,14 +118,6 @@ html, body {
     box-sizing: border-box;
     border: 1px solid #fff;
     border-radius: 0px;
-}
-
-#layoutContainer {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 .chatEntry {

@@ -21,7 +21,9 @@ class ChatLayout extends React.Component {
             layout: null,
             openRooms: [],
         };
+        this.layoutRef = React.createRef();
         this.componentCreated = this.componentCreated.bind(this);
+        this.resizeLayout = this.resizeLayout.bind(this);
         this.saveLayout = this.saveLayout.bind(this);
         this.received = this.received.bind(this);
         this.submit = this.submit.bind(this);
@@ -32,7 +34,7 @@ class ChatLayout extends React.Component {
 
     componentDidMount() {
         // Lazily initialize Golden Layout
-        let layout = new GoldenLayout(this.state.config);
+        let layout = new GoldenLayout(this.state.config, this.layoutRef.current);
         layout.registerComponent('list', Tab);
         layout.registerComponent('room', Tab);
         layout.on('componentCreated', this.componentCreated);
@@ -40,6 +42,11 @@ class ChatLayout extends React.Component {
         layout.eventHub.on('submit', this.submit);
         layout.init();
         this.setState({layout: layout});
+        window.addEventListener('resize', this.resizeLayout);
+    }
+
+    resizeLayout() {
+        this.state.layout.updateSize();
     }
 
     saveLayout() {
@@ -146,17 +153,16 @@ class ChatLayout extends React.Component {
 
     render() {
         return (
-            <div>
-                <Navbar bg="dark" variant="dark">
+            <div id="container">
+                <Navbar className="fixed-top">
                     <Navbar.Brand href="#home">
                         <img
                             alt=""
-                            src="hedgehog_light.svg"
-                            width="30"
-                            height="30"
+                            src="studyhog_mono.svg"
+                            width="180"
+                            height="36"
                             className="d-inline-block align-top"
-                        />{' '}
-                        StudyHog
+                        />
                     </Navbar.Brand>
                     <Nav className="mr-auto">
                         <Nav.Link href="#home">Home</Nav.Link>
@@ -168,6 +174,7 @@ class ChatLayout extends React.Component {
                         <Button variant="outline-info">Search</Button>
                     </Form>
                 </Navbar>
+                <div id="layoutContainer" ref={this.layoutRef}/>
             </div>
         )
     }
@@ -207,5 +214,6 @@ class ChatLayout extends React.Component {
 
 window.React = React;
 window.ReactDOM = ReactDOM;
+
 export {ChatLayout};
 
